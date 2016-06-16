@@ -62,7 +62,6 @@ Then you need to start SharkORM early on:
 func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 	
 	SharkORM.setDelegate(self)
-	SharkORM.setPersistSynthesizedProperties(true)
 	SharkORM.openDatabaseNamed("myDatabase")
 	
 	return true
@@ -77,7 +76,7 @@ In Objective-C properties need to be implemented using `@dynamic`, this is to in
 `Objective-C`
 ```objective-c
 //  Header File : Person.h
-#import <SharkORM/SharkORM.h>
+#import "SharkORM.h"
 
 @interface Person : SRKObject
 @property NSString*         name;
@@ -213,4 +212,4 @@ var ids = Person.query().ids();
 
 ## Requirements:
 
-- CocoaPods 0.31
+- CocoaPods 1.0.0
