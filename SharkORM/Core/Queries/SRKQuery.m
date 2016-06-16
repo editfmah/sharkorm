@@ -45,7 +45,7 @@
 			
 			ptr++;
 			
-			NSRange currentParamHolder;
+			NSRange currentParamHolder = NSMakeRange(0, 0);
 			int pCount = 0;
 			const char* fmt = format.UTF8String;
 			
@@ -198,7 +198,7 @@
 			
 			ptr++;
 			
-			NSRange currentParamHolder;
+			NSRange currentParamHolder = NSMakeRange(0, 0);
 			int pCount = 0;
 			
 			const char* fmt = format.UTF8String;

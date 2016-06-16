@@ -144,7 +144,7 @@
 		E0F413F41CF632120085166C /* SRKTransactionGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F4139E1CF632120085166C /* SRKTransactionGroup.h */; };
 		E0F413F51CF632120085166C /* SRKTransactionGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4139F1CF632120085166C /* SRKTransactionGroup.m */; };
 		E0F413F61CF632120085166C /* SRKTransactionGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4139F1CF632120085166C /* SRKTransactionGroup.m */; };
-		E0F413F71CF632120085166C /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = E0F413A11CF632120085166C /* sqlite3.c */; settings = {COMPILER_FLAGS = "-w"; }; };
+		E0F413F71CF632120085166C /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = E0F413A11CF632120085166C /* sqlite3.c */; };
 		E0F413F81CF632120085166C /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = E0F413A11CF632120085166C /* sqlite3.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		E0F413F91CF632120085166C /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413A21CF632120085166C /* sqlite3.h */; };
 		E0F413FA1CF632120085166C /* sqlite3ext.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413A31CF632120085166C /* sqlite3ext.h */; };
