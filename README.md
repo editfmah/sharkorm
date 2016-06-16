@@ -1,7 +1,7 @@
 Shark iOS ORM
 ============
 
-Shark is a fully featured and FREE to use ORM for iOS.
+Shark (originally DBAccess) is a fully featured and FREE to use ORM for iOS.
 
 Replace CoreData whilst keeping your existing managed objects, but dump the predicates and long-winded syntax.
 
