@@ -9,7 +9,7 @@
 
 @implementation Person
 
-@dynamic Name,age,department,payrollNumber,seq;
+@dynamic Name,age,department,payrollNumber,seq,location;
 
 + (NSArray *)FTSParametersForEntity {
 	return @[@"Name"];

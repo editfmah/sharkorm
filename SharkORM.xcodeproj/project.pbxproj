@@ -16,6 +16,8 @@
 		E003204D1CFA58FF00240C44 /* WidePerson.m in Sources */ = {isa = PBXBuildFile; fileRef = E00320451CFA58FF00240C44 /* WidePerson.m */; };
 		E00320631CFB8F0B00240C44 /* Persistence.m in Sources */ = {isa = PBXBuildFile; fileRef = E00320621CFB8F0B00240C44 /* Persistence.m */; };
 		E012E0361D0AEDDE00B6F741 /* TODO.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E012E0351D0AEDDD00B6F741 /* TODO.rtf */; };
+		E040B5BF1D1479E900FCC830 /* Examples.m in Sources */ = {isa = PBXBuildFile; fileRef = E040B5BE1D1479E900FCC830 /* Examples.m */; };
+		E040B5C31D14970D00FCC830 /* Joins.m in Sources */ = {isa = PBXBuildFile; fileRef = E040B5C21D14970D00FCC830 /* Joins.m */; };
 		E092CB051D00964700C6C8CD /* DBAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = E092CB041D0095A300C6C8CD /* DBAccess.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E092CB081D00DBE800C6C8CD /* Performance.m in Sources */ = {isa = PBXBuildFile; fileRef = E092CB071D00DBE800C6C8CD /* Performance.m */; };
 		E0C450A61D107AA8003FA21D /* SRKEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413631CF632120085166C /* SRKEvent.m */; };
@@ -186,6 +188,10 @@
 		E00320611CFB8F0B00240C44 /* Persistence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Persistence.h; sourceTree = "<group>"; };
 		E00320621CFB8F0B00240C44 /* Persistence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Persistence.m; sourceTree = "<group>"; };
 		E012E0351D0AEDDD00B6F741 /* TODO.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; name = TODO.rtf; path = SharkORM/TODO.rtf; sourceTree = "<group>"; };
+		E040B5BD1D1479E900FCC830 /* Examples.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Examples.h; sourceTree = "<group>"; };
+		E040B5BE1D1479E900FCC830 /* Examples.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Examples.m; sourceTree = "<group>"; };
+		E040B5C11D14970D00FCC830 /* Joins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Joins.h; sourceTree = "<group>"; };
+		E040B5C21D14970D00FCC830 /* Joins.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Joins.m; sourceTree = "<group>"; };
 		E092CB041D0095A300C6C8CD /* DBAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DBAccess.h; sourceTree = "<group>"; };
 		E092CB061D00DBE800C6C8CD /* Performance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Performance.h; sourceTree = "<group>"; };
 		E092CB071D00DBE800C6C8CD /* Performance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Performance.m; sourceTree = "<group>"; };
@@ -383,6 +389,24 @@
 			path = "Transaction Tests";
 			sourceTree = "<group>";
 		};
+		E040B5BC1D1479CF00FCC830 /* Examples */ = {
+			isa = PBXGroup;
+			children = (
+				E040B5BD1D1479E900FCC830 /* Examples.h */,
+				E040B5BE1D1479E900FCC830 /* Examples.m */,
+			);
+			path = Examples;
+			sourceTree = "<group>";
+		};
+		E040B5C01D1496FB00FCC830 /* Joins */ = {
+			isa = PBXGroup;
+			children = (
+				E040B5C11D14970D00FCC830 /* Joins.h */,
+				E040B5C21D14970D00FCC830 /* Joins.m */,
+			);
+			path = Joins;
+			sourceTree = "<group>";
+		};
 		E0DFA4281D107A1800DFDB6F /* TestTargetApplication */ = {
 			isa = PBXGroup;
 			children = (
@@ -441,6 +465,8 @@
 		E0F413551CF6312A0085166C /* SharkORMTests */ = {
 			isa = PBXGroup;
 			children = (
+				E040B5C01D1496FB00FCC830 /* Joins */,
+				E040B5BC1D1479CF00FCC830 /* Examples */,
 				E00320321CFA58FF00240C44 /* Events Test */,
 				E00320331CFA58FF00240C44 /* Multithread Tests */,
 				E00320341CFA58FF00240C44 /* Performance Tests */,
@@ -871,6 +897,7 @@
 				E0F413E31CF632120085166C /* SRKRelationship.m in Sources */,
 				E0F413F61CF632120085166C /* SRKTransactionGroup.m in Sources */,
 				E0F413EE1CF632120085166C /* SRKContext.m in Sources */,
+				E040B5BF1D1479E900FCC830 /* Examples.m in Sources */,
 				E0F413D61CF632120085166C /* SRKRegistryEntry.m in Sources */,
 				E003204D1CFA58FF00240C44 /* WidePerson.m in Sources */,
 				E0F413F01CF632120085166C /* SRKTransaction.m in Sources */,
@@ -885,6 +912,7 @@
 				E0F413BA1CF632120085166C /* SRKEncryptedObject.m in Sources */,
 				E0C450C61D10865A003FA21D /* Query.m in Sources */,
 				E0F413D01CF632120085166C /* SRKQueryProfile.m in Sources */,
+				E040B5C31D14970D00FCC830 /* Joins.m in Sources */,
 				E0F413AE1CF632120085166C /* SRKEventRegistryObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

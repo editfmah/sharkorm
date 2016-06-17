@@ -1822,7 +1822,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 				
 				if (query.lightweightObject && !query.prefetch) {
 					
-					getFieldList = [getFieldList stringByAppendingFormat:@"%@.%@ as result$%@", tableName, SRK_DEFAULT_PRIMARY_KEY_NAME, SRK_DEFAULT_PRIMARY_KEY_NAME];
+					getFieldList = [getFieldList stringByAppendingFormat:SRK_FIELD_NAME_FORMAT, tableName, SRK_DEFAULT_PRIMARY_KEY_NAME, SRK_DEFAULT_PRIMARY_KEY_NAME];
 					
 				} else if (query.lightweightObject && query.prefetch) {
 					
@@ -1832,7 +1832,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 							getFieldList = [getFieldList stringByAppendingString:@", "];
 						}
 						
-						getFieldList = [getFieldList stringByAppendingFormat:@"%@.%@ as result$%@", tableName, qFieldName, qFieldName];
+						getFieldList = [getFieldList stringByAppendingFormat:SRK_FIELD_NAME_FORMAT, tableName, qFieldName, qFieldName];
 					}
 					
 				}
@@ -1846,7 +1846,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 						}
 						
                         // TODO:  This line is 31.7% of the query time of the sequential insert and random read test.
-						getFieldList = [getFieldList stringByAppendingFormat:@"%@.%@ as result$%@", tableName, qFieldName, qFieldName];
+						getFieldList = [getFieldList stringByAppendingFormat:SRK_FIELD_NAME_FORMAT, tableName, qFieldName, qFieldName];
 					}
 					
 				}
@@ -1881,7 +1881,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 			/* now build up the additional selects for the joined data */
 			
 			for (NSString* qFieldName in [tableSchemas objectForKey:[join.joinOn description]]) {
-				getFieldList = [getFieldList stringByAppendingFormat:@", %@.%@ as result$%@_$_%@", [join.joinOn description], qFieldName, [join.joinOn description],qFieldName];
+				getFieldList = [getFieldList stringByAppendingFormat:SRK_JOINED_FIELD_NAME_FORMAT, [join.joinOn description], qFieldName, [join.joinOn description],qFieldName];
 			}
 		}
 		
