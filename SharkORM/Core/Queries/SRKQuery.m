@@ -45,7 +45,7 @@
 			
 			ptr++;
 			
-			NSRange currentParamHolder;
+			NSRange currentParamHolder = NSMakeRange(0, 0);
 			int pCount = 0;
 			const char* fmt = format.UTF8String;
 			
@@ -198,7 +198,7 @@
 			
 			ptr++;
 			
-			NSRange currentParamHolder;
+			NSRange currentParamHolder = NSMakeRange(0, 0);
 			int pCount = 0;
 			
 			const char* fmt = format.UTF8String;
@@ -356,9 +356,32 @@
 
 - (SRKQuery*)joinTo:(Class)joinClass leftParameter:(NSString*)leftParameter targetParameter:(NSString*)targetParameter {
 	
-	SRKJoinObject* join = [[SRKJoinObject new] setJoinOn:joinClass joinWhere:[NSString stringWithFormat:@"%@.%@ = %@.%@", [self.classDecl description], leftParameter, [joinClass description], targetParameter] joinLeft:leftParameter joinRight:targetParameter];
+    // check to see if the 'left parameter' is actually a fully qualified field label such as "Department.location", if so this could be using the result of a previous join to join to a subsequent table.  But even if xxxxxx.fieldname is == to self.class it doesn't matter.  Do the same for the right.
+    
+    NSString* fromEntityClass = [self.classDecl description];
+    NSString* toEntityClass = [joinClass description];
+    
+    NSString* completeLeftParameter = @"";
+    
+    if (![leftParameter containsString:@"."]) {
+        completeLeftParameter = [NSString stringWithFormat:@"%@.%@", fromEntityClass, leftParameter];
+    } else {
+        completeLeftParameter = leftParameter;
+    }
+    
+    NSString* completeRightParameter = @"";
+    
+    if (![targetParameter containsString:@"."]) {
+        completeRightParameter = [NSString stringWithFormat:@"%@.%@", toEntityClass, targetParameter];
+    } else {
+        completeRightParameter = targetParameter;
+    }
+    
+    SRKJoinObject* join = [[SRKJoinObject new] setJoinOn:joinClass joinWhere:[NSString stringWithFormat:@"%@ = %@", completeLeftParameter, completeRightParameter] joinLeft:leftParameter joinRight:targetParameter];
+    
+    [self.joins addObject:join];
+    
 	
-	[self.joins addObject:join];
 	
 	return self;
 }

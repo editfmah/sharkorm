@@ -37,7 +37,7 @@
             
         }
         
-        for (int i=0; i < 10000; i++) {
+        for (int i=0; i < 1000; i++) {
             SRKResultSet* r = [[[[Person query] whereWithFormat:@"seq = %i", rand() % 9999] limit:1] fetch];
         }
         
