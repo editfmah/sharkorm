@@ -263,5 +263,19 @@
     
 }
 
+- (void)test_all_object_types {
+    
+    MostObjectTypes* ob = [MostObjectTypes new];
+    ob.number = @(42);
+    ob.array = @[@(1),@(2),@(3)];
+    ob.date = [NSDate date];
+    ob.dictionary = @{@"one" : @(1), @"two" : @(2)};
+    ob.intvalue = 42;
+    ob.floatValue = 42.424242f;
+    ob.doubelValue = 1234567.1234567;
+    [ob commit];
+    
+}
+
 
 @end

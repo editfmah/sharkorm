@@ -9,12 +9,13 @@
 
 @interface MostObjectTypes : SRKObject
 
-@property (strong) NSString*    string;
-@property (strong) NSDate*      date;
-@property (strong) NSArray*     array;
-@property (strong) NSNumber*    number;
-@property int                   intvalue;
-@property float                 floatValue;
-@property double                doubelValue;
+@property NSString*         string;
+@property NSDate*           date;
+@property NSArray*          array;
+@property NSDictionary*     dictionary;
+@property NSNumber*         number;
+@property int               intvalue;
+@property float             floatValue;
+@property double            doubelValue;
 
 @end

@@ -9,6 +9,6 @@
 
 @implementation MostObjectTypes
 
-@dynamic array,date,doubelValue,floatValue,intvalue,number,string;
+@dynamic array,date,doubelValue,floatValue,intvalue,number,string,dictionary;
 
 @end
