@@ -6,7 +6,7 @@ Updated the podspec, pushed a new version due to a problem merging a pull reques
 
 ##v2.0.1 - June 18, 2016
 JOIN: Added join tests & fixed bugs with join.
-This turned up some faults when you wanted to Query C From A through a B join.  So, if you specifically specified the FQ field name it failed, because the ORM attemoted to prepent the self.class name.
+This turned up some faults when you wanted to Query C From A through a B join.  So, if you specifically specified the FQ field name it failed, because the ORM attemoted to prepend the self.class name.
 
 Structure:
 [Person]->[Deaprtment]->[Location]
