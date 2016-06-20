@@ -253,6 +253,67 @@ override func entityWillDelete() -> Bool {
 ###entityDidInsert(), entityDidUpdate(), entityDidDelete()
 Objects receive this message after an event has happened and after the transaction is complete.
 
+###Printing objects using print(), NSLog or po
+We have provided a printable dictionary styled output which, when called, produces output like below.
+```
+{
+    entity = Person;
+    joins =     {
+    };
+    "pk column" = Id;
+    "pk value" = 36664;
+    properties =     (
+                {
+            name = Id;
+            type = number;
+            value = 36664;
+        },
+                {
+            name = payrollNumber;
+            type = number;
+            value = 0;
+        },
+                {
+            name = age;
+            type = number;
+            value = 36;
+        },
+                {
+            name = Name;
+            type = unset;
+            value = "<null>";
+        },
+                {
+            name = location;
+            type = unset;
+            value = "<null>";
+        },
+                {
+            name = department;
+            type = unset;
+            value = "<null>";
+        },
+                {
+            name = seq;
+            type = number;
+            value = 0;
+        }
+    );
+    relationships =     (
+                {
+            property = department;
+            status = unloaded;
+            target = Department;
+        },
+                {
+            property = location;
+            status = unloaded;
+            target = Location;
+        }
+    );
+}
+```
+
 ##Writing Objects
 Shark looks to simplify the persistence of objects down to a simple method `commit`.  This can be called at any moment and from any thread.  If an object contains either a single or multiple related objects within it, then calling `commit` on the parent object will automatically store all the subsequent objects too.
 
