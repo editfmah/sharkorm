@@ -341,6 +341,9 @@ Specifies the offset in the values to be retrieved, to allow developers to only 
 ####batch
 This, although it does not affect the query, does allow developers to iterate through a large data set without having the performance and memory issue of dealing with the entire data set.  If a batch size of 10 is specified, then the `SRKResultSet` will perform an entire query, but will only fully retrieve the first 10 objects.  Then, it will maintain a window of the batch size when iterating through the results, automatically fetching them in batches.  This enables developers to optimise their system without the need to change the way their code is written.
 
+####joinTo
+Shark allows `LEFT JOIN` unions to be made, to allow for faster and less nested queries.  See Joins for more info.
+
 ###Other types of Query
 In addition to retrieving entire objects there are also additional types of queries which help developers solve other problems.
 
@@ -360,6 +363,35 @@ Returns an NSArray of the distinct values for a particular column, it is used li
 Returns an NSDictionary, which is grouped by the specified property `groupBy("surname")`.
 ####ids
 Returns the PK values of the matching objects, this is a faster way to store results for use in a subquery.  Although, in practice it is little faster than using lightweight objects.
+
+##Joins
+Joins represent the most powerful feature of SQL as the way any RDBMS is optimised is not through subqueries, but through joins and null checking.
+
+In Shark, for the time being, all joins are `LEFT JOIN`.  Simply because we have to retrieve whole objects from the originating query class.  But joins can be multiple and compound.
+
+Example of a join from `[Person] -> [Department]`
+`Objective-C`
+```objective-c
+[[Person query] joinTo:[Department class] leftParameter:@"department" targetParameter:@"departmentId"]
+```
+`Swift`
+```swift
+Person.query()
+	  .joinTo(Department, leftParameter: "department", targetParameter: "departmentId")
+```
+
+But you can also create an `[Person]->[Department]->[Location]` three way join, using the result of the first join to perform the second.
+`Objective-C`
+```objective-c
+[[[Person query] joinTo:[Department class] leftParameter:@"department" targetParameter:@"departmentId"]
+                 joinTo:[Location class] leftParameter:@"Department.location" targetParameter:@"locationId"]
+```
+`Swift`
+```swift
+Person.query()
+      .joinTo(Department, leftParameter: "department", targetParameter: "departmentId")
+      .joinTo(Location, leftParameter: "Department.location", targetParameter: "locationId")
+```
 
 ###Removing objects
 To remove an object from Shark you simply call `remove()` on this object, this will delete it form the data store and sterilise it to ensure it cannot be accidentally written back at a later date.  To optimise the bulk removal of objects, a query can be combined with a call to `removeAll()` on the result set to delete many objects at once.
