@@ -234,7 +234,9 @@ override class func defaultValuesForEntity() -> [NSObject : AnyObject] {
 }
 ```
 
-###Creating objects, setting values & persistance
+##Writing Objects
+Shark looks to simplify the persistence of objects down to a simple method `commit`.  This can be called at any moment and from any thread.  If an object contains either a single or multiple related objects within it, then calling `commit` on the parent object will automatically store all the subsequent objects too.
+
 `Objective-C`
 ```objective-c
 // Create a new object
@@ -261,13 +263,39 @@ thisPerson.name = "Adrian Herridge";
 // Persist the object into the datastore
 thisPerson.commit()
 ```
-###Querying objects
-To retrieve objects back, we use the SRKQuery object that is associated with every `SRKObject` class. This then takes optional parameters such as where, limit, orderBy & offset. All of the parameters return the same query object back, enabling the building of a query within a single nested instruction.
 
-The final call to a query object is made using fetch, count, sum, fetchLightweight & fetchAsync which will then execute the query and return the results.
+Objects are committed immediately and are written to the store in an atomic fashion.  They will become immediately queryable upon completion.
 
-Fetch an entire table
+###Writing in Transactions
+For some batch storage situations, it may be better to batch a lot of writes into a single transaction, this will improve speed, but will also increase memory usage during that process as any event methods would have to be honoured during the commit.  Transactions are setup as follows:
 
+`Objective-C`
+```objective-c
+[SRKTransaction transaction:^{
+    // Create a new object
+    Person* thisPerson = [Person new];
+    thisPerson.name = @"Adrian Herridge";
+    // although the commit is indicated, it is delayed until the transaction is closed.
+    [thisPerson commit];
+} withRollback:^{}];
+```
+`Swift`
+```swift
+SRKTransaction.transaction({ 
+    // Create a new object
+    var thisPerson = Person()
+    thisPerson.name = "Adrian Herridge";
+    // although the commit is indicated, it is delayed until the transaction is closed.
+    thisPerson.commit()
+    }) { // the rollback on failure }
+```
+
+##Querying
+To retrieve objects back, we use the SRKQuery object that is associated with every `SRKObject` class. This then takes optional parameters such as `where`, `limit`, `orderBy` & `offset`. All of the parameters return the same query object back, enabling the building of a query within a single nested instruction.
+
+The final call to a query object is made using `fetch`, `count`, `sum`, `fetchLightweight` & `fetchAsync` which will then execute the query and return the results.
+
+An example to fetch an entire table:
 `Objective-C`
 ```objective-c
 SRKResultSet* results = [[Person query] fetch];
@@ -276,70 +304,90 @@ SRKResultSet* results = [[Person query] fetch];
 ```swift
 var results : SRKResultSet = Person.query().fetch()
 ```
-Query example with parameters
-
+Queries can be build up using a FLUENT interface, so every call except a call to a retrieval method returns itself as a `SRKQuery`, allowing you to nest your parameters. 
 `Objective-C`
 ```objective-c
 SRKResultSet* results = [[[[[Person query]
-                       where:@"age = 35"]
-                       limit:99]
-                     orderBy:@"name"]
-                             fetch];
+                       		where:@"age = 35"]
+                       		limit:99]
+                     	  orderBy:@"name"]
+                        fetch];
 ```
 `Swift`
 ```swift
-var results : SRKResultSet = Person.query().whereWithFormat("age = %@", withParameters: [35]).limit(99).orderBy("name").fetch()
+var results = Person.query()
+					.whereWithFormat("age = %@", withParameters: [35])
+					.limit(99).orderBy("name")
+					.fetch()
 ```
 
+###Supported parameters to `SRKQuery`
+Shark supportes the following optional paramaters to a query:
+
+####where, whereWithFormat (and with parameters).  
+This is the query string supplied to the query, and can contain format specifiers along with object to be placed into the query as normal parameter options.  Supported format specifiers are `%@`,`%i`,`%u`,`%d`,`%s`,`%f`,`%ul`,`%ull`.
+
+`%@` objects can also be Arrays and Sets for use in subqueries, such as `@"department IN (%@)", @[@(1),@(2),@(3)]`.
+
+####limit
+Specifies the limit to the number of query results to return
+
+####orderBy
+Specifies the order by which the `SRKResultSet` will be returned.  These can be multiple values, such as `orderBy("name,age")`.
+
+####offset
+Specifies the offset in the values to be retrieved, to allow developers to only retrieve a window of data when required.
+
+####batch
+This, although it does not affect the query, does allow developers to iterate through a large data set without having the performance and memory issue of dealing with the entire data set.  If a batch size of 10 is specified, then the `SRKResultSet` will perform an entire query, but will only fully retrieve the first 10 objects.  Then, it will maintain a window of the batch size when iterating through the results, automatically fetching them in batches.  This enables developers to optimise their system without the need to change the way their code is written.
+
+###Other types of Query
+In addition to retrieving enture objects there are also additional types of queries which help developers solve other problems.
+
+####fetchLightweight
+Fetches an object from the store, except it does not retrieve any property values.  These are lazily loaded opon access, and can be configured to then be permanently available of freed immediately.
+
+####fetchAsync
+Performs an asynchronous query on a background thread and then executes the supplied block when the results are complete.
+
+####count
+Returns a count of the query, the same as `COUNT(*)` would.
+####sum
+Returns a `SUM(field)` value from the supplied property name, these can also be compound, such as `SUM(property1 + property2)`.
+####distinct
+Returns an NSArray of the distinct values for a particular column, it is used like `distinct("surname")`.
+####groupBy
+Returns an NSDictionary, which is grouped by the specified property `groupBy("surname")`.
+####ids
+Returns the PK values of the matching objects, this is a faster way to store results for use in a subquery.  Although, in practice it is litte faster than using lightweight objects.
+
 ###Removing objects
+To remove an object from Shark you simply call `remove()` on this object, this will delete it form the datastore and sterilise it to ensure it cannot be accidentally written back at a later date.  To optimise the bulk removal of objects, a query can be combined with a call to `removeAll()` on the result set to delete many objects at once.
+
+`Objective-C`
+```objective-c
+[[[[Person query] where:@"age < 18"] fetch] removeAll];
+```
+`Swift`
+```swift
+Person.query()
+      .whereWithFormat("age < %@", withParameters: [18])
+      .fetch()
+      .removeAll()
+```
+
+The longhand version of this is:
 `Objective-C`
 ```objective-c
 for (Person* person in [[Person query] fetch]) {
 	[person remove];
 }
-
-// or the shorthand is to use the removeAll method on the SRKResultSet object
-[[[Person query] fetch] removeAll];
 ```
 `Swift`
 ```swift
 for person in Person.query().fetch() {
 	person.remove()
 }
-
-// or the shorthand is to use the removeAll method on the SRKResultSet object
-Person.query().fetch().removeAll()
-```
-###Other types of query
-There are other types of fetches in addition to just fetch, such as **count**, **sum**, **groupBy** and **ids**
-
-`Objective-C`
-```objective-c
-/* count the rows within the Person table */
-int count = [[Person query] count];
- 
-/* add all of the ages together */
-double total = [[Person query] sumOf:@"age"];
- 
-/* group all the people together by the surname property */
-NSDictionary* peopleBySurname = [[Person query] groupBy:@"name"];
- 
-/* get just the primary keys for a query, useful to save memory */
-NSArray* ids = [[Person query] ids];
-```
-`Swift`
-```swift
-/* count the rows within the Person table */
-var count = Person.query().count()
-
-/* add all of the ages together */
-var total = Person.query().sumOf("age")
-
-/* group all the people together by the surname property */
-var peopleBySurname = Person.query().groupBy("name")
-
-/* get just the primary keys for a query, useful to save memory */
-var ids = Person.query().ids();
 ```
 
 ## Requirements:
