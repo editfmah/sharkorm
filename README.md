@@ -219,7 +219,6 @@ override class func indexDefinitionForEntity() -> SRKIndexDefinition {
 These will automatically be matched to the appropriate query to aid performance.  All related object properties are automatically indexed as is required for caching.  So there would be no need, for instance, to add in an index for `Person.department` as it will have already been created.
 
 ###Default Values
-
 You can specify a set of default values for whenever a new `SRKObject` is created, by overriding the method `defaultValuesForEntity`, and returning a dictionary of default values:
 `Objective-C`
 ```objective-c
@@ -233,6 +232,26 @@ override class func defaultValuesForEntity() -> [NSObject : AnyObject] {
     return ["name" : "Billy", "age" : 36]
 }
 ```
+##Triggers
+Shark objects all have the same methods available for them, to enforce constraints and check validity before or after writes have been made.
+
+###entityWillInsert(), entityWillUpdate(), entityWillDelete() returning bool
+Objects receive this method before any action has been carried out.  In here you can test to see if you wish the operation to continue.  If `true` is returned then the operation is told to continue, but if `false` is retuned then the transaction is aborted, and the commit returns false.
+`Objective-C`
+```objective-c
+- (BOOL)entityWillDelete {
+    return self.persons.count == 0;
+}
+```
+`Swift`
+```swift
+override func entityWillDelete() -> Bool {
+    return Department.people().count == 0;
+}
+```
+
+###entityDidInsert(), entityDidUpdate(), entityDidDelete()
+Objects receive this message after an event has happened and after the transaction is complete.
 
 ##Writing Objects
 Shark looks to simplify the persistence of objects down to a simple method `commit`.  This can be called at any moment and from any thread.  If an object contains either a single or multiple related objects within it, then calling `commit` on the parent object will automatically store all the subsequent objects too.
@@ -364,25 +383,37 @@ In Shark, for the time being, all joins are `LEFT JOIN`.  Simply because we have
 Example of a join from `[Person] -> [Department]`
 `Objective-C`
 ```objective-c
-[[Person query] joinTo:[Department class] leftParameter:@"department" targetParameter:@"departmentId"]
+[[Person query] joinTo:[Department class] leftParameter:@"department" targetParameter:@"Id"]
 ```
 `Swift`
 ```swift
 Person.query()
-	  .joinTo(Department, leftParameter: "department", targetParameter: "departmentId")
+	  .joinTo(Department, leftParameter: "department", targetParameter: "Id")
 ```
 
 But you can also create an `[Person]->[Department]->[Location]` three way join, using the result of the first join to perform the second.
 `Objective-C`
 ```objective-c
-[[[Person query] joinTo:[Department class] leftParameter:@"department" targetParameter:@"departmentId"]
-                 joinTo:[Location class] leftParameter:@"Department.location" targetParameter:@"locationId"]
+[[[Person query] joinTo:[Department class] leftParameter:@"department" targetParameter:@"Id"]
+                 joinTo:[Location class] leftParameter:@"Department.location" targetParameter:@"Id"]
 ```
 `Swift`
 ```swift
 Person.query()
-      .joinTo(Department, leftParameter: "department", targetParameter: "departmentId")
-      .joinTo(Location, leftParameter: "Department.location", targetParameter: "locationId")
+      .joinTo(Department, leftParameter: "department", targetParameter: "Id")
+      .joinTo(Location, leftParameter: "Department.location", targetParameter: "Id")
+```
+Once you have performed your join, the results are stored per object in a dictionary `joinedResults`.
+
+An example of output looks like this.
+```
+{
+    "Department.Id" = 61;
+    "Department.location" = 35;
+    "Department.name" = Development;
+    "Location.Id" = 35;
+    "Location.locationName" = Alton;
+}
 ```
 
 ###Removing objects
@@ -413,6 +444,29 @@ for person in Person.query().fetch() {
 	person.remove()
 }
 ```
+
+##Event handling
+Shark events fall into two caregories, the first being events on an individual object and the second being events on a class.
+
+Class events are raised when there has been any underlying change in the values stored in a class.  This is useful for updating a view when data is written on a background thread, or event triggers are actioned.
+
+Registering an event block simply requires you to create a new `SRKEventHandler` object by calling a creation method on the class.
+`Objective-C`
+```objective-c
+SRKEventHandler* eHandler = [Person eventHandler];
+[eHandler registerBlockForEvents:SharkORMEventInsert withBlock:^(SRKEvent *event) {
+        // update the tableview here
+} onMainThread:YES];
+```
+`Swift`
+```swift
+let eHandler = Person.eventHandler()
+eHandler.registerBlockForEvents(SharkORMEventInsert, withBlock: { (event: SRKEvent!) in
+        // update the tableview here
+}, onMainThread: true)
+```
+
+For object event handlers, all individual objects have the ability to register blocks against them by just making the same call to `registerBlockForEvents`.  This will then automatically make the object `live` and will observe any changes to that corresponding object within the datastore, these will happen across any thread.
 
 ## Requirements:
 
