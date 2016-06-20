@@ -324,44 +324,36 @@ var results = Person.query()
 ###Supported parameters to `SRKQuery`
 Shark supports the following optional parameters to a query:
 
-####where, whereWithFormat (and with parameters).  
+###where, whereWithFormat (and with parameters).  
 This is the query string supplied to the query, and can contain format specifiers along with object to be placed into the query as normal parameter options.  Supported format specifiers are `%@`,`%i`,`%u`,`%d`,`%s`,`%f`,`%ul`,`%ull`.
 
 `%@` objects can also be Arrays and Sets for use in subqueries, such as `@"department IN (%@)", @[@(1),@(2),@(3)]`.
-
-####limit
+###limit
 Specifies the limit to the number of query results to return
-
-####orderBy
+###orderBy
 Specifies the order by which the `SRKResultSet` will be returned.  These can be multiple values, such as `orderBy("name,age")`.
-
-####offset
+###offset
 Specifies the offset in the values to be retrieved, to allow developers to only retrieve a window of data when required.
-
-####batch
+###batch
 This, although it does not affect the query, does allow developers to iterate through a large data set without having the performance and memory issue of dealing with the entire data set.  If a batch size of 10 is specified, then the `SRKResultSet` will perform an entire query, but will only fully retrieve the first 10 objects.  Then, it will maintain a window of the batch size when iterating through the results, automatically fetching them in batches.  This enables developers to optimise their system without the need to change the way their code is written.
-
-####joinTo
+###joinTo
 Shark allows `LEFT JOIN` unions to be made, to allow for faster and less nested queries.  See Joins for more info.
-
-###Other types of Query
+##Other types of Query
 In addition to retrieving entire objects there are also additional types of queries which help developers solve other problems.
-
-####fetchLightweight
+###fetchLightweight
 Fetches an object from the store, except it does not retrieve any property values.  These are lazily loaded upon access, and can be configured to then be permanently available of freed immediately.
-
-####fetchAsync
+###fetchAsync
 Performs an asynchronous query on a background thread and then executes the supplied block when the results are complete.
 
-####count
+###count
 Returns a count of the query, the same as `COUNT(*)` would.
-####sum
+###sum
 Returns a `SUM(field)` value from the supplied property name, these can also be compound, such as `SUM(property1 + property2)`.
-####distinct
+###distinct
 Returns an NSArray of the distinct values for a particular column, it is used like `distinct("surname")`.
-####groupBy
+###groupBy
 Returns an NSDictionary, which is grouped by the specified property `groupBy("surname")`.
-####ids
+###ids
 Returns the PK values of the matching objects, this is a faster way to store results for use in a subquery.  Although, in practice it is little faster than using lightweight objects.
 
 ##Joins
