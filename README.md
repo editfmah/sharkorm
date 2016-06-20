@@ -1,29 +1,25 @@
-Shark iOS ORM
+Shark ORM
 ============
 
-Shark (originally DBAccess) is a fully featured and FREE to use ORM for iOS.
+Shark allows you to create a model layer in your iOS, macOS or tvOS app naturally, using simple and clean syntax.  Shark does as much of the heavy lifting for you, so you don't have to put unnecessary effort into dealing with your data objects.
 
-Replace CoreData whilst keeping your existing managed objects, but dump the predicates and long-winded syntax.
+Regularly updated with over 12k downloads over the past 4 years and in constant use within many public applications, thriving on feedback and input from other developers.
 
-Instead use a simple and clean object syntax, with fast and concise inline queries.
-
-Shark even has a conversion method to migrate your existing CoreData tables across.
-
-Regularly updated and in constant use within many public applications it thrives on feedback from other developers and is supported by the authors via StackOverflow or directly via email.
-
-It's mantra is simple, to be fast, simple to implement and the first choice for any developer.
+Its mantra is simple, to be fast, simple and the first choice for any developer.
 
 ## Getting started
 
-Integrating Shark into your project could not be simpler. This guide should be all you need to get you started and wondering how you ever developed iOS apps without it.
-
-Every effort has been made to ensure that you can get working as quickly as possible, from supporting as many data types as possible and working with your existing classes to an absolute bare minimum of configuration required to integrate the framework.
+Shark is designed to get your app working quickly, integrated as source code, or as a framework. 
 
 ### Requirements
 
 | Shark Version | Minimum iOS Target  |                                   Notes                                   |
 |:--------------------:|:---------------------------:|:----------------------------:|:-------------------------------------------------------------------------:|
-|          2.x.x         |            iOS 8            | Xcode 7 is required. |
+|          2.x.x         |            iOS 6 as source, iOS 8 as framework            | Xcode 7 is required. |
+|          2.x.x         |            tvOS 9 as source and framework            | Xcode 7 is required. |
+|          2.x.x         |            macOS 10.8 as source and framework            | Xcode 7 is required. |
+|          2.x.x         |            watchOS 2 as source and framework            | Xcode 7 is required. |
+
 
 ###Install From Cocoapods
 
@@ -31,12 +27,31 @@ Every effort has been made to ensure that you can get working as quickly as poss
 ```ruby
 pod "SharkORM"
 ```
+###Install as Framework
+Download the source code from GitHub and compile the SharkORM framework target, and then within your application,  add the following:
+
+```objective-c
+// include the framework header within your app, for Swift add this to the bridging header
+#include <SharkORM/SharkORM.h>
+```
+###Install as Source
+Download the source code from GitHub and add to your target the contents of Core and SQLite:
+
+```objective-c
+// include the header within your app, for Swift add this to the bridging header
+#include “SharkORM.h”
+```
+
+##Getting help and support
+If you are having trouble with your implementation then simply ask a question on Stack Overflow, the team actively monitor SO and will answer your questions as quickly as possible.
+
+If you have found a bug or want to suggest a feature, then feel free to use the issue tracker in GitHub to raise an issue.
 
 ## Usage
 
 ### Setting up your project
 
-Once you have added the SharkORM framework into your application, you will need to start it as soon as possible in your application lifecycle.  SRKDelegate needs to be set as well, we recomend this is added to your application delegate.
+Once you have added the SharkORM framework into your application, you will need to start it as soon as possible in your application lifecycle.  SRKDelegate needs to be set as well, we recommend this is added to your application delegate.
 
 ```objective-c
 // Objective-C
@@ -67,10 +82,12 @@ func application(application: UIApplication, didFinishLaunchingWithOptions launc
 	return true
 }
 ```
-###Creating Data Objects
-SharkORM objects are normal classes with properties defined on them, the ORM then inspects all these classes and mirrors their structure in a SQLite database. If you add or remove columns then the tables are updated to represent the current structure of the classes.
+###Objects
+SharkORM objects are normal classes with properties defined on them, the ORM then inspects all these classes and mirrors their structure in a SQLite database automatically. If you add or remove columns, then the tables are updated to represent the current structure of the classes.
 
-In Objective-C properties need to be implemented using `@dynamic`, this is to indicate to the ORM that it will control the fetching and setting of these values from the database, and in Swift the property is defined as `var dynamic`
+You can use these classes in much the same way as any other class  in the system,  and they can be extended with methods and sub classed, and passed around from thread to thread with no problem.
+
+In Objective-C properties need to be implemented using `@dynamic`, this is to indicate to the ORM that it will control the fetching and setting of these values from the database, and in Swift the property is implemented as `var dynamic`
 
 ####Example Object
 `Objective-C`
@@ -79,26 +96,141 @@ In Objective-C properties need to be implemented using `@dynamic`, this is to in
 #import "SharkORM.h"
 
 @interface Person : SRKObject
+
 @property NSString*         name;
 @property int               age;
 @property int               payrollNumber;
+
+// to create a relationship, you add a property as another SRKObject class
+@property Department*       department;
+
 @end
 
 // Source File : Person.m
 #import "Person.h"
 
 @implementation Person
-@dynamic name,age,payrollNumber;
+
+@dynamic name,age,payrollNumber, department;
+
 @end
 
 ```
 `Swift`
 ```Swift
-@objc(Person)
+
 class Person: SRKObject {
-	dynamic var name : String!
-	dynamic var age : NSNumber!
-	dynamic var payrollNumber : NSNumber!
+	dynamic var name : String?
+	dynamic var age : NSNumber?
+	dynamic var payrollNumber : NSNumber?
+	dynamic var department : Department?
+}
+```
+
+##Supported Types
+
+Shark supports the following types: `BOOL`, `bool`, `int`, `int64`, `uint`, `uint64`, `float`, `double`, `long`, `long long`, `unsigned long long`, `NSString`, `NSDate`, `NSData`, `NSNumber`.
+
+##Relationships
+
+`SRKObject`s can be linked to each other either by directly embedding them to create a one-to-one relationship (`dynamic var department : Department?`) or for a one-to-many relationship we employ the use fo a method which returns either an `NSArray` or `SRKResultSet` object.
+
+With the Person object already defined, and with a property department lets look at the Department class.
+
+`Objective-C`
+```objective-c
+// Department.h
+@interface Department : SRKObject
+@property NSString*   	name;
+@property Location*		location;
+@end
+```
+
+`Swift`
+```swift
+class Department : SRKObject { 
+    dynamic var name: String?
+    dynamic var location: Location?
+}
+```
+
+###One-to-One Relationships
+
+This has been created by adding the `Department` property into the `SRKObject` class, and once it has been set with a value it can be used as any other property making use of object dot notation.
+
+`Objective-C`
+```objective-c
+Person* employee = [Person new];
+Department* section = [Department new];
+employee.department = section; 
+```
+`Swift`
+```swift
+let employee = Person()
+let section = Department()
+employee.department = section
+```
+
+Properties can then be accessed directly, and Shark will automatically retrieve any related objects and allow you to access their properties.  For example `employee.deparment.location.address` will automatically retrieve the required objects to satisfy the statement by loading the related `Department` and `Location` objects.
+
+###One-to-Many Relationships
+
+You can define to-many relationships by adding methods to the inverse relationship.  For example, to relate in a to-many relationship `Department` and `Person` we would add the following method to `Department`.
+
+`Objective-C`
+```objective-c
+- (SRKResultSet*)people {
+    return [[[Person query] whereWithFormat:@"department = %@", self] fetch];
+}
+```
+`Swift`
+```swift
+func people() -> SRKResultSet {
+	return Person.query()
+            	 .whereWithFormat("department = %@", withParameters: [self])
+                 .fetch()
+}
+```
+
+You can then safely use these results anywhere, and because an `SRKResultSet` is an array object, these can be iterated inline. `for (Person* employee in [department people]) {...}`.
+
+##Indexing Properties
+
+Shark supports indexing by overriding the `indexDefinitionForEntity` method and returning an `SRKIndexDefinition` object which describes all of the indexes that need to be maintained on the object.
+
+`Objective-C`
+```objective-c
++ (SRKIndexDefinition *)indexDefinitionForEntity {
+    SRKIndexDefinition* idx = [SRKIndexDefinition new];
+    [idx addIndexForProperty:@"name" propertyOrder:SRKIndexSortOrderAscending];
+    [idx addIndexForProperty:@"age" propertyOrder:SRKIndexSortOrderAscending];
+    return idx;
+}
+```
+`Swift`
+```swift
+override class func indexDefinitionForEntity() -> SRKIndexDefinition {
+	let idx = SRKIndexDefinition()
+	idx.addIndexForProperty("name", propertyOrder: SRKIndexSortOrderAscending)
+	idx.addIndexForProperty("age", propertyOrder: SRKIndexSortOrderAscending)
+	return idx
+}
+```
+These will automatically be matched to the appropriate query to aid performance.  All related object properties are automatically indexed as is required for caching.  So there would be no need, for instance, to add in an index for `Person.department` as it will have already been created.
+
+###Default Values
+
+You can specify a set of default values for whenever a new `SRKObject` is created, by overriding the method `defaultValuesForEntity`, and returning a dictionary of default values:
+`Objective-C`
+```objective-c
++ (NSDictionary *)defaultValuesForEntity {
+    return @{@"age": @(36), @"name" : @"Billy"};
+}
+```
+`Swift`
+```swift
+override class func defaultValuesForEntity() -> [NSObject : AnyObject] {
+    return ["name" : "Billy", "age" : 36]
 }
 ```
 
@@ -213,3 +345,4 @@ var ids = Person.query().ids();
 ## Requirements:
 
 - CocoaPods 1.0.0
+
