@@ -17,6 +17,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    [SharkORM setDelegate:self];
+    [SharkORM openDatabaseNamed:@"testing123"];
     return YES;
 }
 
