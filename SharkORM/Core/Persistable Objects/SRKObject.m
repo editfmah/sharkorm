@@ -1968,83 +1968,83 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 }
 
 - (NSString*)description {
-	
-	/* format the data entity for debug output */
-	NSString* retVal =                          @"\n\n-------------------------------------------------------------------------------------------\n";
-	retVal = [retVal stringByAppendingString:   @"| Entity : $entityname________________   Primary Key : $priKey  Value: $value_____________|\n"];
-	retVal = [retVal stringByAppendingString:   @"-------------------------------------------------------------------------------------------\n"];
-	retVal = [retVal stringByAppendingString:   @"| Field Name         |  Type        |                  Value                              |\n"];
-	retVal = [retVal stringByAppendingString:   @"-------------------------------------------------------------------------------------------\n"];
-	
-	retVal = [self replaceValue:@"$entityname________________" withObject:[self.class description] inString:retVal];
-	retVal = [self replaceValue:@"$priKey" withObject:SRK_DEFAULT_PRIMARY_KEY_NAME inString:retVal];
-	retVal = [self replaceValue:@"$value_____________" withObject:[self Id] inString:retVal];
-	
-	for (NSString* s in self.fieldNames) {
-		retVal = [retVal stringByAppendingString:   @"| $fieldname_________| $type________| $value______________________________________________|\n"];
-		retVal = [self replaceValue:@"$fieldname_________" withObject:s inString:retVal];
-		if ([[self getField:s] isKindOfClass:[NSString class]]) {
-			retVal = [self replaceValue:@"$type________" withObject:@"TEXT" inString:retVal];
-		} else if ([[self getField:s] isKindOfClass:[NSNumber class]]) {
-			retVal = [self replaceValue:@"$type________" withObject:@"NUMBER" inString:retVal];
-		} else if ([[self getField:s] isKindOfClass:[NSDate class]]) {
-			retVal = [self replaceValue:@"$type________" withObject:@"DATE" inString:retVal];
-		} else if ([[self getField:s] isKindOfClass:NSClassFromString(TARGET_OS_MAC ? @"NSImage" : @"UIImage")]) {
-			retVal = [self replaceValue:@"$type________" withObject:@"IMAGE" inString:retVal];
-		} else if ([[self getField:s] isKindOfClass:[NSNull class]]) {
-			retVal = [self replaceValue:@"$type________" withObject:@"NULL" inString:retVal];
-		} else if ([[self getField:s] isKindOfClass:[NSData class]]) {
-			retVal = [self replaceValue:@"$type________" withObject:@"BLOB" inString:retVal];
-		} else {
-			retVal = [self replaceValue:@"$type________" withObject:@"UNKNOWN" inString:retVal];
-		}
-		retVal = [self replaceValue:@"$value______________________________________________" withObject:[self getField:s] inString:retVal];
-	}
-	
-	retVal = [retVal stringByAppendingString:   @"-------------------------------------------------------------------------------------------\n"];
-	retVal = [retVal stringByAppendingString:   @"| Relationships                                                                           |\n"];
-	retVal = [retVal stringByAppendingString:   @"-------------------------------------------------------------------------------------------\n"];
-	retVal = [retVal stringByAppendingString:   @"| Entity Name         |  Target Table     |                  Status                       |\n"];
-	retVal = [retVal stringByAppendingString:   @"-------------------------------------------------------------------------------------------\n"];
-	
-	NSMutableArray* matchingRelationships = [NSMutableArray new];
-	for (SRKRelationship* r in [SharkORM entityRelationships]) {
-		if ([[r.sourceClass description] isEqualToString:[self.class description]]) {
-			[matchingRelationships addObject:r];
-		}
-	}
-	
-	if (matchingRelationships.count > 0) {
-		for (SRKRelationship* r in matchingRelationships) {
-			retVal = [retVal stringByAppendingString:   @"| $entityname_________| $targetentity_____| $entitystatus_________________________________|\n"];
-			retVal = [self replaceValue:@"$entityname_________" withObject:r.entityPropertyName inString:retVal];
-			retVal = [self replaceValue:@"$targetentity_____" withObject:[r.targetClass description] inString:retVal];
-			
-			NSObject* thisOb = [self.embeddedEntities objectForKey:r.sourceProperty];
-			if (thisOb) {
-				if ([thisOb isKindOfClass:[SRKLazyLoader class]]) {
-					retVal = [self replaceValue:@"$entitystatus_________________________________" withObject:@"Unloaded" inString:retVal];
-				} else {
-					retVal = [self replaceValue:@"$entitystatus_________________________________" withObject:@"Loaded" inString:retVal];
-				}
-			}
-			else {
-				/* no lazy or value set for this property */
-				retVal = [self replaceValue:@"$entitystatus_________________________________" withObject:@"Unloaded" inString:retVal];
-			}
-			
-		}
-	}
-	else {
-		retVal = [retVal stringByAppendingString:   @"| $entityname_________| $targetentity_____| $entitystatus_________________________________|\n"];
-		retVal = [self replaceValue:@"$entityname_________" withObject:@"NONE" inString:retVal];
-		retVal = [self replaceValue:@"$targetentity_____" withObject:@"" inString:retVal];
-		retVal = [self replaceValue:@"$entitystatus_________________________________" withObject:@"" inString:retVal];
-	}
-	
-	
-	retVal = [retVal stringByAppendingString:   @"-------------------------------------------------------------------------------------------\n"];
-	return retVal;
+    
+    /* format this entry into a dictionary for print out */
+    NSMutableDictionary* info = [NSMutableDictionary new];
+    
+    [info setObject:[self.class description] forKey:@"entity"];
+    [info setObject:SRK_DEFAULT_PRIMARY_KEY_NAME forKey:@"pk column"];
+    [info setObject:[self Id] forKey:@"pk value"];
+    
+    // fields
+    NSMutableArray* fieldValues = [NSMutableArray new];
+    for (NSString* field in self.fieldNames) {
+        
+        if ([[self getField:field] isKindOfClass:[NSString class]]) {
+            
+            [fieldValues addObject:@{@"name":field, @"type":@"text", @"value":[self getField:field]}];
+            
+        } else if ([[self getField:field] isKindOfClass:[NSNumber class]]) {
+            
+            [fieldValues addObject:@{@"name":field, @"type":@"number", @"value":[self getField:field]}];
+            
+        } else if ([[self getField:field] isKindOfClass:[NSDate class]]) {
+            
+            [fieldValues addObject:@{@"name":field, @"type":@"date", @"value":[self getField:field]}];
+            
+        } else if ([[self getField:field] isKindOfClass:NSClassFromString(TARGET_OS_MAC ? @"NSImage" : @"UIImage")]) {
+            
+            [fieldValues addObject:@{@"name":field, @"type":@"image", @"value":[self getField:field]}];
+            
+        } else if ([[self getField:field] isKindOfClass:[NSNull class]]) {
+            
+            [fieldValues addObject:@{@"name":field, @"type":@"null", @"value":[self getField:field]}];
+            
+        } else if ([[self getField:field] isKindOfClass:[NSData class]]) {
+            
+            [fieldValues addObject:@{@"name":field, @"type":@"blob", @"value":[self getField:field]}];
+            
+        } else {
+            
+            [fieldValues addObject:@{@"name":field, @"type":@"unset", @"value":[NSNull null]}];
+            
+        }
+        
+    }
+    [info setObject:fieldValues forKey:@"properties"];
+    
+    // relationships
+    NSMutableArray* matchingRelationships = [NSMutableArray new];
+    for (SRKRelationship* r in [SharkORM entityRelationships]) {
+        if ([[r.sourceClass description] isEqualToString:[self.class description]]) {
+            NSMutableDictionary* d = [NSMutableDictionary new];
+            [d setObject:r.entityPropertyName forKey:@"property"];
+            [d setObject:[r.targetClass description] forKey:@"target"];
+            
+            NSObject* thisOb = [self.embeddedEntities objectForKey:r.sourceProperty];
+            if (thisOb) {
+                if ([thisOb isKindOfClass:[SRKLazyLoader class]]) {
+                    [d setObject:@"unloaded" forKey:@"status"];
+                } else {
+                    [d setObject:@"loaded" forKey:@"status"];
+                }
+            }
+            else {
+                /* no lazy or value set for this property */
+                [d setObject:@"unloaded" forKey:@"status"];
+            }
+            
+            [matchingRelationships addObject:d];
+        }
+    }
+    [info setObject:matchingRelationships forKey:@"relationships"];
+    
+    // joined data
+    if (self.joinedResults) {
+      [info setObject:self.joinedResults forKey:@"joins"];
+    }
+    
+    return [NSString stringWithFormat:@"%@", info];
 	
 }
 
