@@ -16,8 +16,8 @@ Copyright (C) 2016 SharkSync. All rights reserved.
 #ifndef __SHARKORM_H
 #define __SHARKORM_H
 
-#define SHARK_DATE              20160524
-#define SHARK_VER               2.00.00
+#define SHARK_DATE              20160620
+#define SHARK_VER               2.00.03
 
 #import <Foundation/Foundation.h>
 #import <objc/message.h>
