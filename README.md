@@ -28,7 +28,7 @@ Shark is designed to get your app working quickly, integrated as source code, or
 pod "SharkORM"
 ```
 ###Install as Framework
-Download the source code from GitHub and compile the SharkORM framework target, and then within your application,  add the following:
+Download the source code from GitHub and compile the SharkORM framework target, and then within your application, add the following:
 
 ```objective-c
 // include the framework header within your app, for Swift add this to the bridging header
@@ -85,7 +85,7 @@ func application(application: UIApplication, didFinishLaunchingWithOptions launc
 ###Objects
 SharkORM objects are normal classes with properties defined on them, the ORM then inspects all these classes and mirrors their structure in a SQLite database automatically. If you add or remove columns, then the tables are updated to represent the current structure of the classes.
 
-You can use these classes in much the same way as any other class  in the system,  and they can be extended with methods and sub classed, and passed around from thread to thread with no problem.
+You can use these classes in much the same way as any other class in the system, and they can be extended with methods and sub classed, and passed around from thread to thread with no problem.
 
 In Objective-C properties need to be implemented using `@dynamic`, this is to indicate to the ORM that it will control the fetching and setting of these values from the database, and in Swift the property is implemented as `var dynamic`
 
@@ -133,9 +133,9 @@ Shark supports the following types: `BOOL`, `bool`, `int`, `int64`, `uint`, `uin
 
 ##Relationships
 
-`SRKObject`s can be linked to each other either by directly embedding them to create a one-to-one relationship (`dynamic var department : Department?`) or for a one-to-many relationship we employ the use fo a method which returns either an `NSArray` or `SRKResultSet` object.
+`SRKObject`s can be linked to each other either by directly embedding them to create a one-to-one relationship (`dynamic var department : Department?`) or for a one-to-many relationship we employ the use of a method which returns either an `NSArray` or `SRKResultSet` object.
 
-With the Person object already defined, and with a property department lets look at the Department class.
+With the Person object already defined, and with a property department let’s look at the Department class.
 
 `Objective-C`
 ```objective-c
@@ -304,7 +304,7 @@ SRKResultSet* results = [[Person query] fetch];
 ```swift
 var results : SRKResultSet = Person.query().fetch()
 ```
-Queries can be build up using a FLUENT interface, so every call except a call to a retrieval method returns itself as a `SRKQuery`, allowing you to nest your parameters. 
+Queries can be built up using a FLUENT interface, so every call except a call to a retrieval method returns itself as a `SRKQuery`, allowing you to nest your parameters. 
 `Objective-C`
 ```objective-c
 SRKResultSet* results = [[[[[Person query]
@@ -322,7 +322,7 @@ var results = Person.query()
 ```
 
 ###Supported parameters to `SRKQuery`
-Shark supportes the following optional paramaters to a query:
+Shark supports the following optional parameters to a query:
 
 ####where, whereWithFormat (and with parameters).  
 This is the query string supplied to the query, and can contain format specifiers along with object to be placed into the query as normal parameter options.  Supported format specifiers are `%@`,`%i`,`%u`,`%d`,`%s`,`%f`,`%ul`,`%ull`.
@@ -342,10 +342,10 @@ Specifies the offset in the values to be retrieved, to allow developers to only 
 This, although it does not affect the query, does allow developers to iterate through a large data set without having the performance and memory issue of dealing with the entire data set.  If a batch size of 10 is specified, then the `SRKResultSet` will perform an entire query, but will only fully retrieve the first 10 objects.  Then, it will maintain a window of the batch size when iterating through the results, automatically fetching them in batches.  This enables developers to optimise their system without the need to change the way their code is written.
 
 ###Other types of Query
-In addition to retrieving enture objects there are also additional types of queries which help developers solve other problems.
+In addition to retrieving entire objects there are also additional types of queries which help developers solve other problems.
 
 ####fetchLightweight
-Fetches an object from the store, except it does not retrieve any property values.  These are lazily loaded opon access, and can be configured to then be permanently available of freed immediately.
+Fetches an object from the store, except it does not retrieve any property values.  These are lazily loaded upon access, and can be configured to then be permanently available of freed immediately.
 
 ####fetchAsync
 Performs an asynchronous query on a background thread and then executes the supplied block when the results are complete.
@@ -359,10 +359,10 @@ Returns an NSArray of the distinct values for a particular column, it is used li
 ####groupBy
 Returns an NSDictionary, which is grouped by the specified property `groupBy("surname")`.
 ####ids
-Returns the PK values of the matching objects, this is a faster way to store results for use in a subquery.  Although, in practice it is litte faster than using lightweight objects.
+Returns the PK values of the matching objects, this is a faster way to store results for use in a subquery.  Although, in practice it is little faster than using lightweight objects.
 
 ###Removing objects
-To remove an object from Shark you simply call `remove()` on this object, this will delete it form the datastore and sterilise it to ensure it cannot be accidentally written back at a later date.  To optimise the bulk removal of objects, a query can be combined with a call to `removeAll()` on the result set to delete many objects at once.
+To remove an object from Shark you simply call `remove()` on this object, this will delete it form the data store and sterilise it to ensure it cannot be accidentally written back at a later date.  To optimise the bulk removal of objects, a query can be combined with a call to `removeAll()` on the result set to delete many objects at once.
 
 `Objective-C`
 ```objective-c
@@ -393,4 +393,5 @@ for person in Person.query().fetch() {
 ## Requirements:
 
 - CocoaPods 1.0.0
+
 
