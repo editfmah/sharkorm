@@ -1,5 +1,65 @@
 Shark Changelog
 ===============
+##v2.0.3 - June 20, 2016
+Added more tests, changed print output of a class to output in the style of the following.
+```
+{
+    entity = Person;
+    joins =     {
+    };
+    "pk column" = Id;
+    "pk value" = 36664;
+    properties =     (
+                {
+            name = Id;
+            type = number;
+            value = 36664;
+        },
+                {
+            name = payrollNumber;
+            type = number;
+            value = 0;
+        },
+                {
+            name = age;
+            type = number;
+            value = 36;
+        },
+                {
+            name = Name;
+            type = unset;
+            value = "<null>";
+        },
+                {
+            name = location;
+            type = unset;
+            value = "<null>";
+        },
+                {
+            name = department;
+            type = unset;
+            value = "<null>";
+        },
+                {
+            name = seq;
+            type = number;
+            value = 0;
+        }
+    );
+    relationships =     (
+                {
+            property = department;
+            status = unloaded;
+            target = Department;
+        },
+                {
+            property = location;
+            status = unloaded;
+            target = Location;
+        }
+    );
+}
+```
 
 ##v2.0.2 - June 19, 2016
 Updated the podspec, pushed a new version due to a problem merging a pull request
