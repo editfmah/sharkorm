@@ -16,6 +16,7 @@
 		E003204D1CFA58FF00240C44 /* WidePerson.m in Sources */ = {isa = PBXBuildFile; fileRef = E00320451CFA58FF00240C44 /* WidePerson.m */; };
 		E00320631CFB8F0B00240C44 /* Persistence.m in Sources */ = {isa = PBXBuildFile; fileRef = E00320621CFB8F0B00240C44 /* Persistence.m */; };
 		E012E0361D0AEDDE00B6F741 /* TODO.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E012E0351D0AEDDD00B6F741 /* TODO.rtf */; };
+		E0215CA81D195C2700876ABC /* Subclass.m in Sources */ = {isa = PBXBuildFile; fileRef = E0215CA71D195C2700876ABC /* Subclass.m */; };
 		E040B5BF1D1479E900FCC830 /* Examples.m in Sources */ = {isa = PBXBuildFile; fileRef = E040B5BE1D1479E900FCC830 /* Examples.m */; };
 		E040B5C31D14970D00FCC830 /* Joins.m in Sources */ = {isa = PBXBuildFile; fileRef = E040B5C21D14970D00FCC830 /* Joins.m */; };
 		E092CB051D00964700C6C8CD /* DBAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = E092CB041D0095A300C6C8CD /* DBAccess.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -188,6 +189,8 @@
 		E00320611CFB8F0B00240C44 /* Persistence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Persistence.h; sourceTree = "<group>"; };
 		E00320621CFB8F0B00240C44 /* Persistence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Persistence.m; sourceTree = "<group>"; };
 		E012E0351D0AEDDD00B6F741 /* TODO.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; name = TODO.rtf; path = SharkORM/TODO.rtf; sourceTree = "<group>"; };
+		E0215CA61D195C2700876ABC /* Subclass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Subclass.h; sourceTree = "<group>"; };
+		E0215CA71D195C2700876ABC /* Subclass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Subclass.m; sourceTree = "<group>"; };
 		E040B5BD1D1479E900FCC830 /* Examples.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Examples.h; sourceTree = "<group>"; };
 		E040B5BE1D1479E900FCC830 /* Examples.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Examples.m; sourceTree = "<group>"; };
 		E040B5C11D14970D00FCC830 /* Joins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Joins.h; sourceTree = "<group>"; };
@@ -389,6 +392,15 @@
 			path = "Transaction Tests";
 			sourceTree = "<group>";
 		};
+		E0215CA11D195B3800876ABC /* Subclass Tests */ = {
+			isa = PBXGroup;
+			children = (
+				E0215CA61D195C2700876ABC /* Subclass.h */,
+				E0215CA71D195C2700876ABC /* Subclass.m */,
+			);
+			path = "Subclass Tests";
+			sourceTree = "<group>";
+		};
 		E040B5BC1D1479CF00FCC830 /* Examples */ = {
 			isa = PBXGroup;
 			children = (
@@ -465,6 +477,7 @@
 		E0F413551CF6312A0085166C /* SharkORMTests */ = {
 			isa = PBXGroup;
 			children = (
+				E0215CA11D195B3800876ABC /* Subclass Tests */,
 				E040B5C01D1496FB00FCC830 /* Joins */,
 				E040B5BC1D1479CF00FCC830 /* Examples */,
 				E00320321CFA58FF00240C44 /* Events Test */,
@@ -888,6 +901,7 @@
 				E0F413C51CF632120085166C /* SRKFTSQuery.m in Sources */,
 				E0F413E51CF632120085166C /* SRKSettings.m in Sources */,
 				E0F413CB1CF632120085166C /* SRKQuery.m in Sources */,
+				E0215CA81D195C2700876ABC /* Subclass.m in Sources */,
 				E0F413B41CF632120085166C /* SRKFuzzyStore.m in Sources */,
 				E0F413E01CF632120085166C /* SRKLazyLoader.m in Sources */,
 				E0F413C31CF632120085166C /* SRKUnsupportedObject.m in Sources */,

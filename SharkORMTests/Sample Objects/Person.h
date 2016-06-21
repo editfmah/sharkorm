@@ -19,3 +19,9 @@
 @property Location*         location;
 
 @end
+
+@interface SmallPerson : Person
+
+@property int               height;
+
+@end
