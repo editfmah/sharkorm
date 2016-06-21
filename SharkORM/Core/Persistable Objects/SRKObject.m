@@ -1289,6 +1289,90 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
     entitiesThatNeedRefactoring = nil;
 }
 
++ (void)inspectClass:(Class)class accumulateDefinitions:(NSMutableDictionary*)classDef accumulateRelationships:(NSMutableArray*)relationships {
+    
+    /* this class needs to be tested by the data layer to see if it needs to make any changes */
+    unsigned int outCount;
+    objc_property_t *properties = class_copyPropertyList(class, &outCount);
+    
+    for (int i = 0; i < outCount; i++) {
+        
+        objc_property_t property = properties[i];
+        
+        NSString* name = [NSString stringWithUTF8String:property_getName(property)];
+        int propertyType = [class getEntityPropertyType:name];
+        if (propertyType != SRK_PROPERTY_TYPE_UNDEFINED) {
+            
+            /* now get the actual storage type of the property */
+            int storageType = [class getStorageType:propertyType];
+            NSNumber* dataType = [NSNumber numberWithInt:storageType];
+            
+            if (storageType == SRK_COLUMN_TYPE_ENTITYCOLLECTION) {
+                
+                SRKRelationship* r = [class relationshipForProperty:name];
+                if (r) {
+                    
+                    /* this is a one to many, no need to create a field because it's hooked up to "Id" */
+                    
+                    /* we've told the layer that the "link" field is to be created so now we will hook up the one-to-many relationship */
+                    r.sourceClass = class;
+                    r.sourceProperty = name;
+                    r.entityPropertyName = name;
+                    [relationships addObject:r];
+                    
+                    [classDef setObject:dataType forKey:name];
+                    
+                }
+                
+            }
+            
+            if(storageType == SRK_COLUMN_TYPE_ENTITYCLASS) {
+                
+                NSString* attributes = [NSString stringWithUTF8String:property_getAttributes(property)];
+                if ([attributes rangeOfString:@","].location != NSNotFound) {
+                    attributes = [attributes substringToIndex:[attributes rangeOfString:@","].location];
+                }
+                
+                if ([attributes rangeOfString:@"T@"].location != NSNotFound) {
+                    attributes = [attributes substringFromIndex:[attributes rangeOfString:@"T@"].location+1];
+                }
+                
+                const char* typeEncoding = [attributes UTF8String];
+                
+                NSString* className = [[[NSString stringWithUTF8String:typeEncoding] stringByReplacingOccurrencesOfString:@"@\"" withString:@""] stringByReplacingOccurrencesOfString:@"\"" withString:@""];
+                Class testClass = NSClassFromString(className);
+                if ([testClass isSubclassOfClass:[SRKObject class]]) {
+                    
+                    /* ok this is a property based on a entity class linked to the db layer */
+                    [classDef setObject:dataType forKey:[NSString stringWithFormat:@"%@", name]];
+                    
+                    /* we've told the layer that the "link" field is to be created so now we will hook up the one-to-one relationship */
+                    SRKRelationship* r = [SRKRelationship new];
+                    r.sourceClass = self.class;
+                    r.targetClass = NSClassFromString(className);
+                    r.sourceProperty = [NSString stringWithFormat:@"%@", name];
+                    r.targetProperty = SRK_DEFAULT_PRIMARY_KEY_NAME;
+                    r.entityPropertyName = [NSString stringWithString:name];
+                    r.relationshipType = SRK_RELATE_ONETOONE;
+                    
+                    [relationships addObject:r];
+                    
+                }
+                
+            }
+            
+            if (![name isEqualToString:SRK_DEFAULT_PRIMARY_KEY_NAME]) {
+                [classDef setObject:dataType forKey:name];
+            }
+            
+        }
+        
+    }
+    
+    free(properties);
+    
+}
+
 + (void)setupClass {
     
     /* this method gets called when a class is registered in the system */
@@ -1338,89 +1422,24 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
                 [SharkORM addEntityRelationship:jr inDatabase:[SharkORM databaseNameForClass:[self class]]];
             }
             
-            /* this class needs to be tested by the data layer to see if it needs to make any changes */
-            unsigned int outCount;
-            NSMutableDictionary* classDef = [NSMutableDictionary new];
-            objc_property_t *properties = class_copyPropertyList(c, &outCount);
-            
-            /* storage for relationships and indexes to create later on (e.g. once the fields have all been added) */
-            NSMutableArray* relationships = [NSMutableArray new];
-            
-            for (int i = 0; i < outCount; i++) {
-                
-                objc_property_t property = properties[i];
-                
-                NSString* name = [NSString stringWithUTF8String:property_getName(property)];
-                int propertyType = [c getEntityPropertyType:name];
-                if (propertyType != SRK_PROPERTY_TYPE_UNDEFINED) {
-                    
-                    /* now get the actual storage type of the property */
-                    int storageType = [c getStorageType:propertyType];
-                    NSNumber* dataType = [NSNumber numberWithInt:storageType];
-                    
-                    if (storageType == SRK_COLUMN_TYPE_ENTITYCOLLECTION) {
-                        
-                        SRKRelationship* r = [c relationshipForProperty:name];
-                        if (r) {
-                            
-                            /* this is a one to many, no need to create a field because it's hooked up to "Id" */
-                            
-                            /* we've told the layer that the "link" field is to be created so now we will hook up the one-to-many relationship */
-                            r.sourceClass = c;
-                            r.sourceProperty = name;
-                            r.entityPropertyName = name;
-                            [relationships addObject:r];
-                            
-                            [classDef setObject:dataType forKey:name];
-                            
-                        }
-                        
-                    }
-                    
-                    if(storageType == SRK_COLUMN_TYPE_ENTITYCLASS) {
-                        
-                        NSString* attributes = [NSString stringWithUTF8String:property_getAttributes(property)];
-                        if ([attributes rangeOfString:@","].location != NSNotFound) {
-                            attributes = [attributes substringToIndex:[attributes rangeOfString:@","].location];
-                        }
-                        
-                        if ([attributes rangeOfString:@"T@"].location != NSNotFound) {
-                            attributes = [attributes substringFromIndex:[attributes rangeOfString:@"T@"].location+1];
-                        }
-                        
-                        const char* typeEncoding = [attributes UTF8String];
-                        
-                        NSString* className = [[[NSString stringWithUTF8String:typeEncoding] stringByReplacingOccurrencesOfString:@"@\"" withString:@""] stringByReplacingOccurrencesOfString:@"\"" withString:@""];
-                        Class testClass = NSClassFromString(className);
-                        if ([testClass isSubclassOfClass:[SRKObject class]]) {
-                            
-                            /* ok this is a property based on a entity class linked to the db layer */
-                            [classDef setObject:dataType forKey:[NSString stringWithFormat:@"%@", name]];
-                            
-                            /* we've told the layer that the "link" field is to be created so now we will hook up the one-to-one relationship */
-                            SRKRelationship* r = [SRKRelationship new];
-                            r.sourceClass = self.class;
-                            r.targetClass = NSClassFromString(className);
-                            r.sourceProperty = [NSString stringWithFormat:@"%@", name];
-                            r.targetProperty = SRK_DEFAULT_PRIMARY_KEY_NAME;
-                            r.entityPropertyName = [NSString stringWithString:name];
-                            r.relationshipType = SRK_RELATE_ONETOONE;
-                            
-                            [relationships addObject:r];
-                            
-                        }
-                        
-                    }
-                    
-                    if (![name isEqualToString:SRK_DEFAULT_PRIMARY_KEY_NAME]) {
-                        [classDef setObject:dataType forKey:name];
-                    }
-                    
+            /* build an array of classes that we need to introspect */
+            NSMutableArray* classes = [NSMutableArray new];
+            [classes addObject:c];
+            Class startClass = [self class];
+            while ([[startClass superclass] isSubclassOfClass:[SRKObject class]]) {
+                [classes addObject:[startClass superclass]];
+                startClass = [startClass superclass];
+                if ([[startClass.superclass description] isEqualToString:@"SRKObject"]) {
+                    break;
                 }
-                
             }
             
-            free(properties);
+            NSMutableDictionary* classDef = [NSMutableDictionary new];
+            NSMutableArray* relationships = [NSMutableArray new];
+            
+            for (Class class in classes) {
+               [self inspectClass:class accumulateDefinitions:classDef accumulateRelationships:relationships];
+            }
             
             /* hookup all the getters and setters for this class and point them at the statics */
             

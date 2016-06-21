@@ -34,6 +34,8 @@
     [[[Department query] fetchLightweight] removeAll];
     [[[DepartmentSwift query] fetchLightweight] removeAll];
     [[[Location query] fetchLightweight] removeAll];
+    [[[SmallPerson query] fetchLightweight] removeAll];
+    [[[SmallPersonSwift query] fetchLightweight] removeAll];
 }
 
 - (void)databaseError:(SRKError *)error {
