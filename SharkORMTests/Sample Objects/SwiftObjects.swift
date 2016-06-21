@@ -9,9 +9,15 @@ import Foundation
 
 class PersonSwift : SRKObject {
     
-    dynamic var Name: String?
-    dynamic var age: NSNumber?
-    dynamic var department: DepartmentSwift?
+    internal dynamic var Name: String?
+    internal dynamic var age: NSNumber?
+    internal dynamic var department: DepartmentSwift?
+    
+}
+
+class SmallPersonSwift : PersonSwift {
+    
+    dynamic var height: NSNumber?
     
 }
 
