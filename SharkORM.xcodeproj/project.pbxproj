@@ -18,6 +18,9 @@
 		E012E0361D0AEDDE00B6F741 /* TODO.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E012E0351D0AEDDD00B6F741 /* TODO.rtf */; };
 		E040B5BF1D1479E900FCC830 /* Examples.m in Sources */ = {isa = PBXBuildFile; fileRef = E040B5BE1D1479E900FCC830 /* Examples.m */; };
 		E040B5C31D14970D00FCC830 /* Joins.m in Sources */ = {isa = PBXBuildFile; fileRef = E040B5C21D14970D00FCC830 /* Joins.m */; };
+		E04FFAB81D1C8FB700F7866D /* SRKRawResults.m in Sources */ = {isa = PBXBuildFile; fileRef = E04FFAB61D1C8FB700F7866D /* SRKRawResults.m */; };
+		E04FFAB91D1C8FB700F7866D /* SRKRawResults.m in Sources */ = {isa = PBXBuildFile; fileRef = E04FFAB61D1C8FB700F7866D /* SRKRawResults.m */; };
+		E04FFABA1D1C8FB700F7866D /* SRKRawResults.m in Sources */ = {isa = PBXBuildFile; fileRef = E04FFAB61D1C8FB700F7866D /* SRKRawResults.m */; };
 		E092CB051D00964700C6C8CD /* DBAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = E092CB041D0095A300C6C8CD /* DBAccess.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E092CB081D00DBE800C6C8CD /* Performance.m in Sources */ = {isa = PBXBuildFile; fileRef = E092CB071D00DBE800C6C8CD /* Performance.m */; };
 		E0C450A61D107AA8003FA21D /* SRKEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413631CF632120085166C /* SRKEvent.m */; };
@@ -192,6 +195,7 @@
 		E040B5BE1D1479E900FCC830 /* Examples.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Examples.m; sourceTree = "<group>"; };
 		E040B5C11D14970D00FCC830 /* Joins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Joins.h; sourceTree = "<group>"; };
 		E040B5C21D14970D00FCC830 /* Joins.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Joins.m; sourceTree = "<group>"; };
+		E04FFAB61D1C8FB700F7866D /* SRKRawResults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKRawResults.m; sourceTree = "<group>"; };
 		E092CB041D0095A300C6C8CD /* DBAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DBAccess.h; sourceTree = "<group>"; };
 		E092CB061D00DBE800C6C8CD /* Performance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Performance.h; sourceTree = "<group>"; };
 		E092CB071D00DBE800C6C8CD /* Performance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Performance.m; sourceTree = "<group>"; };
@@ -566,6 +570,7 @@
 				E0F413791CF632120085166C /* SRKResultSet.m */,
 				E0F4137A1CF632120085166C /* SRKUnsupportedObject.h */,
 				E0F4137B1CF632120085166C /* SRKUnsupportedObject.m */,
+				E04FFAB61D1C8FB700F7866D /* SRKRawResults.m */,
 			);
 			path = "Persistable Objects";
 			sourceTree = "<group>";
@@ -804,6 +809,7 @@
 				E0C450A91D107AA8003FA21D /* SRKEventRegistryObject.m in Sources */,
 				E0C450C11D107AA8003FA21D /* SRKSQLiteHandle.m in Sources */,
 				E0C450BC1D107AA8003FA21D /* SharkORM.m in Sources */,
+				E04FFABA1D1C8FB700F7866D /* SRKRawResults.m in Sources */,
 				E0C450AD1D107AA8003FA21D /* SRKEncryptedObject.m in Sources */,
 				E0DFA42E1D107A1800DFDB6F /* AppDelegate.m in Sources */,
 				E0C450B51D107AA8003FA21D /* SRKQueryProfile.m in Sources */,
@@ -859,6 +865,7 @@
 				E0F413E41CF632120085166C /* SRKSettings.m in Sources */,
 				E0F413EA1CF632120085166C /* SRKUtilities.m in Sources */,
 				E0F413C41CF632120085166C /* SRKFTSQuery.m in Sources */,
+				E04FFAB81D1C8FB700F7866D /* SRKRawResults.m in Sources */,
 				E0F413D91CF632120085166C /* SharkORM.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -905,6 +912,7 @@
 				E0F413A51CF632120085166C /* SRKEvent.m in Sources */,
 				E0E3ACD81D11BC6A006803F7 /* Multithreaded.m in Sources */,
 				E0F413F31CF632120085166C /* SRKTransactionElement.m in Sources */,
+				E04FFAB91D1C8FB700F7866D /* SRKRawResults.m in Sources */,
 				E00320631CFB8F0B00240C44 /* Persistence.m in Sources */,
 				E003204C1CFA58FF00240C44 /* SwiftObjects.swift in Sources */,
 				E00320471CFA58FF00240C44 /* Department.m in Sources */,

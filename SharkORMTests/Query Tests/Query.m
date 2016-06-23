@@ -189,4 +189,16 @@
     
 }
 
+- (void)test_raw_query {
+    
+    [self setupCommonData];
+    
+    SRKRawResults* results = [SharkORM rawQuery:@"SELECT * FROM Person ORDER BY age;"];
+    
+    XCTAssert(results.rowCount == 3, @"Raw query row count was incorrect given fixed data");
+    XCTAssert(results.columnCount == 7, @"Raw query column count was incorrect given fixed data");
+    XCTAssert([((NSString*)[results valueForColumn:@"Name" atRow:0]) isEqualToString:@"Michael"], @"Raw query column count was incorrect given fixed data");
+    
+}
+
 @end

@@ -31,6 +31,7 @@ Copyright (C) 2016 SharkSync. All rights reserved.
 @class SRKQuery;
 @class SRKFTSQuery;
 @class SRKTransaction;
+@class SRKRawResults;
 
 typedef void(^SRKTransactionBlockBlock)();
 
@@ -198,7 +199,13 @@ typedef enum {
  * @return void;
  */
 +(void)closeDatabaseNamed:(NSString*)dbName;
-
+/**
+ * Performs a free text query and returns the result as a SRKRawResults object.
+ *
+ * @param (NSString*) The query to be performed.
+ * @return (SRK;
+ */
++(SRKRawResults*)rawQuery:(NSString*)sql;
 @end
 
 /*
@@ -860,6 +867,46 @@ typedef void(^SRKQueryAsyncResponse)(SRKResultSet* results);
  * @return (SRKQuery*) this value can be discarded or used to nest queries together to form clear and concise statements.
  */
 - (SRKQuery*)whereWithFormat:(NSString*)format withParameters:(NSArray*)params;
+
+@end
+
+/**
+ * A SRKRawResults class is used to store results from raw queries.
+ *
+ *
+ */
+@interface SRKRawResults : NSObject
+
+@property (nonatomic) NSMutableArray* rawResults;
+@property (nonatomic) SRKError* error;
+
+/**
+ * Contains the number if rows in the result set from a raw query
+ *
+ * @return (NSInteger) the count of rows.
+ */
+- (NSInteger)rowCount;
+/**
+ * Contains the number if columns in the result set from a raw query
+ *
+ * @return (NSInteger) the number of columns.
+ */
+- (NSInteger)columnCount;
+/**
+ * Retrieves a value from the dataset, given the column name and the rown index.
+ *
+ * @param (NSString*)columnName.  The named column from the original queries.
+ * @param (NSInteger)index. The row index for the result to retrieve.
+ * @return (id), this is the value contained in the column.  This can be, NSString, NSDate, NSNumber, NSNull.
+ */
+- (id)valueForColumn:(NSString*)columnName atRow:(NSInteger)index;
+/**
+ * Retrieves a column from the dataset, given the index.
+ *
+ * @param (NSInteger)index. The index for the column name to retrieve.
+ * @return (NSString*), the column name to be used in queries.
+ */
+- (NSString*)columnNameForIndex:(NSInteger)index;
 
 @end
 
