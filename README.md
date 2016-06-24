@@ -533,4 +533,6 @@ For object event handlers, all individual objects have the ability to register b
 
 - CocoaPods 1.0.0
 
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+
 
