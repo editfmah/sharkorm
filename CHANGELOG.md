@@ -1,5 +1,14 @@
 Shark Changelog
 ===============
+##v2.0.4 - June 24, 2016
+
+Added support for Raw Queries, Inherritance support & Carthage support.
+
+Raw query example:
+```objective-c
+SRKRawResults* results = [SharkORM rawQuery:@"SELECT * FROM Person ORDER BY age;"];
+```
+
 ##v2.0.3 - June 20, 2016
 Added more tests, changed print output of a class to output in the style of the following.
 ```
