@@ -20,3 +20,9 @@
 }
 
 @end
+
+@implementation SmallPerson
+
+@dynamic height;
+
+@end
