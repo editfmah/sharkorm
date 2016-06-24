@@ -199,6 +199,17 @@ static NSMutableDictionary* primaryTypes;
     
 }
 
++(sqlite3 *)defaultHandleForDatabase {
+    
+    if (databaseHandleIndex.allKeys.count) {
+        NSNumber* n = [databaseHandleIndex objectForKey:[databaseHandleIndex.allKeys objectAtIndex:0]];
+        sqlite3* handle = handles[n.intValue];
+        return handle;
+    }
+    return nil;
+    
+}
+
 +(sqlite3 *)handleForDatabaseNonBlocking:(NSString *)dbName {
   
     if ([databaseHandleIndex objectForKey:dbName]) {
@@ -1139,6 +1150,66 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     }
 }
 
++ (SRKRawResults *)rawQuery:(NSString *)sql {
+    
+    SRKRawResults* returnValue = [SRKRawResults new];
+    returnValue.rawResults = [NSMutableArray new];
+    
+    sqlite3_stmt* statement;
+    sqlite3* dbHandle = [SharkORM defaultHandleForDatabase];
+    
+    int prepareResult = sqlite3_prepare_v2(dbHandle, [sql UTF8String], (int)sql.length, &statement, NULL);
+    if (prepareResult == SQLITE_OK) {
+        
+        int status = sqlite3_step(statement);
+        
+        while (status == SQLITE_ROW) {
+            
+            @autoreleasepool {
+                
+                NSMutableDictionary* record = [[NSMutableDictionary alloc] init];
+                
+                /* loop thorugh the record */
+                for (int p=0; p<sqlite3_column_count(statement); p++) {
+                    
+                    NSString* columnName = [NSString stringWithUTF8String:sqlite3_column_name(statement, p)];
+                    SRKUtilities* dba = [SRKUtilities new];
+                    columnName = [dba normalizedColumnName:columnName];
+                    NSObject* value = [[SRKUtilities new] sqlite3_column_objc:statement column:p];
+                    [record setObject:value forKey:columnName];
+                    
+                }
+                
+                [returnValue.rawResults addObject:record];
+                
+                
+            }
+            
+            status = sqlite3_step(statement);
+            
+        }
+        
+    } else {
+        
+        SRKError* e = [SRKError new];
+        e.sqlQuery = sql;
+        e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg(dbHandle)];
+        
+        /* error in prepare statement */
+        if (delegate && [delegate respondsToSelector:@selector(databaseError:)]) {
+            [delegate databaseError:e];
+        }
+        
+        returnValue.error = e;
+        
+    }
+    
+    sqlite3_finalize(statement);
+    
+    return returnValue;
+    
+}
+
 #pragma mark - user object functions
 
 
@@ -1197,11 +1268,11 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                 placeholders = [placeholders stringByAppendingString:@"?"];
                 
             }
-                
+            
             NSString* sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ (%@) VALUES (%@);", className , fieldNames, placeholders];
             
             NSMutableArray* params = [NSMutableArray new];
-                    
+            
             for (NSString* key in keys) {
                 
                 NSObject* value = [entity getField:key];
