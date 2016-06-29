@@ -1426,7 +1426,7 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
             NSMutableArray* classes = [NSMutableArray new];
             [classes addObject:c];
             Class startClass = [self class];
-            while ([[startClass superclass] isSubclassOfClass:[SRKObject class]]) {
+            while ([[startClass superclass] isSubclassOfClass:[SRKObject class]] && ![[[startClass superclass] description] isEqualToString:@"SRKObject"]) {
                 [classes addObject:[startClass superclass]];
                 startClass = [startClass superclass];
                 if ([[startClass.superclass description] isEqualToString:@"SRKObject"]) {
@@ -1993,7 +1993,7 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
     
     [info setObject:[self.class description] forKey:@"entity"];
     [info setObject:SRK_DEFAULT_PRIMARY_KEY_NAME forKey:@"pk column"];
-    [info setObject:[self Id] forKey:@"pk value"];
+    [info setObject:[self Id] ? [self Id] : [NSNull null] forKey:@"pk value"];
     
     // fields
     NSMutableArray* fieldValues = [NSMutableArray new];

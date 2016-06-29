@@ -1,5 +1,9 @@
 Shark Changelog
 ===============
+##v2.0.5 - June 29, 2016
+Fixed crash when printing an object without an primary key value.  No Null check was made.
+Fixed serious issue, where SRKObject properties were being persisted. Causing query errors.
+
 ##v2.0.4 - June 24, 2016
 
 Added support for Raw Queries, Inherritance support & Carthage support.
