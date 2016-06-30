@@ -83,4 +83,29 @@
     
 }
 
+- (void)test_one_to_one_and_back_to_one_circular_reference {
+    
+    [self cleardown];
+    
+    // setup some common data
+    
+    Location* l = [Location new];
+    l.locationName = @"San Francisco";
+    [l commit];
+    
+    Department* d = [Department new];
+    d.name = @"Test Department";
+    d.location = l;
+
+    // create the problem
+    l.department = d;
+    
+    Person* p = [Person new];
+    p.Name = @"Adrian";
+    p.age = 37;
+    p.department = d;
+    [p commit];
+    
+}
+
 @end

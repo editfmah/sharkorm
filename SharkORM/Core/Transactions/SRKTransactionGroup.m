@@ -256,6 +256,7 @@ static NSMutableDictionary* transactionForThread = nil;
 										@synchronized(item.originalObject.changedValues) {
 											[item.originalObject.changedValues removeAllObjects];
 											[item.originalObject.dirtyFields removeAllObjects];
+                                            item.originalObject.dirty = NO;
 										}
 										
 									}
@@ -290,6 +291,7 @@ static NSMutableDictionary* transactionForThread = nil;
 										@synchronized(item.originalObject.changedValues) {
 											[item.originalObject.changedValues removeAllObjects];
 											[item.originalObject.dirtyFields removeAllObjects];
+                                            item.originalObject.dirty = NO;
 										}
 										
 									}
@@ -311,6 +313,7 @@ static NSMutableDictionary* transactionForThread = nil;
 										@synchronized(item.originalObject.changedValues) {
 											[item.originalObject.changedValues removeAllObjects];
 											[item.originalObject.dirtyFields removeAllObjects];
+                                            item.originalObject.dirty = NO;
 										}
 										
 										/* now remove the primary key now the event has been broadcast */

@@ -7,9 +7,13 @@
 //
 
 #import <SharkORM/SharkORM.h>
+#import "Department.h"
+
+@class Department;
 
 @interface Location : SRKObject
 
 @property NSString* locationName;
+@property Department* department;
 
 @end
