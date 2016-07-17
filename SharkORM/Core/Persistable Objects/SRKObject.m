@@ -2295,10 +2295,10 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 			}
 			
 			/* check to see if any entities have been added into this object, commit them */
-			for (NSObject* o in self.embeddedEntities.allValues) {
+			for (SRKObject* o in self.embeddedEntities.allValues) {
 				if ([o isKindOfClass:[SRKObject class]]) {
                     // check to see if this object has already appeard in this chain.
-                    if (![chain doesObjectExistInChain:self]) {
+                    if (![chain doesObjectExistInChain:o]) {
                         [(SRKObject*)o __commitRawWithObjectChain:[chain addObjectToChain:self]];
                     } 
 				}
