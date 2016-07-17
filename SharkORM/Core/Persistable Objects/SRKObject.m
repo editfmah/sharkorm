@@ -372,10 +372,7 @@ static int obCount=0;
                     
                 }
                 
-            } else {
-                // this property is ignored;
-                int i=0;
-            }
+            } 
             
         }
 		
