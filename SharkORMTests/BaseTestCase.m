@@ -20,7 +20,7 @@
 
 - (void)tearDown {
     
-    [[[Person query] fetch] removeAll];
+    [self cleardown];
     
     [SharkORM closeDatabaseNamed:@"Persistence"];
     [SharkORM setDelegate:nil];

@@ -19,12 +19,13 @@
 #import "SRKTransactionGroup.h"
 #import "SRKUnsupportedObject.h"
 #import "SRKEncryptedObject.h"
+#import "SRKObjectChain.h"
 
 @implementation SRKObject {
 	id cachedPrimaryKeyValue;
 }
 
-@synthesize exists, embeddedEntities, context, isMarkedForDeletion;
+@synthesize exists, embeddedEntities, context, isMarkedForDeletion, dirty;
 @dynamic Id,joinedResults;
 
 static NSMutableDictionary* refactoredEntities;
@@ -995,6 +996,7 @@ static void setPropertyIMP(SRKObject* self, SEL _cmd, id aValue) {
 	
 	/* mark this property as dirty for live sets */
 	[self.dirtyFields setObject:@(1) forKey:propertyName];
+    self.dirty = YES;
 	
 }
 
@@ -1072,6 +1074,7 @@ static void setPropertyEntityIMP(SRKObject* self, SEL _cmd, id aValue) {
 	
 	/* mark this property as dirty for live sets */
 	[self.dirtyFields setObject:@(1) forKey:propertyName];
+    self.dirty = YES;
 	
 }
 
@@ -1147,6 +1150,7 @@ static void setPropertyEntityCollectionIMP(SRKObject* self, SEL _cmd, id aValue)
 	
 	/* mark this property as dirty for live sets */
 	[self.dirtyFields setObject:@(1) forKey:propertyName];
+    self.dirty = YES;
 	
 }
 
@@ -1831,6 +1835,7 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 				cachedPrimaryKeyValue = value;
 			}
 			[_dirtyFields setObject:@(1) forKey:fieldName];
+            self.dirty = YES;
 		}
 	}
 	
@@ -1858,6 +1863,7 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 				cachedPrimaryKeyValue = value;
 			}
 			[_dirtyFields setObject:@(1) forKey:fieldName];
+            self.dirty = YES;
 		}
 	}
 	
@@ -1876,6 +1882,7 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 	@synchronized(self.changedValues) {
 		[self.changedValues removeAllObjects];
 		[self.dirtyFields removeAllObjects];
+        self.dirty = NO;
 	}
 	
 }
@@ -2243,6 +2250,7 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 				@synchronized(self.changedValues) {
 					[self.changedValues removeAllObjects];
 					[self.dirtyFields removeAllObjects];
+                    self.dirty = NO;
 				}
 				
 				/* now remove the primary key now the event has been broadcast */
@@ -2272,7 +2280,7 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 	return YES;
 }
 
-- (BOOL)__commitRaw {
+- (BOOL)__commitRawWithObjectChain:(SRKObjectChain *)chain {
 	
 	if (self.sterilised) {
 		return NO;
@@ -2292,7 +2300,10 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 			/* check to see if any entities have been added into this object, commit them */
 			for (NSObject* o in self.embeddedEntities.allValues) {
 				if ([o isKindOfClass:[SRKObject class]]) {
-					[(SRKObject*)o __commitRaw];
+                    // check to see if this object has already appeard in this chain.
+                    if (![chain doesObjectExistInChain:self]) {
+                        [(SRKObject*)o __commitRawWithObjectChain:[chain addObjectToChain:self]];
+                    } 
 				}
 			}
 			
@@ -2346,6 +2357,7 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 					@synchronized(self.changedValues) {
 						[self.changedValues removeAllObjects];
 						[self.dirtyFields removeAllObjects];
+                        self.dirty = NO;
 					}
 				}
 				
@@ -2368,11 +2380,13 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 		
 		if ([self entityWillUpdate]) {
 			
-			/* check to see if any entities have been added into this object, commit them */
+			/* check to see if any entities have been added into this object, commit them, but only if they do not have a PK or any outstanding changes (stops cyclical inserts) */
 			
 			for (NSObject* o in self.embeddedEntities.allValues) {
 				if ([o isKindOfClass:[SRKObject class]]) {
-					[((SRKObject*)o) __commitRaw];
+                    if (!((SRKObject*)o).Id || ((SRKObject*)o).dirty) {
+                        [((SRKObject*)o) __commitRawWithObjectChain:[chain addObjectToChain:self]];
+                    }
 				}
 			}
 			
@@ -2413,6 +2427,7 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 					@synchronized(self.changedValues) {
 						[self.changedValues removeAllObjects];
 						[self.dirtyFields removeAllObjects];
+                        self.dirty = NO;
 					}
 				}
 				
@@ -2456,7 +2471,7 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 	
 	if(!self.context) {
 		
-		[self __commitRaw];
+		[self __commitRawWithObjectChain:[SRKObjectChain new]];
 		
 	} else {
 		
@@ -2509,6 +2524,7 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 	_joinedData = nil;
 	_changedValues = nil;
 	_dirtyFields = nil;
+    self.dirty = NO;
 	_eventsDelegate = nil;
 	_creatorFunctionName = nil;
 	

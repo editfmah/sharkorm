@@ -8,6 +8,7 @@
 #import "SharkORM.h"
 #import "SRKObject+Private.h"
 #import "SharkORM+Private.h"
+#import "SRKObjectChain.h"
 
 @interface SRKContext ()
 
@@ -67,7 +68,7 @@
 		if (ob.isMarkedForDeletion) {
 			[ob __removeRaw];
 		} else {
-			[ob __commitRaw];
+			[ob __commitRawWithObjectChain:[SRKObjectChain new]];
 		}
 	}
 	
