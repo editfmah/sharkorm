@@ -55,4 +55,10 @@
     return NO;
 }
 
+- (void)setPostCommitalUpdate:(SRKObject*)obj property:(NSString*)property targetProperty:(SRKObject*)target {
+    [self.postCommitalObjectsToUpdate addObject:obj];
+    [self.postCommitalPropertiesToSet addObject:property];
+    [self.postCommitalObjectsToBeSetIntoProperties addObject:target];
+}
+
 @end

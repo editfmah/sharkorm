@@ -15,5 +15,6 @@
 - (BOOL)doesObjectExistInChain:(SRKObject*)o;
 - (BOOL)isOriginatingObject:(SRKObject*)o;
 - (BOOL)hasUnresolvedPersistence;
+- (void)setPostCommitalUpdate:(SRKObject*)obj property:(NSString*)property targetProperty:(SRKObject*)target;
 
 @end

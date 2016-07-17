@@ -104,8 +104,19 @@
     p.Name = @"Adrian";
     p.age = 37;
     p.department = d;
+    p.location = l;
     [p commit];
     
+    Person* p2 = [[[Person query] fetch] firstObject];
+    XCTAssert(p2, @"failed to retrieve a 'Person' entity when stored with Person->Deprtment->Location");
+    XCTAssert(p2.department, @"one-to-one related object was not empty when checking property");
+    XCTAssert([p2.department.name isEqualToString:@"Test Department"], @"an object was loaded, when there should be nothing");
+    XCTAssert(p2.department.location, @"one-to-one related object was not empty when checking property");
+    XCTAssert([p2.department.location.locationName isEqualToString:@"San Francisco"], @"an object was loaded, when there should be nothing");
+    XCTAssert(p2.department.location.department, @"one-to-one related object was not empty when checking property");
+    XCTAssert([p2.department.location.department.name isEqualToString:@"Test Department"], @"an object was loaded, when there should be nothing");
+    XCTAssert(p2.location, @"one-to-one related object was not empty when checking property");
+    XCTAssert([p2.location.locationName isEqualToString:@"San Francisco"], @"an object was loaded, when there should be nothing");
 }
 
 @end
