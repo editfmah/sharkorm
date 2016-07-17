@@ -16,8 +16,8 @@ Copyright (C) 2016 SharkSync. All rights reserved.
 #ifndef __SHARKORM_H
 #define __SHARKORM_H
 
-#define SHARK_DATE              20160624
-#define SHARK_VER               2.00.04
+#define SHARK_DATE              20160717
+#define SHARK_VER               2.00.06
 
 #import <Foundation/Foundation.h>
 #import <objc/message.h>
@@ -491,6 +491,12 @@ typedef     void(^contextExecutionBlock)();
  * @return (SRKIndexDefinition*) return an index object to let SharkORM know which properties need to be indexed for performance reasons.  Primary keys are already indexed, as are any properties that are in fact other persisbale classes.  SharkORM will attempt to automatically calculate indexes from the relationships between your classes, but sometimes you may with to add them manually given feedback form the profiling mechanisum.
  */
 + (SRKIndexDefinition*)indexDefinitionForEntity;
+/**
+ * Used to indicate to SharkORM that you wish to ignore ceratin properties and to not persiste them.
+ *
+ * @return (NSArray*) Return an array of property names, these will be used to create an ignore list.
+ */
++ (NSArray*)ignoredProperties;
 /**
  * Used to specify the default values for a new entity, where the "key" is the property name and the "value" is a standard NSObject such as NSNumber / NSString / NSNull / NSData / NSArray.  Every new object will automatically have these properties set with their default values.  When adding a new property to a SRKObject class, SharkORM will create a new column.  This column will be populated with the default value as provided by this method.
  *

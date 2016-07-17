@@ -212,6 +212,10 @@ static int obCount=0;
 	return nil;
 }
 
++ (NSArray*)ignoredProperties {
+    return nil;
+}
+
 + (NSDictionary*)defaultValuesForEntity {
 	return nil;
 }
@@ -262,101 +266,117 @@ static int obCount=0;
 	NSString* clName = [[self class] description];
 	NSMutableDictionary* cachedPropertyList = [cachedPropertyListForAllClasses objectForKey:clName];
 	
-	if (!cachedPropertyList) {
-		
-		cachedPropertyList = [NSMutableDictionary new];
-		
-		Class c = [self class];
-		
-		/* this class needs to be tested by the data layer to see if it needs to make any changes */
-		unsigned int outCount;
-		objc_property_t *properties = class_copyPropertyList(c, &outCount);
-		
-		for (int i = 0; i < outCount; i++) {
-			
-			objc_property_t property = properties[i];
-			
-			const char* name = property_getName(property);
-			NSString* propName = [NSString stringWithUTF8String:name];
-			NSString* attributes = [NSString stringWithUTF8String:property_getAttributes(property)];
-			NSString* declarationType = [NSString stringWithUTF8String:property_getAttributes(property)];
-			/* now we need to detect if this is a @dynamic property, synthesised properties are ignored */
-			
-			if ([attributes rangeOfString:@","].location != NSNotFound) {
-				attributes = [attributes substringToIndex:[attributes rangeOfString:@","].location];
-			}
-			
-			if ([attributes rangeOfString:@"T@"].location != NSNotFound) {
-				attributes = [attributes substringFromIndex:[attributes rangeOfString:@"T@"].location+1];
-			}
-			
-			const char* typeEncoding = [attributes UTF8String];
-			
-			BOOL swiftStaticallyDispatchedVarFound = NO;
-   
-			/* test for swiftness, and then check to see if the var is dynamic or not, the only way we can */
-			if ([self isSwiftClass]) {
-				
-				/*
-				 * Awaiting the ability to see if a swift property is dynamic and therefore persistable
-				 */
-				
-				//swiftSynthesizedVarFound = YES;
-				//[cachedPropertyList setObject:@(SRK_PROPERTY_TYPE_UNDEFINED) forKey:propName];
-				
-			}
-			
-			if (!swiftStaticallyDispatchedVarFound) {
-				
-				if ([declarationType rangeOfString:[NSString stringWithFormat:@"V%s", name]].location != NSNotFound) {
-					[cachedPropertyList setObject:@(SRK_PROPERTY_TYPE_UNDEFINED) forKey:propName];
-				}
-				
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSString\"" storageType:SRK_PROPERTY_TYPE_STRING];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSNumber\"" storageType:SRK_PROPERTY_TYPE_NUMBER];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSDate\"" storageType:SRK_PROPERTY_TYPE_DATE];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"UIImage\"" storageType:SRK_PROPERTY_TYPE_IMAGE];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSImage\"" storageType:SRK_PROPERTY_TYPE_IMAGE];
-				
-				/* we need to check that this array is *NOT* involved in a relationship */
-				if (![c relationshipForProperty:[NSString stringWithUTF8String:name]]) {
-					[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSArray\"" storageType:SRK_PROPERTY_TYPE_ARRAY];
-				} else {
-					[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSArray\"" storageType:SRK_PROPERTY_TYPE_ENTITYOBJECTARRAY];
-				}
-				
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSDictionary\"" storageType:SRK_PROPERTY_TYPE_DICTIONARY];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSData\"" storageType:SRK_PROPERTY_TYPE_DATA];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSMutableData\"" storageType:SRK_PROPERTY_TYPE_MUTABLEDATA];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSMutableArray\"" storageType:SRK_PROPERTY_TYPE_MUTABLEARAY];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSMutableDictionary\"" storageType:SRK_PROPERTY_TYPE_MUTABLEDIC];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSURL\"" storageType:SRK_PROPERTY_TYPE_URL];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSObject\"" storageType:SRK_PROPERTY_TYPE_NSOBJECT];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@" storageType:SRK_PROPERTY_TYPE_NSOBJECT];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Ti" storageType:SRK_PROPERTY_TYPE_INT];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"TB" storageType:SRK_PROPERTY_TYPE_BOOL];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Tl" storageType:SRK_PROPERTY_TYPE_LONG];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Tf" storageType:SRK_PROPERTY_TYPE_FLOAT];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Tc" storageType:SRK_PROPERTY_TYPE_BOOL];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Ts" storageType:SRK_PROPERTY_TYPE_SHORT];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Tq" storageType:SRK_PROPERTY_TYPE_LONGLONG];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"TC" storageType:SRK_PROPERTY_TYPE_UCHAR];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"TI" storageType:SRK_PROPERTY_TYPE_UINT];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"TS" storageType:SRK_PROPERTY_TYPE_USHORT];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"TL" storageType:SRK_PROPERTY_TYPE_ULONG];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"TQ" storageType:SRK_PROPERTY_TYPE_ULONGLONG];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Td" storageType:SRK_PROPERTY_TYPE_DOUBLE];
-				[self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"T*" storageType:SRK_PROPERTY_TYPE_CHARPTR];
-				
-				NSString* className = [[[NSString stringWithUTF8String:typeEncoding] stringByReplacingOccurrencesOfString:@"@\"" withString:@""] stringByReplacingOccurrencesOfString:@"\"" withString:@""];
-				Class testClass = NSClassFromString(className);
-				if ([testClass isSubclassOfClass:[SRKObject class]]) {
-					[cachedPropertyList setObject:@(SRK_PROPERTY_TYPE_ENTITYOBJECT) forKey:propName];
-				}
-				
-			}
-			
-		}
+    if (!cachedPropertyList) {
+        
+        cachedPropertyList = [NSMutableDictionary new];
+        
+        Class c = [self class];
+        
+        /* this class needs to be tested by the data layer to see if it needs to make any changes */
+        unsigned int outCount;
+        objc_property_t *properties = class_copyPropertyList(c, &outCount);
+        
+        NSArray* ignoredProperties = [[self class] ignoredProperties];
+        
+        for (int i = 0; i < outCount; i++) {
+            
+            objc_property_t property = properties[i];
+            
+            const char* name = property_getName(property);
+            NSString* propName = [NSString stringWithUTF8String:name];
+            NSString* attributes = [NSString stringWithUTF8String:property_getAttributes(property)];
+            NSString* declarationType = [NSString stringWithUTF8String:property_getAttributes(property)];
+            
+            /*
+             *  We can no longer detect @dynamic variables to determine what needs to be persisted , as even 'dynamic var'
+             *      properties in Swift identify their signature as synthesized.
+             *
+             *  As of v2.0.6-> a call to +(NSArray*)ignoredProperties on SRKObjects is called to determine what not to persist.
+             *
+             */
+            
+            if (!ignoredProperties || ![ignoredProperties containsObject:propName]) {
+                
+                if ([attributes rangeOfString:@","].location != NSNotFound) {
+                    attributes = [attributes substringToIndex:[attributes rangeOfString:@","].location];
+                }
+                
+                if ([attributes rangeOfString:@"T@"].location != NSNotFound) {
+                    attributes = [attributes substringFromIndex:[attributes rangeOfString:@"T@"].location+1];
+                }
+                
+                const char* typeEncoding = [attributes UTF8String];
+                
+                BOOL swiftStaticallyDispatchedVarFound = NO;
+                
+                /* test for swiftness, and then check to see if the var is dynamic or not, the only way we can */
+                if ([self isSwiftClass]) {
+                    
+                    /*
+                     * Awaiting the ability to see if a swift property is dynamic and therefore persistable
+                     */
+                    
+                    //swiftSynthesizedVarFound = YES;
+                    //[cachedPropertyList setObject:@(SRK_PROPERTY_TYPE_UNDEFINED) forKey:propName];
+                    
+                }
+                
+                if (!swiftStaticallyDispatchedVarFound) {
+                    
+                    if ([declarationType rangeOfString:[NSString stringWithFormat:@"V%s", name]].location != NSNotFound) {
+                        [cachedPropertyList setObject:@(SRK_PROPERTY_TYPE_UNDEFINED) forKey:propName];
+                    }
+                    
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSString\"" storageType:SRK_PROPERTY_TYPE_STRING];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSNumber\"" storageType:SRK_PROPERTY_TYPE_NUMBER];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSDate\"" storageType:SRK_PROPERTY_TYPE_DATE];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"UIImage\"" storageType:SRK_PROPERTY_TYPE_IMAGE];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSImage\"" storageType:SRK_PROPERTY_TYPE_IMAGE];
+                    
+                    /* we need to check that this array is *NOT* involved in a relationship */
+                    if (![c relationshipForProperty:[NSString stringWithUTF8String:name]]) {
+                        [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSArray\"" storageType:SRK_PROPERTY_TYPE_ARRAY];
+                    } else {
+                        [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSArray\"" storageType:SRK_PROPERTY_TYPE_ENTITYOBJECTARRAY];
+                    }
+                    
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSDictionary\"" storageType:SRK_PROPERTY_TYPE_DICTIONARY];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSData\"" storageType:SRK_PROPERTY_TYPE_DATA];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSMutableData\"" storageType:SRK_PROPERTY_TYPE_MUTABLEDATA];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSMutableArray\"" storageType:SRK_PROPERTY_TYPE_MUTABLEARAY];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSMutableDictionary\"" storageType:SRK_PROPERTY_TYPE_MUTABLEDIC];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSURL\"" storageType:SRK_PROPERTY_TYPE_URL];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@\"NSObject\"" storageType:SRK_PROPERTY_TYPE_NSOBJECT];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"@" storageType:SRK_PROPERTY_TYPE_NSOBJECT];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Ti" storageType:SRK_PROPERTY_TYPE_INT];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"TB" storageType:SRK_PROPERTY_TYPE_BOOL];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Tl" storageType:SRK_PROPERTY_TYPE_LONG];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Tf" storageType:SRK_PROPERTY_TYPE_FLOAT];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Tc" storageType:SRK_PROPERTY_TYPE_BOOL];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Ts" storageType:SRK_PROPERTY_TYPE_SHORT];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Tq" storageType:SRK_PROPERTY_TYPE_LONGLONG];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"TC" storageType:SRK_PROPERTY_TYPE_UCHAR];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"TI" storageType:SRK_PROPERTY_TYPE_UINT];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"TS" storageType:SRK_PROPERTY_TYPE_USHORT];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"TL" storageType:SRK_PROPERTY_TYPE_ULONG];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"TQ" storageType:SRK_PROPERTY_TYPE_ULONGLONG];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"Td" storageType:SRK_PROPERTY_TYPE_DOUBLE];
+                    [self updateCache:cachedPropertyList property:propName encoding:typeEncoding matches:@"T*" storageType:SRK_PROPERTY_TYPE_CHARPTR];
+                    
+                    NSString* className = [[[NSString stringWithUTF8String:typeEncoding] stringByReplacingOccurrencesOfString:@"@\"" withString:@""] stringByReplacingOccurrencesOfString:@"\"" withString:@""];
+                    Class testClass = NSClassFromString(className);
+                    if ([testClass isSubclassOfClass:[SRKObject class]]) {
+                        [cachedPropertyList setObject:@(SRK_PROPERTY_TYPE_ENTITYOBJECT) forKey:propName];
+                    }
+                    
+                }
+                
+            } else {
+                // this property is ignored;
+                int i=0;
+            }
+            
+        }
 		
 		free(properties);
 		
