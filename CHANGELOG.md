@@ -1,5 +1,11 @@
 Shark Changelog
 ===============
+##v2.0.6 - July 17, 2016
+Fixed an issue with circular commit chains, SRKObjects can now be arranged with complicated relationships such as A-B-C-B.  But also with A-C as well, causing a quad point relationship within a single commit.
+
+SRKObject’s now implement a class method ‘ignoreProperties’.  Which
+allows developers to choose which properties to ignore.
+
 ##v2.0.5 - June 29, 2016
 Fixed crash when printing an object without an primary key value.  No Null check was made.
 Fixed serious issue, where SRKObject properties were being persisted. Causing query errors.
