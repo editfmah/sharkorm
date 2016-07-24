@@ -1,5 +1,8 @@
 Shark Changelog
 ===============
+##v2.0.7 - July 17, 2016
+Fixed a bug where the cached property types of an SRKObject did not contain a data type for the Id column.
+
 ##v2.0.6 - July 17, 2016
 Fixed an issue with circular commit chains, SRKObjects can now be arranged with complicated relationships such as A-B-C-B.  But also with A-C as well, causing a quad point relationship within a single commit.
 
