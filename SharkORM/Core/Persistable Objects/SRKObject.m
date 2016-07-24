@@ -271,6 +271,11 @@ static int obCount=0;
         
         cachedPropertyList = [NSMutableDictionary new];
         
+        /* because we no longer inspect the superclass since 2.0.5+ and the introduction of inheritance, 
+            we need to set the default PK as NUMBER until it is overwritten if different */
+        
+        [cachedPropertyList setObject:@(SRK_PROPERTY_TYPE_NUMBER) forKey:SRK_DEFAULT_PRIMARY_KEY_NAME];
+        
         Class c = [self class];
         
         /* this class needs to be tested by the data layer to see if it needs to make any changes */
