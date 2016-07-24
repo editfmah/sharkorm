@@ -1,6 +1,6 @@
 Shark Changelog
 ===============
-##v2.0.7 - July 17, 2016
+##v2.0.7 - July 24, 2016
 Fixed a bug where the cached property types of an SRKObject did not contain a data type for the Id column.
 
 ##v2.0.6 - July 17, 2016
