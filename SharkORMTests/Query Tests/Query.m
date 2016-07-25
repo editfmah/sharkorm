@@ -201,4 +201,15 @@
     
 }
 
+- (void)test_where_query_with_object_dot_notation_joins {
+    
+    [self setupCommonData];
+    
+    SRKResultSet *r = [[Person query] where:@"department.name='Test Department'"].fetch;
+    
+    XCTAssert(r,@"Failed to return a result set");
+    XCTAssert(r.count == 3,@"incorrect number of results returned");
+    
+}
+
 @end
