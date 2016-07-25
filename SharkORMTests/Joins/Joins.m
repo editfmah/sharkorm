@@ -138,4 +138,23 @@
     XCTAssert([[p.joinedResults objectForKey:@"Location.locationName"] isEqualToString:@"Alton"],@"join failed, no results returned for second join");
 }
 
+- (void)test_where_query_with_object_dot_notation_joins_and_normal_joins {
+    
+    [self setupData];
+    
+    SRKResultSet *r = [[[[Person query] where:@"department.name='Development' AND location.locationName = 'Alton' "]
+                       joinTo:[Department class] leftParameter:@"Person.department" targetParameter:@"Department.Id"]
+                        joinTo:[Location class] leftParameter:@"Department.location" targetParameter:@"Location.Id"].fetch;
+    
+    XCTAssert(r,@"Failed to return a result set");
+    XCTAssert(r.count == 1,@"incorrect number of results returned");
+    
+    Person* p = r.firstObject;
+    
+    XCTAssert(p, @"failed to retrieve and object when using a single join");
+    XCTAssert([[p.joinedResults objectForKey:@"Department.name"] isEqualToString:@"Development"],@"join failed, no results returned for first join");
+    XCTAssert([[p.joinedResults objectForKey:@"Location.locationName"] isEqualToString:@"Alton"],@"join failed, no results returned for second join");
+}
+
+
 @end

@@ -178,6 +178,34 @@ static NSMutableDictionary* primaryTypes;
     return [systemEntityRelationships copy];
 }
 
++ (NSMutableArray*)entityRelationshipsForClass:(Class)class {
+    
+    NSMutableArray* relationships = [NSMutableArray new];
+    
+    for (SRKRelationship* r in [SharkORM entityRelationships]) {
+        if ([[r.sourceClass description] isEqualToString:[class description]]) {
+            [relationships addObject:r];
+        }
+    }
+    
+    return relationships;
+    
+}
+
++ (SRKRelationship*)entityRelationshipsForProperty:(NSString*)property inClass:(Class)class {
+    
+    NSMutableArray* relationships = [self entityRelationshipsForClass:class];
+    
+    for (SRKRelationship* r in relationships) {
+        if ([r.sourceProperty isEqualToString:property]) {
+            return r;
+        }
+    }
+    
+    return nil;
+    
+}
+
 + (SRKSettings*)getSettings {
     return SharkORMSettings;
 }
@@ -1939,8 +1967,35 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 	}
 	
     /* see if there are any automatic joins made through object dot notation e.g. "department.name = 'Software'", where department is a property of type Department on Person */
-    for (NSString* qFieldName in [tableSchemas objectForKey:tableName]) {
+    for (NSString* qFieldName in ((NSMutableDictionary*)[tableSchemas objectForKey:tableName]).allKeys) {
+        
         // we have the fields, now to check their types as to whether they are related objects
+        Class class = query.classDecl;
+        int propertyType = [class getEntityPropertyType:qFieldName];
+        if (propertyType == SRK_PROPERTY_TYPE_ENTITYOBJECT) {
+            
+            // generate the property name to look for notation
+            NSString* component = [NSString stringWithFormat:@"%@.", qFieldName];
+            
+            // now check the query for signs of object dot notation <property>.<sub property>
+            if ([query.whereClause rangeOfString:component].location != NSNotFound || [query.orderBy rangeOfString:component].location != NSNotFound) {
+                
+                // go and get the relationship->target class for this property
+                SRKRelationship* r = [SharkORM entityRelationshipsForProperty:qFieldName inClass:class];
+                if (r) {
+                    // because the user has referenced an object like "department.name = 'Development' " and not just 'department IN (select ID from Department WHERE name='Development'), we now want to automatically join the table
+                    // but we need to rename the join and re-arrange the query to cope with a mixture of both object.value and traditional joins to the exact same tables.
+                    [fromList addObject:[NSString stringWithFormat:@" LEFT JOIN %@ as query_auto_join_%@ ON %@.%@ = query_auto_join_%@.%@ ", [r.targetClass description], qFieldName, [r.sourceClass description], qFieldName, [r.targetClass description], SRK_DEFAULT_PRIMARY_KEY_NAME]];
+                    
+                    // now we need to swap out all instances of the 'component' with the new named version.
+                    NSString* namedReplacement = [NSString stringWithFormat:@"query_auto_join_%@.",qFieldName];
+                    query.whereClause = [query.whereClause stringByReplacingOccurrencesOfString:component withString:namedReplacement];
+                    query.orderBy = [query.orderBy stringByReplacingOccurrencesOfString:component withString:namedReplacement];
+                }
+                
+            }
+            
+        }
         
     }
 

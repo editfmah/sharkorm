@@ -27,6 +27,8 @@
 -(NSArray*)fetchDistinctForQuery:(SRKQuery*)query field:(NSString*)fieldname;
 -(NSArray*)fetchIDsForQuery:(SRKQuery*)query;
 +(NSMutableArray*)entityRelationships;
++(NSMutableArray*)entityRelationshipsForClass:(Class)class;
++(SRKRelationship*)entityRelationshipsForProperty:(NSString*)property inClass:(Class)class;
 +(NSMutableDictionary*)tableSchemas;
 +(NSArray*)fieldsForTable:(NSString*)table;
 +(SRKSettings*)getSettings;
