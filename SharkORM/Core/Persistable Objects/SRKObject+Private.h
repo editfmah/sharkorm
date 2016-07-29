@@ -63,6 +63,9 @@
 - (BOOL)__removeRaw;
 - (void)reloadRelationships;
 
+/* schema */
++(int)getEntityPropertyType:(NSString*)propertyName;
+
 @end
 
 #endif /* SRKObject_Private_h */

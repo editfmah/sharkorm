@@ -26,6 +26,11 @@
 		E04FFAB81D1C8FB700F7866D /* SRKRawResults.m in Sources */ = {isa = PBXBuildFile; fileRef = E04FFAB61D1C8FB700F7866D /* SRKRawResults.m */; };
 		E04FFAB91D1C8FB700F7866D /* SRKRawResults.m in Sources */ = {isa = PBXBuildFile; fileRef = E04FFAB61D1C8FB700F7866D /* SRKRawResults.m */; };
 		E04FFABA1D1C8FB700F7866D /* SRKRawResults.m in Sources */ = {isa = PBXBuildFile; fileRef = E04FFAB61D1C8FB700F7866D /* SRKRawResults.m */; };
+		E07C4F2E1D451BAA00DB6CAB /* SwiftStringId.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07C4F2D1D451BAA00DB6CAB /* SwiftStringId.swift */; };
+		E07C4F2F1D45F12500DB6CAB /* SRKObjectChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A330F611D25461500483626 /* SRKObjectChain.m */; };
+		E07C4F331D45F71400DB6CAB /* SRKStringObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E07C4F311D45F71400DB6CAB /* SRKStringObject.m */; };
+		E07C4F341D45F71400DB6CAB /* SRKStringObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E07C4F311D45F71400DB6CAB /* SRKStringObject.m */; };
+		E07C4F351D45F71400DB6CAB /* SRKStringObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E07C4F311D45F71400DB6CAB /* SRKStringObject.m */; };
 		E092CB051D00964700C6C8CD /* DBAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = E092CB041D0095A300C6C8CD /* DBAccess.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E092CB081D00DBE800C6C8CD /* Performance.m in Sources */ = {isa = PBXBuildFile; fileRef = E092CB071D00DBE800C6C8CD /* Performance.m */; };
 		E0C450A61D107AA8003FA21D /* SRKEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413631CF632120085166C /* SRKEvent.m */; };
@@ -207,6 +212,8 @@
 		E040B5C11D14970D00FCC830 /* Joins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Joins.h; sourceTree = "<group>"; };
 		E040B5C21D14970D00FCC830 /* Joins.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Joins.m; sourceTree = "<group>"; };
 		E04FFAB61D1C8FB700F7866D /* SRKRawResults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKRawResults.m; sourceTree = "<group>"; };
+		E07C4F2D1D451BAA00DB6CAB /* SwiftStringId.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftStringId.swift; sourceTree = "<group>"; };
+		E07C4F311D45F71400DB6CAB /* SRKStringObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKStringObject.m; sourceTree = "<group>"; };
 		E092CB041D0095A300C6C8CD /* DBAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DBAccess.h; sourceTree = "<group>"; };
 		E092CB061D00DBE800C6C8CD /* Performance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Performance.h; sourceTree = "<group>"; };
 		E092CB071D00DBE800C6C8CD /* Performance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Performance.m; sourceTree = "<group>"; };
@@ -389,6 +396,8 @@
 			children = (
 				E00320391CFA58FF00240C44 /* Department.h */,
 				E003203A1CFA58FF00240C44 /* Department.m */,
+				E0E3ACD31D11B8B5006803F7 /* Location.h */,
+				E0E3ACD41D11B8B5006803F7 /* Location.m */,
 				E003203B1CFA58FF00240C44 /* MostObjectTypes.h */,
 				E003203C1CFA58FF00240C44 /* MostObjectTypes.m */,
 				E003203D1CFA58FF00240C44 /* Person.h */,
@@ -398,10 +407,9 @@
 				E00320411CFA58FF00240C44 /* StringIdRelatedObject.h */,
 				E00320421CFA58FF00240C44 /* StringIdRelatedObject.m */,
 				E00320431CFA58FF00240C44 /* SwiftObjects.swift */,
+				E07C4F2D1D451BAA00DB6CAB /* SwiftStringId.swift */,
 				E00320441CFA58FF00240C44 /* WidePerson.h */,
 				E00320451CFA58FF00240C44 /* WidePerson.m */,
-				E0E3ACD31D11B8B5006803F7 /* Location.h */,
-				E0E3ACD41D11B8B5006803F7 /* Location.m */,
 			);
 			path = "Sample Objects";
 			sourceTree = "<group>";
@@ -604,6 +612,7 @@
 				E04FFAB61D1C8FB700F7866D /* SRKRawResults.m */,
 				3A330F601D25461500483626 /* SRKObjectChain.h */,
 				3A330F611D25461500483626 /* SRKObjectChain.m */,
+				E07C4F311D45F71400DB6CAB /* SRKStringObject.m */,
 			);
 			path = "Persistable Objects";
 			sourceTree = "<group>";
@@ -851,6 +860,7 @@
 				E0C450BB1D107AA8003FA21D /* SRKTransactionGroup.m in Sources */,
 				E0C450B31D107AA8003FA21D /* SRKQuery.m in Sources */,
 				E0C450AA1D107AA8003FA21D /* FTSRegistry.m in Sources */,
+				E07C4F351D45F71400DB6CAB /* SRKStringObject.m in Sources */,
 				E0C450C21D107AA8003FA21D /* SRKUtilities.m in Sources */,
 				E0C450B71D107AA8003FA21D /* SRKRegistryEntry.m in Sources */,
 				E0C450C01D107AA8003FA21D /* SRKSettings.m in Sources */,
@@ -863,6 +873,7 @@
 				E0C450AC1D107AA8003FA21D /* SRKIndexDefinition.m in Sources */,
 				E0C450C31D107ABF003FA21D /* sqlite3.c in Sources */,
 				E0C450A61D107AA8003FA21D /* SRKEvent.m in Sources */,
+				E07C4F2F1D45F12500DB6CAB /* SRKObjectChain.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -871,6 +882,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E0F413E21CF632120085166C /* SRKRelationship.m in Sources */,
+				E07C4F331D45F71400DB6CAB /* SRKStringObject.m in Sources */,
 				E0F413D51CF632120085166C /* SRKRegistryEntry.m in Sources */,
 				E0F413CD1CF632120085166C /* SRKQueryAsyncHandler.m in Sources */,
 				E0F413C71CF632120085166C /* SRKJoinObject.m in Sources */,
@@ -948,6 +960,8 @@
 				E0F413C01CF632120085166C /* SRKResultSet.m in Sources */,
 				E0F413A51CF632120085166C /* SRKEvent.m in Sources */,
 				E0E3ACD81D11BC6A006803F7 /* Multithreaded.m in Sources */,
+				E07C4F2E1D451BAA00DB6CAB /* SwiftStringId.swift in Sources */,
+				E07C4F341D45F71400DB6CAB /* SRKStringObject.m in Sources */,
 				E0F413F31CF632120085166C /* SRKTransactionElement.m in Sources */,
 				E04FFAB91D1C8FB700F7866D /* SRKRawResults.m in Sources */,
 				E00320631CFB8F0B00240C44 /* Persistence.m in Sources */,

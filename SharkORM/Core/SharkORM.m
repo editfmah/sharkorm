@@ -178,6 +178,34 @@ static NSMutableDictionary* primaryTypes;
     return [systemEntityRelationships copy];
 }
 
++ (NSMutableArray*)entityRelationshipsForClass:(Class)class {
+    
+    NSMutableArray* relationships = [NSMutableArray new];
+    
+    for (SRKRelationship* r in [SharkORM entityRelationships]) {
+        if ([[r.sourceClass description] isEqualToString:[class description]]) {
+            [relationships addObject:r];
+        }
+    }
+    
+    return relationships;
+    
+}
+
++ (SRKRelationship*)entityRelationshipsForProperty:(NSString*)property inClass:(Class)class {
+    
+    NSMutableArray* relationships = [self entityRelationshipsForClass:class];
+    
+    for (SRKRelationship* r in relationships) {
+        if ([r.sourceProperty isEqualToString:property]) {
+            return r;
+        }
+    }
+    
+    return nil;
+    
+}
+
 + (SRKSettings*)getSettings {
     return SharkORMSettings;
 }
@@ -1881,10 +1909,13 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 		}
 	}
 	
-	NSString*   getFieldList = @"";
-	NSString*   fromList = [query.classDecl description];
+    NSMutableArray*   getFieldList = [NSMutableArray new];
+    NSMutableArray*   fromList = [NSMutableArray new];
 	NSString*   tableName = [query.classDecl description];
 	
+    // always add in the originating class
+    [fromList addObject:[query.classDecl description]];
+    
 	switch (query.queryType) {
 			
 	  case SRK_QUERY_TYPE_FETCH:
@@ -1893,66 +1924,91 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 				
 				if (query.lightweightObject && !query.prefetch) {
 					
-					getFieldList = [getFieldList stringByAppendingFormat:SRK_FIELD_NAME_FORMAT, tableName, SRK_DEFAULT_PRIMARY_KEY_NAME, SRK_DEFAULT_PRIMARY_KEY_NAME];
+                    [getFieldList addObject:[NSString stringWithFormat:SRK_FIELD_NAME_FORMAT, tableName, SRK_DEFAULT_PRIMARY_KEY_NAME, SRK_DEFAULT_PRIMARY_KEY_NAME]];
 					
 				} else if (query.lightweightObject && query.prefetch) {
 					
-					for (NSString* qFieldName in [query.prefetch arrayByAddingObject:SRK_DEFAULT_PRIMARY_KEY_NAME]) {
-						
-						if (getFieldList.length > 0) {
-							getFieldList = [getFieldList stringByAppendingString:@", "];
-						}
-						
-						getFieldList = [getFieldList stringByAppendingFormat:SRK_FIELD_NAME_FORMAT, tableName, qFieldName, qFieldName];
+                    [getFieldList addObject:[NSString stringWithFormat:SRK_FIELD_NAME_FORMAT, tableName, SRK_DEFAULT_PRIMARY_KEY_NAME, SRK_DEFAULT_PRIMARY_KEY_NAME]];
+                    
+					for (NSString* qFieldName in query.prefetch) {
+
+                        [getFieldList addObject:[NSString stringWithFormat:SRK_FIELD_NAME_FORMAT, tableName, qFieldName, qFieldName]];
+
 					}
 					
 				}
 				
 				else {
 					
-					for (NSString* qFieldName in [tableSchemas objectForKey:tableName]) {
-						if (getFieldList.length > 0) {
-                            // TODO:  This line is 4.2% of the query time of the sequential insert and random read test.
-							getFieldList = [getFieldList stringByAppendingString:@", "];
-						}
-						
-                        // TODO:  This line is 31.7% of the query time of the sequential insert and random read test.
-						getFieldList = [getFieldList stringByAppendingFormat:SRK_FIELD_NAME_FORMAT, tableName, qFieldName, qFieldName];
+					for (NSString* qFieldName in ((NSMutableDictionary*)[tableSchemas objectForKey:tableName]).allKeys) {
+						[getFieldList addObject:[NSString stringWithFormat:SRK_FIELD_NAME_FORMAT, tableName, qFieldName, qFieldName]];
 					}
 					
 				}
 				break;
 			
 		case SRK_QUERY_TYPE_COUNT:
-			getFieldList = @" COUNT(*) ";
+			[getFieldList addObject:@" COUNT(*) "];
 			break;
 			
 		case SRK_QUERY_TYPE_SUM:
-			getFieldList = [NSString stringWithFormat:@" SUM(%@) ", query.sumFieldName];
+			[getFieldList addObject: [NSString stringWithFormat:@" SUM(%@) ", query.sumFieldName]];
 			break;
 			
 		case SRK_QUERY_TYPE_DISTINCT:
-			getFieldList = [NSString stringWithFormat:@" DISTINCT %@ ", query.distinctFieldName];
+			[getFieldList addObject: [NSString stringWithFormat:@" DISTINCT %@ ", query.distinctFieldName]];
 			break;
 			
 		case SRK_QUERY_TYPE_IDS:
-			getFieldList = @" Id ";
+			[getFieldList addObject: @" Id "];
 			
 		default:
 			break;
 	}
 	
+    /* see if there are any automatic joins made through object dot notation e.g. "department.name = 'Software'", where department is a property of type Department on Person */
+    for (NSString* qFieldName in ((NSMutableDictionary*)[tableSchemas objectForKey:tableName]).allKeys) {
+        
+        // we have the fields, now to check their types as to whether they are related objects
+        Class class = query.classDecl;
+        int propertyType = [class getEntityPropertyType:qFieldName];
+        if (propertyType == SRK_PROPERTY_TYPE_ENTITYOBJECT) {
+            
+            // generate the property name to look for notation
+            NSString* component = [NSString stringWithFormat:@"%@.", qFieldName];
+            
+            // now check the query for signs of object dot notation <property>.<sub property>
+            if ([query.whereClause rangeOfString:component].location != NSNotFound || [query.orderBy rangeOfString:component].location != NSNotFound) {
+                
+                // go and get the relationship->target class for this property
+                SRKRelationship* r = [SharkORM entityRelationshipsForProperty:qFieldName inClass:class];
+                if (r) {
+                    // because the user has referenced an object like "department.name = 'Development' " and not just 'department IN (select ID from Department WHERE name='Development'), we now want to automatically join the table
+                    // but we need to rename the join and re-arrange the query to cope with a mixture of both object.value and traditional joins to the exact same tables.
+                    [fromList addObject:[NSString stringWithFormat:@" LEFT JOIN %@ as query_auto_join_%@ ON %@.%@ = query_auto_join_%@.%@ ", [r.targetClass description], qFieldName, [r.sourceClass description], qFieldName, [r.targetClass description], SRK_DEFAULT_PRIMARY_KEY_NAME]];
+                    
+                    // now we need to swap out all instances of the 'component' with the new named version.
+                    NSString* namedReplacement = [NSString stringWithFormat:@"query_auto_join_%@.",qFieldName];
+                    query.whereClause = [query.whereClause stringByReplacingOccurrencesOfString:component withString:namedReplacement];
+                    query.orderBy = [query.orderBy stringByReplacingOccurrencesOfString:component withString:namedReplacement];
+                }
+                
+            }
+            
+        }
+        
+    }
 
 	/* now see if there is a join condition */
 	if (query.joins.count) {
 		
 		for (SRKJoinObject* join in query.joins) {
-			fromList = [fromList stringByAppendingFormat:@" LEFT JOIN %@ ON %@ ", [join.joinOn description], join.joinWhere];
-			
+            [fromList addObject:[NSString stringWithFormat:@" LEFT JOIN %@ ON %@ ", [join.joinOn description], join.joinWhere]];
+
 			/* now build up the additional selects for the joined data */
 			
 			for (NSString* qFieldName in [tableSchemas objectForKey:[join.joinOn description]]) {
-				getFieldList = [getFieldList stringByAppendingFormat:SRK_JOINED_FIELD_NAME_FORMAT, [join.joinOn description], qFieldName, [join.joinOn description],qFieldName];
+                [getFieldList addObject:[NSString stringWithFormat:SRK_JOINED_FIELD_NAME_FORMAT, [join.joinOn description], qFieldName, [join.joinOn description],qFieldName]];
 			}
 		}
 		
@@ -1961,7 +2017,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 	NSMutableArray* resultsSet = nil;
 	
 	NSString* sql = @"";
-	sql = [NSString stringWithFormat:@"SELECT %@ FROM %@ WHERE %@ ORDER BY %@ LIMIT %i OFFSET %i",getFieldList, fromList, query.whereClause, query.orderBy, query.limitOf, query.offsetFrom];
+	sql = [NSString stringWithFormat:@"SELECT %@ FROM %@ WHERE %@ ORDER BY %@ LIMIT %i OFFSET %i",[getFieldList componentsJoinedByString:@", "], [fromList componentsJoinedByString:@" "], query.whereClause, query.orderBy, query.limitOf, query.offsetFrom];
 	
 	/* optimise the query by removing the global default query options */
 	NSString* defaultWhere = [NSString stringWithFormat:@"WHERE %@", SRK_DEFAULT_CONDITION];
