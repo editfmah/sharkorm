@@ -33,6 +33,10 @@
 		E07C4F351D45F71400DB6CAB /* SRKStringObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E07C4F311D45F71400DB6CAB /* SRKStringObject.m */; };
 		E092CB051D00964700C6C8CD /* DBAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = E092CB041D0095A300C6C8CD /* DBAccess.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E092CB081D00DBE800C6C8CD /* Performance.m in Sources */ = {isa = PBXBuildFile; fileRef = E092CB071D00DBE800C6C8CD /* Performance.m */; };
+		E09B720D1D4F530A00B68A80 /* SRKAES256Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E09B720B1D4F530A00B68A80 /* SRKAES256Extension.h */; };
+		E09B720E1D4F530A00B68A80 /* SRKAES256Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E09B720C1D4F530A00B68A80 /* SRKAES256Extension.m */; };
+		E09B720F1D4F531000B68A80 /* SRKAES256Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E09B720C1D4F530A00B68A80 /* SRKAES256Extension.m */; };
+		E09B72101D4F531300B68A80 /* SRKAES256Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E09B720C1D4F530A00B68A80 /* SRKAES256Extension.m */; };
 		E0C450A61D107AA8003FA21D /* SRKEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413631CF632120085166C /* SRKEvent.m */; };
 		E0C450A71D107AA8003FA21D /* SRKEventBlockHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413651CF632120085166C /* SRKEventBlockHolder.m */; };
 		E0C450A81D107AA8003FA21D /* SRKEventHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413671CF632120085166C /* SRKEventHandler.m */; };
@@ -217,6 +221,8 @@
 		E092CB041D0095A300C6C8CD /* DBAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DBAccess.h; sourceTree = "<group>"; };
 		E092CB061D00DBE800C6C8CD /* Performance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Performance.h; sourceTree = "<group>"; };
 		E092CB071D00DBE800C6C8CD /* Performance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Performance.m; sourceTree = "<group>"; };
+		E09B720B1D4F530A00B68A80 /* SRKAES256Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKAES256Extension.h; sourceTree = "<group>"; };
+		E09B720C1D4F530A00B68A80 /* SRKAES256Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKAES256Extension.m; sourceTree = "<group>"; };
 		E0C450C41D10865A003FA21D /* Query.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Query.h; sourceTree = "<group>"; };
 		E0C450C51D10865A003FA21D /* Query.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Query.m; sourceTree = "<group>"; };
 		E0DFA4271D107A1800DFDB6F /* TestTargetApplication.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestTargetApplication.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -601,6 +607,8 @@
 		E0F413731CF632120085166C /* Persistable Objects */ = {
 			isa = PBXGroup;
 			children = (
+				E09B720B1D4F530A00B68A80 /* SRKAES256Extension.h */,
+				E09B720C1D4F530A00B68A80 /* SRKAES256Extension.m */,
 				E0F413741CF632120085166C /* SRKEncryptedObject.h */,
 				E0F413751CF632120085166C /* SRKEncryptedObject.m */,
 				E0F413761CF632120085166C /* SRKObject+Private.h */,
@@ -691,6 +699,7 @@
 				E0F413AF1CF632120085166C /* FTSRegistry.h in Headers */,
 				E0F413BE1CF632120085166C /* SRKResultSet+Private.h in Headers */,
 				E0F413E61CF632120085166C /* SRKSQLiteHandle.h in Headers */,
+				E09B720D1D4F530A00B68A80 /* SRKAES256Extension.h in Headers */,
 				E0F413C61CF632120085166C /* SRKJoinObject.h in Headers */,
 				E0F413FA1CF632120085166C /* sqlite3ext.h in Headers */,
 				E0F413EC1CF632120085166C /* SRKContext.h in Headers */,
@@ -856,6 +865,7 @@
 				E0C450AD1D107AA8003FA21D /* SRKEncryptedObject.m in Sources */,
 				E0DFA42E1D107A1800DFDB6F /* AppDelegate.m in Sources */,
 				E0C450B51D107AA8003FA21D /* SRKQueryProfile.m in Sources */,
+				E09B72101D4F531300B68A80 /* SRKAES256Extension.m in Sources */,
 				E0DFA42B1D107A1800DFDB6F /* main.m in Sources */,
 				E0C450BB1D107AA8003FA21D /* SRKTransactionGroup.m in Sources */,
 				E0C450B31D107AA8003FA21D /* SRKQuery.m in Sources */,
@@ -897,6 +907,7 @@
 				E0F413E71CF632120085166C /* SRKSQLiteHandle.m in Sources */,
 				E0F413BF1CF632120085166C /* SRKResultSet.m in Sources */,
 				E0F413CA1CF632120085166C /* SRKQuery.m in Sources */,
+				E09B720E1D4F530A00B68A80 /* SRKAES256Extension.m in Sources */,
 				E0F413B31CF632120085166C /* SRKFuzzyStore.m in Sources */,
 				E0F413B91CF632120085166C /* SRKEncryptedObject.m in Sources */,
 				E0F413D21CF632120085166C /* SRKRegistry.m in Sources */,
@@ -963,6 +974,7 @@
 				E07C4F2E1D451BAA00DB6CAB /* SwiftStringId.swift in Sources */,
 				E07C4F341D45F71400DB6CAB /* SRKStringObject.m in Sources */,
 				E0F413F31CF632120085166C /* SRKTransactionElement.m in Sources */,
+				E09B720F1D4F531000B68A80 /* SRKAES256Extension.m in Sources */,
 				E04FFAB91D1C8FB700F7866D /* SRKRawResults.m in Sources */,
 				E00320631CFB8F0B00240C44 /* Persistence.m in Sources */,
 				E003204C1CFA58FF00240C44 /* SwiftObjects.swift in Sources */,
