@@ -384,7 +384,7 @@ static int obCount=0;
         }
 		
 		free(properties);
-		
+        [cachedPropertyList setObject:@(SRK_PROPERTY_TYPE_STRING) forKey:SRK_DEFAULT_PRIMARY_KEY_NAME];
 		[cachedPropertyListForAllClasses setObject:cachedPropertyList forKey:[[self class] description]];
 		
 	}
