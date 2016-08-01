@@ -12,10 +12,7 @@
 
 + (NSString*)generateGUID {
 	
-	CFUUIDRef theUUID = CFUUIDCreate(NULL);
-	CFStringRef string = CFUUIDCreateString(NULL, theUUID);
-	CFRelease(theUUID);
-	return (NSString *)objc_retainedObject(string);
+	return [[NSUUID UUID] UUIDString];
 	
 }
 

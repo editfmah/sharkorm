@@ -273,8 +273,9 @@ static int obCount=0;
         
         /* because we no longer inspect the superclass since 2.0.5+ and the introduction of inheritance, 
             we need to set the default PK as NUMBER until it is overwritten if different */
-        
-        [cachedPropertyList setObject:@(SRK_PROPERTY_TYPE_NUMBER) forKey:SRK_DEFAULT_PRIMARY_KEY_NAME];
+        objc_property_t primaryKeyProperty = class_getProperty([self class], SRK_DEFAULT_PRIMARY_KEY_NAME.UTF8String);
+        NSString* primaryKeyPropertyDeclarationType = [NSString stringWithUTF8String:property_getAttributes(primaryKeyProperty)];
+        [cachedPropertyList setObject:@([primaryKeyPropertyDeclarationType rangeOfString:@"NSString"].location == NSNotFound ?   SRK_PROPERTY_TYPE_NUMBER : SRK_PROPERTY_TYPE_STRING) forKey:SRK_DEFAULT_PRIMARY_KEY_NAME];
         
         Class c = [self class];
         
@@ -282,7 +283,8 @@ static int obCount=0;
         unsigned int outCount;
         objc_property_t *properties = class_copyPropertyList(c, &outCount);
         
-        NSArray* ignoredProperties = [[self class] ignoredProperties];
+        NSMutableArray* ignoredProperties = [NSMutableArray arrayWithArray:[[self class] ignoredProperties]];
+        [ignoredProperties addObject:SRK_DEFAULT_PRIMARY_KEY_NAME];
         
         for (int i = 0; i < outCount; i++) {
             
@@ -1315,7 +1317,7 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
     entitiesThatNeedRefactoring = nil;
 }
 
-+ (void)inspectClass:(Class)class accumulateDefinitions:(NSMutableDictionary*)classDef accumulateRelationships:(NSMutableArray*)relationships {
++ (void)inspectClass:(Class)class accumulateDefinitions:(NSMutableDictionary*)classDef accumulateRelationships:(NSMutableArray*)relationships accumulateProperties:(NSMutableDictionary*)combinedProperties {
     
     /* this class needs to be tested by the data layer to see if it needs to make any changes */
     unsigned int outCount;
@@ -1387,9 +1389,8 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
                 
             }
             
-            if (![name isEqualToString:SRK_DEFAULT_PRIMARY_KEY_NAME]) {
-                [classDef setObject:dataType forKey:name];
-            }
+            [combinedProperties setObject:@(propertyType) forKey:name];
+            [classDef setObject:dataType forKey:name];
             
         }
         
@@ -1432,7 +1433,7 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
     /* call open to ensure there is a database opened for the storage database of this class */
     [SharkORM openDatabaseNamed:[SharkORM databaseNameForClass:[self class]]];
     
-    if (![strClassName isEqualToString:@"SRKObject"]) {
+    if (![strClassName isEqualToString:@"SRKObject"] && ![strClassName isEqualToString:@"SRKPublicObject"] && ![strClassName isEqualToString:@"SRKPrivateObject"]) {
         
         if ([refactoredEntities objectForKey:strClassName] == nil) {
             
@@ -1449,6 +1450,11 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
             }
             
             /* build an array of classes that we need to introspect */
+            
+            NSMutableDictionary* classDef = [NSMutableDictionary new];
+            NSMutableDictionary* combinedProperties = [NSMutableDictionary new];
+            NSMutableArray* relationships = [NSMutableArray new];
+            
             NSMutableArray* classes = [NSMutableArray new];
             [classes addObject:c];
             Class startClass = [self class];
@@ -1460,11 +1466,18 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
                 }
             }
             
-            NSMutableDictionary* classDef = [NSMutableDictionary new];
-            NSMutableArray* relationships = [NSMutableArray new];
-            
             for (Class class in classes) {
-               [self inspectClass:class accumulateDefinitions:classDef accumulateRelationships:relationships];
+               [self inspectClass:class accumulateDefinitions:classDef accumulateRelationships:relationships accumulateProperties:combinedProperties];
+            }
+            
+            /* if this class is a subclass/inherits, then merge back the properties */
+            if (classes.count > 1) {
+                NSMutableDictionary* cachedProperties = [cachedPropertyListForAllClasses objectForKey:strClassName];
+                for (NSString* key in combinedProperties.allKeys) {
+                    if (![cachedProperties objectForKey:key]) {
+                        [cachedProperties setObject:[combinedProperties objectForKey:key] forKey:key];
+                    }
+                }
             }
             
             /* hookup all the getters and setters for this class and point them at the statics */

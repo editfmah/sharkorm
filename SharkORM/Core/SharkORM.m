@@ -1631,6 +1631,17 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                         }
                     }
                     
+                } else {
+                    // an error occoured
+                    /* error in prepare statement */
+                    if (delegate && [delegate respondsToSelector:@selector(databaseError:)]) {
+                        
+                        SRKError* e = [SRKError new];
+                        e.sqlQuery = sql;
+                        e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg(databaseHandle)];
+                        [delegate databaseError:e];
+                        
+                    }
                 }
                 
                 sqlite3_finalize(statement);
