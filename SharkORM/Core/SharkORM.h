@@ -313,9 +313,9 @@ typedef void(^SRKEventRegistrationBlock)(SRKEvent* event);
 /**
  * Removes all objects contained within the array from the database.  This is done within a single transaction to optimize performance.
  *
- * @return void
+ * @return BOOL, true if operation was successful.
  */
-- (void)removeAll;
+- (BOOL)removeAll;
 
 @end
 
