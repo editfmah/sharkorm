@@ -1745,6 +1745,58 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     
 }
 
+-(void)replaceUUIDPrimaryKey:(SRKObject *)entity withNewUUIDKey:(NSString*)newPrimaryKey {
+    
+    __block BOOL    succeded = NO;
+    NSString* databaseNameForClass = [SharkORM databaseNameForClass:entity.class];
+    NSString* entityName = [entity.class description];
+    
+    @synchronized(SRK_LOCK_WRITE) {
+        
+        sqlite3_stmt* statement;
+        
+        NSString* sql = [NSString stringWithFormat:@"UPDATE %@ SET %@ = ? WHERE %@ = ?;", entityName, SRK_DEFAULT_PRIMARY_KEY_NAME , SRK_DEFAULT_PRIMARY_KEY_NAME];
+        
+        if (sqlite3_prepare_v2([SharkORM handleForDatabase:databaseNameForClass], [sql UTF8String], -1, &statement, nil) == SQLITE_OK) {
+            
+            [[SRKUtilities new] bindParameters:@[newPrimaryKey,entity.Id] toStatement:statement];
+            
+            int result = sqlite3_step(statement);
+            
+            if (result == SQLITE_DONE) {
+                succeded = YES;
+            } else {
+                /* error in prepare statement */
+                if (delegate && [delegate respondsToSelector:@selector(databaseError:)]) {
+                    
+                    SRKError* e = [SRKError new];
+                    e.sqlQuery = sql;
+                    e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg([SharkORM handleForDatabase:databaseNameForClass])];
+                    [delegate databaseError:e];
+                    
+                }
+            }
+        }
+        
+        sqlite3_finalize(statement);
+        
+    };
+    
+    if (succeded) {
+        
+        // update the entity with the new primary key
+        [entity setId:(id)newPrimaryKey];
+        
+        /* check to see if this object is a fts object and clear the existing row */
+        if ([[entity class] FTSParametersForEntity]) {
+            [SharkORM executeSQL:[NSString stringWithFormat:@"DELETE FROM fts_%@ WHERE docid = %@", [[entity class] description], entity.Id] inDatabase:nil];
+        }
+    }
+    
+    return;
+    
+}
+
 +(void)refreshObject:(SRKObject *)entity {
     
     SRKObject* entNew = [[entity.class alloc] initWithPrimaryKeyValue:[entity Id]];

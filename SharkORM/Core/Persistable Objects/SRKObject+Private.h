@@ -44,6 +44,7 @@
 - (NSArray*)fieldNames;
 - (NSArray*)modifiedFieldNames;
 - (NSDictionary*)entityDictionary;
+- (NSMutableDictionary*)entityContentsAsObjects;
 - (void)rawSetManagedObjectDomain:(NSString *)domain;
 - (NSString*)managedObjectDomain;
 - (void)setManagedObjectDomain:(NSString *)domain;

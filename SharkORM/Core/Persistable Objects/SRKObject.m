@@ -1047,7 +1047,12 @@ static void setPropertyEntityIMP(SRKObject* self, SEL _cmd, id aValue) {
 						/* if the new entity exists in the table then update the id column */
 						if (((SRKObject*)argument).exists) {
 							[self setFieldRaw:[NSString stringWithFormat:@"%@", propertyName] value:((SRKObject*)argument).Id];
-						}
+                        } else {
+                            /* stil flag this object as dirty so we know it has actualy changed, regardless of not having a PK yet */
+                            @synchronized (self.dirtyFields) {
+                                [self.dirtyFields setObject:@(1) forKey:propertyName];
+                            }
+                        }
 						
 					} else if ([argument isKindOfClass:[SRKLazyLoader class]]) {
 						
@@ -1955,6 +1960,16 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 	
 }
 
+- (NSMutableDictionary*)entityContentsAsObjects {
+    NSMutableDictionary* contents = [NSMutableDictionary dictionaryWithDictionary:[self entityDictionary]];
+    @synchronized (self.embeddedEntities) {
+        for (NSString* property in self.embeddedEntities.allKeys) {
+            [contents setObject:[self.embeddedEntities objectForKey:property] forKey:property];
+        }
+    }
+    return contents;
+}
+
 
 /*  linked properties need to be intercepted */
 /*
@@ -2326,7 +2341,6 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 				if ([[r.sourceClass description] isEqualToString:[self.class description]] && r.relationshipType == SRK_RELATE_ONETOONE) {
 					
 					/* this is a link field that needs to be updated */
-					
 					NSObject* e = [self.embeddedEntities objectForKey:r.entityPropertyName];
 					if(e && [e isKindOfClass:[SRKObject class]]) {
 						[self setField:[NSString stringWithFormat:@"%@",r.entityPropertyName] value:((SRKObject*)e).Id];
