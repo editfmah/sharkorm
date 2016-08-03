@@ -3,7 +3,7 @@ Shark ORM
 
 Shark allows you to create a model layer in your iOS, macOS or tvOS app naturally, using simple and clean syntax.  Shark does as much of the heavy lifting for you, so you don't have to put unnecessary effort into dealing with your data objects.
 
-Regularly updated with over 12k downloads over the past 4 years and in constant use within many public applications, thriving on feedback and input from other developers.
+Regularly updated with over 12k downloads (as DBAccess) over the past 4 years and in constant use within many public applications, thriving on feedback and input from other developers.
 
 Its mantra is simple, to be fast, simple and the first choice for any developer.
 
