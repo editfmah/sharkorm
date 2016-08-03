@@ -1,6 +1,6 @@
 Shark Changelog
 ===============
-##v2.0.8 - Aug 04, 2016
+##v2.0.8 - Aug 03, 2016
 ####Added Object dot notation support to query syntax
 
 Developers can now access the properties of related objects from within the *where* clause of a query, such as the following.  If we take the example of a Person class which is related to the Department class via the `department` property.
