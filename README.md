@@ -401,6 +401,17 @@ var results = Person.query()
 					.fetch()
 ```
 
+As of v2.0.8 you can now use object dot notation to query related objects via the property path.  If we take the example of a Person class which is related to the Department class via the `department` property.
+`Objective-C`
+```objective-c
+[[[Person query] where:@"department.name = 'Test Department'"] fetch]
+```
+`Swift`
+```swift
+Person.query().whereWithFormat("department.name = %@", withParameters: ["Test Department"]).fetch()
+```
+Where `name` is within a related object, SharkORM will now automatically re-arrange the query and join the two tables on that relationship and therefore validate that condition.
+
 ###Supported parameters to `SRKQuery`
 Shark supports the following optional parameters to a query:
 
