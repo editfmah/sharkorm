@@ -178,6 +178,34 @@ static NSMutableDictionary* primaryTypes;
     return [systemEntityRelationships copy];
 }
 
++ (NSMutableArray*)entityRelationshipsForClass:(Class)class {
+    
+    NSMutableArray* relationships = [NSMutableArray new];
+    
+    for (SRKRelationship* r in [SharkORM entityRelationships]) {
+        if ([[r.sourceClass description] isEqualToString:[class description]]) {
+            [relationships addObject:r];
+        }
+    }
+    
+    return relationships;
+    
+}
+
++ (SRKRelationship*)entityRelationshipsForProperty:(NSString*)property inClass:(Class)class {
+    
+    NSMutableArray* relationships = [self entityRelationshipsForClass:class];
+    
+    for (SRKRelationship* r in relationships) {
+        if ([r.sourceProperty isEqualToString:property]) {
+            return r;
+        }
+    }
+    
+    return nil;
+    
+}
+
 + (SRKSettings*)getSettings {
     return SharkORMSettings;
 }
@@ -196,6 +224,17 @@ static NSMutableDictionary* primaryTypes;
     if(!SharkORMSettings) {
         SharkORMSettings = [SRKSettings new];
     }
+    
+}
+
++(sqlite3 *)defaultHandleForDatabase {
+    
+    if (databaseHandleIndex.allKeys.count) {
+        NSNumber* n = [databaseHandleIndex objectForKey:[databaseHandleIndex.allKeys objectAtIndex:0]];
+        sqlite3* handle = handles[n.intValue];
+        return handle;
+    }
+    return nil;
     
 }
 
@@ -1139,6 +1178,66 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     }
 }
 
++ (SRKRawResults *)rawQuery:(NSString *)sql {
+    
+    SRKRawResults* returnValue = [SRKRawResults new];
+    returnValue.rawResults = [NSMutableArray new];
+    
+    sqlite3_stmt* statement;
+    sqlite3* dbHandle = [SharkORM defaultHandleForDatabase];
+    
+    int prepareResult = sqlite3_prepare_v2(dbHandle, [sql UTF8String], (int)sql.length, &statement, NULL);
+    if (prepareResult == SQLITE_OK) {
+        
+        int status = sqlite3_step(statement);
+        
+        while (status == SQLITE_ROW) {
+            
+            @autoreleasepool {
+                
+                NSMutableDictionary* record = [[NSMutableDictionary alloc] init];
+                
+                /* loop thorugh the record */
+                for (int p=0; p<sqlite3_column_count(statement); p++) {
+                    
+                    NSString* columnName = [NSString stringWithUTF8String:sqlite3_column_name(statement, p)];
+                    SRKUtilities* dba = [SRKUtilities new];
+                    columnName = [dba normalizedColumnName:columnName];
+                    NSObject* value = [[SRKUtilities new] sqlite3_column_objc:statement column:p];
+                    [record setObject:value forKey:columnName];
+                    
+                }
+                
+                [returnValue.rawResults addObject:record];
+                
+                
+            }
+            
+            status = sqlite3_step(statement);
+            
+        }
+        
+    } else {
+        
+        SRKError* e = [SRKError new];
+        e.sqlQuery = sql;
+        e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg(dbHandle)];
+        
+        /* error in prepare statement */
+        if (delegate && [delegate respondsToSelector:@selector(databaseError:)]) {
+            [delegate databaseError:e];
+        }
+        
+        returnValue.error = e;
+        
+    }
+    
+    sqlite3_finalize(statement);
+    
+    return returnValue;
+    
+}
+
 #pragma mark - user object functions
 
 
@@ -1197,11 +1296,11 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                 placeholders = [placeholders stringByAppendingString:@"?"];
                 
             }
-                
+            
             NSString* sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ (%@) VALUES (%@);", className , fieldNames, placeholders];
             
             NSMutableArray* params = [NSMutableArray new];
-                    
+            
             for (NSString* key in keys) {
                 
                 NSObject* value = [entity getField:key];
@@ -1532,6 +1631,17 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                         }
                     }
                     
+                } else {
+                    // an error occoured
+                    /* error in prepare statement */
+                    if (delegate && [delegate respondsToSelector:@selector(databaseError:)]) {
+                        
+                        SRKError* e = [SRKError new];
+                        e.sqlQuery = sql;
+                        e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg(databaseHandle)];
+                        [delegate databaseError:e];
+                        
+                    }
                 }
                 
                 sqlite3_finalize(statement);
@@ -1632,6 +1742,58 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
         return succeded;
         
     }
+    
+}
+
+-(void)replaceUUIDPrimaryKey:(SRKObject *)entity withNewUUIDKey:(NSString*)newPrimaryKey {
+    
+    __block BOOL    succeded = NO;
+    NSString* databaseNameForClass = [SharkORM databaseNameForClass:entity.class];
+    NSString* entityName = [entity.class description];
+    
+    @synchronized(SRK_LOCK_WRITE) {
+        
+        sqlite3_stmt* statement;
+        
+        NSString* sql = [NSString stringWithFormat:@"UPDATE %@ SET %@ = ? WHERE %@ = ?;", entityName, SRK_DEFAULT_PRIMARY_KEY_NAME , SRK_DEFAULT_PRIMARY_KEY_NAME];
+        
+        if (sqlite3_prepare_v2([SharkORM handleForDatabase:databaseNameForClass], [sql UTF8String], -1, &statement, nil) == SQLITE_OK) {
+            
+            [[SRKUtilities new] bindParameters:@[newPrimaryKey,entity.Id] toStatement:statement];
+            
+            int result = sqlite3_step(statement);
+            
+            if (result == SQLITE_DONE) {
+                succeded = YES;
+            } else {
+                /* error in prepare statement */
+                if (delegate && [delegate respondsToSelector:@selector(databaseError:)]) {
+                    
+                    SRKError* e = [SRKError new];
+                    e.sqlQuery = sql;
+                    e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg([SharkORM handleForDatabase:databaseNameForClass])];
+                    [delegate databaseError:e];
+                    
+                }
+            }
+        }
+        
+        sqlite3_finalize(statement);
+        
+    };
+    
+    if (succeded) {
+        
+        // update the entity with the new primary key
+        [entity setId:(id)newPrimaryKey];
+        
+        /* check to see if this object is a fts object and clear the existing row */
+        if ([[entity class] FTSParametersForEntity]) {
+            [SharkORM executeSQL:[NSString stringWithFormat:@"DELETE FROM fts_%@ WHERE docid = %@", [[entity class] description], entity.Id] inDatabase:nil];
+        }
+    }
+    
+    return;
     
 }
 
@@ -1810,10 +1972,13 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 		}
 	}
 	
-	NSString*   getFieldList = @"";
-	NSString*   fromList = [query.classDecl description];
+    NSMutableArray*   getFieldList = [NSMutableArray new];
+    NSMutableArray*   fromList = [NSMutableArray new];
 	NSString*   tableName = [query.classDecl description];
 	
+    // always add in the originating class
+    [fromList addObject:[query.classDecl description]];
+    
 	switch (query.queryType) {
 			
 	  case SRK_QUERY_TYPE_FETCH:
@@ -1822,66 +1987,91 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 				
 				if (query.lightweightObject && !query.prefetch) {
 					
-					getFieldList = [getFieldList stringByAppendingFormat:SRK_FIELD_NAME_FORMAT, tableName, SRK_DEFAULT_PRIMARY_KEY_NAME, SRK_DEFAULT_PRIMARY_KEY_NAME];
+                    [getFieldList addObject:[NSString stringWithFormat:SRK_FIELD_NAME_FORMAT, tableName, SRK_DEFAULT_PRIMARY_KEY_NAME, SRK_DEFAULT_PRIMARY_KEY_NAME]];
 					
 				} else if (query.lightweightObject && query.prefetch) {
 					
-					for (NSString* qFieldName in [query.prefetch arrayByAddingObject:SRK_DEFAULT_PRIMARY_KEY_NAME]) {
-						
-						if (getFieldList.length > 0) {
-							getFieldList = [getFieldList stringByAppendingString:@", "];
-						}
-						
-						getFieldList = [getFieldList stringByAppendingFormat:SRK_FIELD_NAME_FORMAT, tableName, qFieldName, qFieldName];
+                    [getFieldList addObject:[NSString stringWithFormat:SRK_FIELD_NAME_FORMAT, tableName, SRK_DEFAULT_PRIMARY_KEY_NAME, SRK_DEFAULT_PRIMARY_KEY_NAME]];
+                    
+					for (NSString* qFieldName in query.prefetch) {
+
+                        [getFieldList addObject:[NSString stringWithFormat:SRK_FIELD_NAME_FORMAT, tableName, qFieldName, qFieldName]];
+
 					}
 					
 				}
 				
 				else {
 					
-					for (NSString* qFieldName in [tableSchemas objectForKey:tableName]) {
-						if (getFieldList.length > 0) {
-                            // TODO:  This line is 4.2% of the query time of the sequential insert and random read test.
-							getFieldList = [getFieldList stringByAppendingString:@", "];
-						}
-						
-                        // TODO:  This line is 31.7% of the query time of the sequential insert and random read test.
-						getFieldList = [getFieldList stringByAppendingFormat:SRK_FIELD_NAME_FORMAT, tableName, qFieldName, qFieldName];
+					for (NSString* qFieldName in ((NSMutableDictionary*)[tableSchemas objectForKey:tableName]).allKeys) {
+						[getFieldList addObject:[NSString stringWithFormat:SRK_FIELD_NAME_FORMAT, tableName, qFieldName, qFieldName]];
 					}
 					
 				}
 				break;
 			
 		case SRK_QUERY_TYPE_COUNT:
-			getFieldList = @" COUNT(*) ";
+			[getFieldList addObject:@" COUNT(*) "];
 			break;
 			
 		case SRK_QUERY_TYPE_SUM:
-			getFieldList = [NSString stringWithFormat:@" SUM(%@) ", query.sumFieldName];
+			[getFieldList addObject: [NSString stringWithFormat:@" SUM(%@) ", query.sumFieldName]];
 			break;
 			
 		case SRK_QUERY_TYPE_DISTINCT:
-			getFieldList = [NSString stringWithFormat:@" DISTINCT %@ ", query.distinctFieldName];
+			[getFieldList addObject: [NSString stringWithFormat:@" DISTINCT %@ ", query.distinctFieldName]];
 			break;
 			
 		case SRK_QUERY_TYPE_IDS:
-			getFieldList = @" Id ";
+			[getFieldList addObject: @" Id "];
 			
 		default:
 			break;
 	}
 	
+    /* see if there are any automatic joins made through object dot notation e.g. "department.name = 'Software'", where department is a property of type Department on Person */
+    for (NSString* qFieldName in ((NSMutableDictionary*)[tableSchemas objectForKey:tableName]).allKeys) {
+        
+        // we have the fields, now to check their types as to whether they are related objects
+        Class class = query.classDecl;
+        int propertyType = [class getEntityPropertyType:qFieldName];
+        if (propertyType == SRK_PROPERTY_TYPE_ENTITYOBJECT) {
+            
+            // generate the property name to look for notation
+            NSString* component = [NSString stringWithFormat:@"%@.", qFieldName];
+            
+            // now check the query for signs of object dot notation <property>.<sub property>
+            if ([query.whereClause rangeOfString:component].location != NSNotFound || [query.orderBy rangeOfString:component].location != NSNotFound) {
+                
+                // go and get the relationship->target class for this property
+                SRKRelationship* r = [SharkORM entityRelationshipsForProperty:qFieldName inClass:class];
+                if (r) {
+                    // because the user has referenced an object like "department.name = 'Development' " and not just 'department IN (select ID from Department WHERE name='Development'), we now want to automatically join the table
+                    // but we need to rename the join and re-arrange the query to cope with a mixture of both object.value and traditional joins to the exact same tables.
+                    [fromList addObject:[NSString stringWithFormat:@" LEFT JOIN %@ as query_auto_join_%@ ON %@.%@ = query_auto_join_%@.%@ ", [r.targetClass description], qFieldName, [r.sourceClass description], qFieldName, [r.targetClass description], SRK_DEFAULT_PRIMARY_KEY_NAME]];
+                    
+                    // now we need to swap out all instances of the 'component' with the new named version.
+                    NSString* namedReplacement = [NSString stringWithFormat:@"query_auto_join_%@.",qFieldName];
+                    query.whereClause = [query.whereClause stringByReplacingOccurrencesOfString:component withString:namedReplacement];
+                    query.orderBy = [query.orderBy stringByReplacingOccurrencesOfString:component withString:namedReplacement];
+                }
+                
+            }
+            
+        }
+        
+    }
 
 	/* now see if there is a join condition */
 	if (query.joins.count) {
 		
 		for (SRKJoinObject* join in query.joins) {
-			fromList = [fromList stringByAppendingFormat:@" LEFT JOIN %@ ON %@ ", [join.joinOn description], join.joinWhere];
-			
+            [fromList addObject:[NSString stringWithFormat:@" LEFT JOIN %@ ON %@ ", [join.joinOn description], join.joinWhere]];
+
 			/* now build up the additional selects for the joined data */
 			
 			for (NSString* qFieldName in [tableSchemas objectForKey:[join.joinOn description]]) {
-				getFieldList = [getFieldList stringByAppendingFormat:SRK_JOINED_FIELD_NAME_FORMAT, [join.joinOn description], qFieldName, [join.joinOn description],qFieldName];
+                [getFieldList addObject:[NSString stringWithFormat:SRK_JOINED_FIELD_NAME_FORMAT, [join.joinOn description], qFieldName, [join.joinOn description],qFieldName]];
 			}
 		}
 		
@@ -1890,7 +2080,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 	NSMutableArray* resultsSet = nil;
 	
 	NSString* sql = @"";
-	sql = [NSString stringWithFormat:@"SELECT %@ FROM %@ WHERE %@ ORDER BY %@ LIMIT %i OFFSET %i",getFieldList, fromList, query.whereClause, query.orderBy, query.limitOf, query.offsetFrom];
+	sql = [NSString stringWithFormat:@"SELECT %@ FROM %@ WHERE %@ ORDER BY %@ LIMIT %i OFFSET %i",[getFieldList componentsJoinedByString:@", "], [fromList componentsJoinedByString:@" "], query.whereClause, query.orderBy, query.limitOf, query.offsetFrom];
 	
 	/* optimise the query by removing the global default query options */
 	NSString* defaultWhere = [NSString stringWithFormat:@"WHERE %@", SRK_DEFAULT_CONDITION];

@@ -277,5 +277,20 @@
     
 }
 
+- (void)test_string_pk_object {
+    
+    StringIdObject* obj = [StringIdObject new];
+    obj.value = @"test value];";
+    
+    // there should not be a UUID yet for the PK column
+    XCTAssert(obj.Id == nil, @"Primary key had been generated prior to insertion into data store");
+    [obj commit];
+    XCTAssert(obj.Id != nil, @"Primary key had not been generated post insertion into data store");
+    
+    StringIdObject* o2 = [StringIdObject objectWithPrimaryKeyValue:obj.Id];
+    XCTAssert(o2 != nil, @"Retrieval of object with a string PK value failed");
+    
+}
+
 
 @end

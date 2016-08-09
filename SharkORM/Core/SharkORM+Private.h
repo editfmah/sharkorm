@@ -19,6 +19,7 @@
 // form data methods
 -(BOOL)removeObject:(SRKObject*)entity inTransaction:(SRKTransactionGroup*)transaction;
 -(BOOL)commitObject:(SRKObject*)entity inTransaction:(SRKTransactionGroup*)transaction;
+-(void)replaceUUIDPrimaryKey:(SRKObject *)entity withNewUUIDKey:(NSString*)newPrimaryKey;
 +(void)refreshObject:(SRKObject*)entity;
 
 -(NSMutableArray*)fetchEntitySetForQuery:(SRKQuery*)query;
@@ -27,6 +28,8 @@
 -(NSArray*)fetchDistinctForQuery:(SRKQuery*)query field:(NSString*)fieldname;
 -(NSArray*)fetchIDsForQuery:(SRKQuery*)query;
 +(NSMutableArray*)entityRelationships;
++(NSMutableArray*)entityRelationshipsForClass:(Class)class;
++(SRKRelationship*)entityRelationshipsForProperty:(NSString*)property inClass:(Class)class;
 +(NSMutableDictionary*)tableSchemas;
 +(NSArray*)fieldsForTable:(NSString*)table;
 +(SRKSettings*)getSettings;

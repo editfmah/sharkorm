@@ -11,6 +11,7 @@
 #import "SharkORM.h"
 
 @class SRKObject;
+@class SRKObjectChain;
 
 @interface SRKObject () {
 	NSString*               managedObjectDomain;
@@ -26,6 +27,7 @@
 @property (nonatomic, strong)   NSMutableDictionary*    dirtyFields;
 @property BOOL                                          sterilised;
 @property BOOL                                          exists;
+@property BOOL                                          dirty;
 @property BOOL                                          isLightweightObject;
 @property BOOL                                          isLightweightObjectLoaded;
 @property (nonatomic, strong)   NSMutableDictionary*    embeddedEntities; // this will be used to store all of the set entities
@@ -42,6 +44,7 @@
 - (NSArray*)fieldNames;
 - (NSArray*)modifiedFieldNames;
 - (NSDictionary*)entityDictionary;
+- (NSMutableDictionary*)entityContentsAsObjects;
 - (void)rawSetManagedObjectDomain:(NSString *)domain;
 - (NSString*)managedObjectDomain;
 - (void)setManagedObjectDomain:(NSString *)domain;
@@ -57,9 +60,12 @@
 /* transformation */
 - (id)transformInto:(id)targetObject;
 - (id)copy;
-- (BOOL)__commitRaw;
+- (BOOL)__commitRawWithObjectChain:(SRKObjectChain*)chain;
 - (BOOL)__removeRaw;
 - (void)reloadRelationships;
+
+/* schema */
++(int)getEntityPropertyType:(NSString*)propertyName;
 
 @end
 

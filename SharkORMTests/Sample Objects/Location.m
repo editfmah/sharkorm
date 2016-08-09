@@ -10,6 +10,6 @@
 
 @implementation Location
 
-@dynamic locationName;
+@dynamic locationName, department;
 
 @end

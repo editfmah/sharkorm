@@ -16,8 +16,8 @@ Copyright (C) 2016 SharkSync. All rights reserved.
 #ifndef __SHARKORM_H
 #define __SHARKORM_H
 
-#define SHARK_DATE              20160620
-#define SHARK_VER               2.00.03
+#define SHARK_DATE              20160803
+#define SHARK_VER               2.00.08
 
 #import <Foundation/Foundation.h>
 #import <objc/message.h>
@@ -31,6 +31,7 @@ Copyright (C) 2016 SharkSync. All rights reserved.
 @class SRKQuery;
 @class SRKFTSQuery;
 @class SRKTransaction;
+@class SRKRawResults;
 
 typedef void(^SRKTransactionBlockBlock)();
 
@@ -198,7 +199,13 @@ typedef enum {
  * @return void;
  */
 +(void)closeDatabaseNamed:(NSString*)dbName;
-
+/**
+ * Performs a free text query and returns the result as a SRKRawResults object.
+ *
+ * @param (NSString*) The query to be performed.
+ * @return (SRK;
+ */
++(SRKRawResults*)rawQuery:(NSString*)sql;
 @end
 
 /*
@@ -306,9 +313,9 @@ typedef void(^SRKEventRegistrationBlock)(SRKEvent* event);
 /**
  * Removes all objects contained within the array from the database.  This is done within a single transaction to optimize performance.
  *
- * @return void
+ * @return BOOL, true if operation was successful.
  */
-- (void)removeAll;
+- (BOOL)removeAll;
 
 @end
 
@@ -485,6 +492,12 @@ typedef     void(^contextExecutionBlock)();
  */
 + (SRKIndexDefinition*)indexDefinitionForEntity;
 /**
+ * Used to indicate to SharkORM that you wish to ignore ceratin properties and to not persiste them.
+ *
+ * @return (NSArray*) Return an array of property names, these will be used to create an ignore list.
+ */
++ (NSArray*)ignoredProperties;
+/**
  * Used to specify the default values for a new entity, where the "key" is the property name and the "value" is a standard NSObject such as NSNumber / NSString / NSNull / NSData / NSArray.  Every new object will automatically have these properties set with their default values.  When adding a new property to a SRKObject class, SharkORM will create a new column.  This column will be populated with the default value as provided by this method.
  *
  * @return (NSDictionary*) return a dictionary object to specify default values for properties.
@@ -589,6 +602,26 @@ typedef     void(^contextExecutionBlock)();
  * @return void
  */
 - (void)clearAllRegisteredBlocks;
+
+@end
+
+/*
+ *      SRKObject
+ *
+ */
+
+/**
+ * Specifies a persistable class within SharkORM, any properties that are created within a class that is derrived from SRKObject will need to be implemnted using dynamic properties and not synthesized ones.  SharkORM places its own get/set methods to ensure that all values are correct for the storage and column type.
+ 
+ */
+@interface SRKStringObject : SRKObject <NSCopying>
+
+//NOTE:  There is no way around this, for convenience for the developer to 'know' the type.  The base class inspects the value to check its class, but this is bad OO practice that leads to convenient and nice API for the developer so suck it up, it is NOT dangerous as the public facing API is strongly typed and safe, and well anticipated by the backstore.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Ww"
+/// The primary key column, this is common and mandatory across all persistable classes.  In this case it is forced to NSString* to allow string primary keys in Swift.
+@property (nonatomic, strong)   NSString* Id;
+#pragma clang diagnostic pop
 
 @end
 
@@ -860,6 +893,46 @@ typedef void(^SRKQueryAsyncResponse)(SRKResultSet* results);
  * @return (SRKQuery*) this value can be discarded or used to nest queries together to form clear and concise statements.
  */
 - (SRKQuery*)whereWithFormat:(NSString*)format withParameters:(NSArray*)params;
+
+@end
+
+/**
+ * A SRKRawResults class is used to store results from raw queries.
+ *
+ *
+ */
+@interface SRKRawResults : NSObject
+
+@property (nonatomic) NSMutableArray* rawResults;
+@property (nonatomic) SRKError* error;
+
+/**
+ * Contains the number if rows in the result set from a raw query
+ *
+ * @return (NSInteger) the count of rows.
+ */
+- (NSInteger)rowCount;
+/**
+ * Contains the number if columns in the result set from a raw query
+ *
+ * @return (NSInteger) the number of columns.
+ */
+- (NSInteger)columnCount;
+/**
+ * Retrieves a value from the dataset, given the column name and the rown index.
+ *
+ * @param (NSString*)columnName.  The named column from the original queries.
+ * @param (NSInteger)index. The row index for the result to retrieve.
+ * @return (id), this is the value contained in the column.  This can be, NSString, NSDate, NSNumber, NSNull.
+ */
+- (id)valueForColumn:(NSString*)columnName atRow:(NSInteger)index;
+/**
+ * Retrieves a column from the dataset, given the index.
+ *
+ * @param (NSInteger)index. The index for the column name to retrieve.
+ * @return (NSString*), the column name to be used in queries.
+ */
+- (NSString*)columnNameForIndex:(NSInteger)index;
 
 @end
 

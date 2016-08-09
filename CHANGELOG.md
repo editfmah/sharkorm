@@ -1,5 +1,44 @@
 Shark Changelog
 ===============
+##v2.0.8 - Aug 03, 2016
+####Added Object dot notation support to query syntax
+
+Developers can now access the properties of related objects from within the *where* clause of a query, such as the following.  If we take the example of a Person class which is related to the Department class via the `department` property.
+    
+```swift
+Person.query().whereWithFormat("department.name = %@", withParameters: ["Test Department"]).fetch()
+```
+Where `name` is within a related object, SharkORM will now automatically re-arrange the query and join the two tables on that relationship and therefore validate that condition.
+    
+Updated to SQLite v3.13.0
+
+Better support of UUID primary keys in many scenarios.
+
+Change [SRKResultSet removeAll] to return a BOOL value indicating the success of the operation to remain consistent with other read/write operations.
+
+
+##v2.0.7 - July 24, 2016
+Fixed a bug where the cached property types of an SRKObject did not contain a data type for the Id column.
+
+##v2.0.6 - July 17, 2016
+Fixed an issue with circular commit chains, SRKObjects can now be arranged with complicated relationships such as A-B-C-B.  But also with A-C as well, causing a quad point relationship within a single commit.
+
+SRKObject’s now implement a class method ‘ignoreProperties’.  Which
+allows developers to choose which properties to ignore.
+
+##v2.0.5 - June 29, 2016
+Fixed crash when printing an object without an primary key value.  No Null check was made.
+Fixed serious issue, where SRKObject properties were being persisted. Causing query errors.
+
+##v2.0.4 - June 24, 2016
+
+Added support for Raw Queries, Inherritance support & Carthage support.
+
+Raw query example:
+```objective-c
+SRKRawResults* results = [SharkORM rawQuery:@"SELECT * FROM Person ORDER BY age;"];
+```
+
 ##v2.0.3 - June 20, 2016
 Added more tests, changed print output of a class to output in the style of the following.
 ```

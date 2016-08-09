@@ -129,13 +129,25 @@
 	return o;
 }
 
-- (void)removeAll {
+- (BOOL)removeAll {
 	
-	for (SRKObject* o in self) {
-		@autoreleasepool {
-			[o remove];
-		}
-	}
+    __block BOOL succeeded = YES;
+    
+    [SRKTransaction transaction:^{
+        
+        for (SRKObject* o in self) {
+            @autoreleasepool {
+                [o remove];
+            }
+        }
+        
+    } withRollback:^{
+        
+        succeeded = NO;
+        
+    }];
+    
+    return succeeded;
 	
 }
 

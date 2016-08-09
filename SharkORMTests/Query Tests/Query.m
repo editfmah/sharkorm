@@ -189,4 +189,38 @@
     
 }
 
+- (void)test_raw_query {
+    
+    [self setupCommonData];
+    
+    SRKRawResults* results = [SharkORM rawQuery:@"SELECT * FROM Person ORDER BY age;"];
+    
+    XCTAssert(results.rowCount == 3, @"Raw query row count was incorrect given fixed data");
+    XCTAssert(results.columnCount == 7, @"Raw query column count was incorrect given fixed data");
+    XCTAssert([((NSString*)[results valueForColumn:@"Name" atRow:0]) isEqualToString:@"Michael"], @"Raw query column count was incorrect given fixed data");
+    
+}
+
+- (void)test_where_query_with_object_dot_notation_joins {
+    
+    [self setupCommonData];
+    
+    SRKResultSet *r = [[Person query] where:@"department.name='Test Department' AND location.locationName IS NULL"].fetch;
+    
+    XCTAssert(r,@"Failed to return a result set");
+    XCTAssert(r.count == 3,@"incorrect number of results returned");
+    
+}
+
+- (void)test_where_query_with_object_dot_notation_joins_order_by_on_joined_subproperty {
+    
+    [self setupCommonData];
+    
+    SRKResultSet *r = [[[Person query] where:@"department.name='Test Department' AND location.locationName IS NULL"] orderBy:@"department.name"].fetch;
+    
+    XCTAssert(r,@"Failed to return a result set");
+    XCTAssert(r.count == 3,@"incorrect number of results returned");
+    
+}
+
 @end

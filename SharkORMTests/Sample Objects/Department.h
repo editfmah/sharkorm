@@ -8,6 +8,8 @@
 #import "SharkORM.h"
 #import "Location.h"
 
+@class Location;
+
 @interface Department : SRKObject
 
 @property NSString* name;
