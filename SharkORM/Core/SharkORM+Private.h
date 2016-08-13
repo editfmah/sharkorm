@@ -19,6 +19,7 @@
 // form data methods
 -(BOOL)removeObject:(SRKObject*)entity inTransaction:(SRKTransactionGroup*)transaction;
 -(BOOL)commitObject:(SRKObject*)entity inTransaction:(SRKTransactionGroup*)transaction;
+-(void)replaceUUIDPrimaryKey:(SRKObject *)entity withNewUUIDKey:(NSString*)newPrimaryKey;
 +(void)refreshObject:(SRKObject*)entity;
 
 -(NSMutableArray*)fetchEntitySetForQuery:(SRKQuery*)query;

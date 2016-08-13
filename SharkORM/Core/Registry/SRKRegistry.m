@@ -99,7 +99,7 @@ static SRKRegistry* this = nil;
 									if (o.entity.managedObjectDomain && thisEventEntity.managedObjectDomain && [o.entity.managedObjectDomain isEqualToString:thisEventEntity.managedObjectDomain]) {
 										
 										[obj notifyObjectChanges:event];
-										
+        
 									}
 									
 									if (obj.registeredEventBlocks.count > 0) {

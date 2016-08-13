@@ -1,5 +1,22 @@
 Shark Changelog
 ===============
+##v2.0.8 - Aug 03, 2016
+####Added Object dot notation support to query syntax
+
+Developers can now access the properties of related objects from within the *where* clause of a query, such as the following.  If we take the example of a Person class which is related to the Department class via the `department` property.
+    
+```swift
+Person.query().whereWithFormat("department.name = %@", withParameters: ["Test Department"]).fetch()
+```
+Where `name` is within a related object, SharkORM will now automatically re-arrange the query and join the two tables on that relationship and therefore validate that condition.
+    
+Updated to SQLite v3.13.0
+
+Better support of UUID primary keys in many scenarios.
+
+Change [SRKResultSet removeAll] to return a BOOL value indicating the success of the operation to remain consistent with other read/write operations.
+
+
 ##v2.0.7 - July 24, 2016
 Fixed a bug where the cached property types of an SRKObject did not contain a data type for the Id column.
 

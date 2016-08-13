@@ -122,7 +122,9 @@ static NSMutableDictionary* transactionForThread = nil;
 														sqlite3_bind_double(statement, idx, [(NSNumber*)value doubleValue]);
 													}
 													
-												} else if ([value isKindOfClass:[NSString class]]) {
+                                                } else if ([value isKindOfClass:[NSDate class]]) {
+                                                    sqlite3_bind_double(statement, idx, [@(((NSDate*)value).timeIntervalSince1970) doubleValue]);
+                                                } else if ([value isKindOfClass:[NSString class]]) {
 													sqlite3_bind_text16(statement, idx, [(NSString*)value cStringUsingEncoding:NSUTF16StringEncoding],@([(NSString*)value lengthOfBytesUsingEncoding:NSUTF16StringEncoding]).intValue , SQLITE_TRANSIENT);
 												} else if ([value isKindOfClass:[NSData class]]) {
 													NSData* d = (NSData*)value;

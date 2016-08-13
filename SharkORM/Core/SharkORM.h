@@ -16,8 +16,8 @@ Copyright (C) 2016 SharkSync. All rights reserved.
 #ifndef __SHARKORM_H
 #define __SHARKORM_H
 
-#define SHARK_DATE              20160724
-#define SHARK_VER               2.00.07
+#define SHARK_DATE              20160803
+#define SHARK_VER               2.00.08
 
 #import <Foundation/Foundation.h>
 #import <objc/message.h>
@@ -616,7 +616,7 @@ typedef     void(^contextExecutionBlock)();
  */
 @interface SRKStringObject : SRKObject <NSCopying>
 
-//NOTE:  There is no way around this, for convenience for the developer to 'know' the type.  The base class inspects the value to check its class, but this is bad OO practice that leads to convenient and nice API for the developer so suck it up, it is NOT dangerous as the public facing API is strongly typed and safe.
+//NOTE:  There is no way around this, for convenience for the developer to 'know' the type.  The base class inspects the value to check its class, but this is bad OO practice that leads to convenient and nice API for the developer so suck it up, it is NOT dangerous as the public facing API is strongly typed and safe, and well anticipated by the backstore.
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Ww"
 /// The primary key column, this is common and mandatory across all persistable classes.  In this case it is forced to NSString* to allow string primary keys in Swift.

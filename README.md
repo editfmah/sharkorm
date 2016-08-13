@@ -3,8 +3,6 @@ Shark ORM
 
 Shark allows you to create a model layer in your iOS, macOS or tvOS app naturally, using simple and clean syntax.  Shark does as much of the heavy lifting for you, so you don't have to put unnecessary effort into dealing with your data objects.
 
-Regularly updated with over 12k downloads over the past 4 years and in constant use within many public applications, thriving on feedback and input from other developers.
-
 Its mantra is simple, to be fast, simple and the first choice for any developer.
 
 ## Getting started
@@ -400,6 +398,18 @@ var results = Person.query()
 					.limit(99).orderBy("name")
 					.fetch()
 ```
+
+As of v2.0.8 you can now use object dot notation to query related objects via the property path.  If we take the example of a Person class which is related to the Department class via the `department` property.
+ 
+`Objective-C`
+```objective-c
+[[[Person query] where:@"department.name = 'Test Department'"] fetch]
+```
+`Swift`
+```swift
+Person.query().whereWithFormat("department.name = %@", withParameters: ["Test Department"]).fetch()
+```
+Where `name` is within a related object, SharkORM will now automatically re-arrange the query and join the two tables on that relationship and therefore validate that condition.
 
 ###Supported parameters to `SRKQuery`
 Shark supports the following optional parameters to a query:
