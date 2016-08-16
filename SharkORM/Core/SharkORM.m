@@ -847,7 +847,7 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
     } else if (columnType == SRK_COLUMN_TYPE_DATE) {
 		
         if ([[SharkORM getSettings] useEpochDates]) {
-			
+            type = @"DATETIME";
         } else {
             type = @"TEXT";
         }
