@@ -99,6 +99,9 @@ typedef enum {
 /// tells SharkORM if you wish to retain values for lightweight objects once they are done with.
 @property BOOL                      retainLightweightObjects;
 
+/// tells SharkORM if you wish to print sql statement when access database.
+@property (nonatomic)               BOOL printSql;
+
 @end
 
 /**
