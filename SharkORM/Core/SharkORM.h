@@ -433,6 +433,14 @@ typedef     void(^contextExecutionBlock)();
  */
 - (BOOL)commit;
 
+/**
+ * Inserts or updates the object within the database and ignore all embed entities modification provided in the list.
+ 
+ *
+ * @return BOOL returns NO if the operation failed to complete.
+ */
+- (BOOL)commitWithoutEmbedEntities:(NSArray *)entities;
+
 /* these methods should be overloaded in the business object class */
 /**
  * Before SharkORM attempts an operation it will ask the persitable class if it would like to continue with this operation.

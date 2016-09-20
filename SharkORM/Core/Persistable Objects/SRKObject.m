@@ -2326,210 +2326,217 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 	return YES;
 }
 
-- (BOOL)__commitRawWithObjectChain:(SRKObjectChain *)chain {
-	
-	if (self.sterilised) {
-		return NO;
-	}
-	
-	if (!self.exists) {
-		
-		/* insert */
-		if ([self entityWillInsert]) {
-			
-			/* check to see if this entity used a string based primary key */
-			id currentId = [self Id];
-			if (!currentId && [self.class getEntityPropertyType:SRK_DEFAULT_PRIMARY_KEY_NAME] == SRK_PROPERTY_TYPE_STRING) {
-				self.Id = (id)[SRKUtilities generateGUID];
-			}
-			
-			/* check to see if any entities have been added into this object, commit them */
-			for (SRKObject* o in self.embeddedEntities.allValues) {
-				if ([o isKindOfClass:[SRKObject class]]) {
+- (BOOL)__commitRawWithObjectChain:(SRKObjectChain *)chain ignoredEntities:(NSArray *)entities
+{
+    if (self.sterilised) {
+        return NO;
+    }
+    
+    if (!self.exists) {
+        
+        /* insert */
+        if ([self entityWillInsert]) {
+            
+            /* check to see if this entity used a string based primary key */
+            id currentId = [self Id];
+            if (!currentId && [self.class getEntityPropertyType:SRK_DEFAULT_PRIMARY_KEY_NAME] == SRK_PROPERTY_TYPE_STRING) {
+                self.Id = (id)[SRKUtilities generateGUID];
+            }
+            
+            /* check to see if any entities have been added into this object, commit them */
+            for (SRKObject* o in self.embeddedEntities.allValues) {
+                if ([o isKindOfClass:[SRKObject class]] && ![entities containsObject:o]) {
                     // check to see if this object has already appeard in this chain.
                     if (![chain doesObjectExistInChain:o]) {
                         [(SRKObject*)o __commitRawWithObjectChain:[chain addObjectToChain:self]];
-                    } 
-				}
-			}
-			
-			for (SRKRelationship* r in [SharkORM entityRelationships]) {
-				if ([[r.sourceClass description] isEqualToString:[self.class description]] && r.relationshipType == SRK_RELATE_ONETOONE) {
-					
-					/* this is a link field that needs to be updated */
-					NSObject* e = [self.embeddedEntities objectForKey:r.entityPropertyName];
-					if(e && [e isKindOfClass:[SRKObject class]]) {
-						[self setField:[NSString stringWithFormat:@"%@",r.entityPropertyName] value:((SRKObject*)e).Id];
-					}
-					
-				}
-			}
-			
-			/* now we need to populate any fields that are based on primatives with their default values */
-			for (NSString* f in self.fieldNames) {
-				
-				int type = [self.class getEntityPropertyType:f];
-				if ([self.class isTypeAPrimitive:type] && ![self getField:f]) {
-					[self setFieldRaw:f value:@(0)];
-				}
-				
-			}
-			
-			SRKTransactionGroup* transaction = [SRKTransactionGroup isEfectiveTransaction] ? [SRKTransactionGroup createEffectiveCollection] : nil;
-			
-			if (transaction && transaction.transactionClosed) {
-				transaction = nil; /* this is a child transaction condition */
-			}
-			
-			if([[SharkORM new] commitObject:self inTransaction:transaction]) {
-				
-				if (!transaction) {
-					self.exists = YES;
-					[self entityDidInsert];
-					
-					
-					/* now send out the live message as well as tiggering the local event */
-					
-					if (![[self class] entityDoesNotRaiseEvents]) {
-						SRKEvent* e = [SRKEvent new];
-						e.event = SharkORMEventInsert;
-						e.entity = self;
-						e.changedProperties = self.modifiedFieldNames;
-						[[SRKRegistry sharedInstance] broadcast:e];
-					}
-					
-					/* clear the modified fields list */
-					@synchronized(self.changedValues) {
-						[self.changedValues removeAllObjects];
-						[self.dirtyFields removeAllObjects];
+                    }
+                }
+            }
+            
+            for (SRKRelationship* r in [SharkORM entityRelationships]) {
+                if ([[r.sourceClass description] isEqualToString:[self.class description]] && r.relationshipType == SRK_RELATE_ONETOONE) {
+                    
+                    /* this is a link field that needs to be updated */
+                    NSObject* e = [self.embeddedEntities objectForKey:r.entityPropertyName];
+                    if(e && [e isKindOfClass:[SRKObject class]]) {
+                        [self setField:[NSString stringWithFormat:@"%@",r.entityPropertyName] value:((SRKObject*)e).Id];
+                    }
+                    
+                }
+            }
+            
+            /* now we need to populate any fields that are based on primatives with their default values */
+            for (NSString* f in self.fieldNames) {
+                
+                int type = [self.class getEntityPropertyType:f];
+                if ([self.class isTypeAPrimitive:type] && ![self getField:f]) {
+                    [self setFieldRaw:f value:@(0)];
+                }
+                
+            }
+            
+            SRKTransactionGroup* transaction = [SRKTransactionGroup isEfectiveTransaction] ? [SRKTransactionGroup createEffectiveCollection] : nil;
+            
+            if (transaction && transaction.transactionClosed) {
+                transaction = nil; /* this is a child transaction condition */
+            }
+            
+            if([[SharkORM new] commitObject:self inTransaction:transaction]) {
+                
+                if (!transaction) {
+                    self.exists = YES;
+                    [self entityDidInsert];
+                    
+                    
+                    /* now send out the live message as well as tiggering the local event */
+                    
+                    if (![[self class] entityDoesNotRaiseEvents]) {
+                        SRKEvent* e = [SRKEvent new];
+                        e.event = SharkORMEventInsert;
+                        e.entity = self;
+                        e.changedProperties = self.modifiedFieldNames;
+                        [[SRKRegistry sharedInstance] broadcast:e];
+                    }
+                    
+                    /* clear the modified fields list */
+                    @synchronized(self.changedValues) {
+                        [self.changedValues removeAllObjects];
+                        [self.dirtyFields removeAllObjects];
                         self.dirty = NO;
-					}
-				}
-				
-				return YES;
-				
-			}
-			
-			
-		}
-		
-	} else {
-		
-		/* update */
-		
-		/* check to see if this entity used a string based primary key */
-		id currentId = [self Id];
-		if (!currentId && [self.class getEntityPropertyType:SRK_DEFAULT_PRIMARY_KEY_NAME] == SRK_PROPERTY_TYPE_STRING) {
-			self.Id = (id)[SRKUtilities generateGUID];
-		}
-		
-		if ([self entityWillUpdate]) {
-			
-			/* check to see if any entities have been added into this object, commit them, but only if they do not have a PK or any outstanding changes (stops cyclical inserts) */
-			
-			for (NSObject* o in self.embeddedEntities.allValues) {
-				if ([o isKindOfClass:[SRKObject class]]) {
+                    }
+                }
+                
+                return YES;
+                
+            }
+            
+            
+        }
+        
+    } else {
+        
+        /* update */
+        
+        /* check to see if this entity used a string based primary key */
+        id currentId = [self Id];
+        if (!currentId && [self.class getEntityPropertyType:SRK_DEFAULT_PRIMARY_KEY_NAME] == SRK_PROPERTY_TYPE_STRING) {
+            self.Id = (id)[SRKUtilities generateGUID];
+        }
+        
+        if ([self entityWillUpdate]) {
+            
+            /* check to see if any entities have been added into this object, commit them, but only if they do not have a PK or any outstanding changes (stops cyclical inserts) */
+            
+            for (NSObject* o in self.embeddedEntities.allValues) {
+                if ([o isKindOfClass:[SRKObject class]] && ![entities containsObject:o]) {
                     if (!((SRKObject*)o).Id || ((SRKObject*)o).dirty) {
                         [((SRKObject*)o) __commitRawWithObjectChain:[chain addObjectToChain:self]];
                     }
-				}
-			}
-			
-			for (SRKRelationship* r in [SharkORM entityRelationships]) {
-				if ([[r.sourceClass description] isEqualToString:[self.class description]] && r.relationshipType == SRK_RELATE_ONETOONE) {
-					
-					/* this is a link field that needs to be updated */
-					
-					NSObject* e = [self.embeddedEntities objectForKey:r.entityPropertyName];
-					if(e && [e isKindOfClass:[SRKObject class]]) {
-						[self setField:[NSString stringWithFormat:@"%@",r.entityPropertyName] value:((SRKObject*)e).Id];
-					}
-					
-				}
-			}
-			
-			SRKTransactionGroup* transaction = [SRKTransactionGroup isEfectiveTransaction] ? [SRKTransactionGroup createEffectiveCollection] : nil;
-			
-			if (transaction && transaction.transactionClosed) {
-				transaction = nil; /* this is a child transaction condition */
-			}
-			
-			if([[SharkORM new] commitObject:self inTransaction:transaction]) {
-				
-				self.exists = YES;
-				if (!transaction) {
-					[self entityDidUpdate];
-					
-					/* now send out the live message as well as triggering the local event */
-					if (![[self class] entityDoesNotRaiseEvents]) {
-						SRKEvent* e = [SRKEvent new];
-						e.event = SharkORMEventUpdate;
-						e.entity = self;
-						e.changedProperties = self.modifiedFieldNames;
-						[[SRKRegistry sharedInstance] broadcast:e];
-					}
-					/* clear the modified fields list */
-					@synchronized(self.changedValues) {
-						[self.changedValues removeAllObjects];
-						[self.dirtyFields removeAllObjects];
+                }
+            }
+            
+            for (SRKRelationship* r in [SharkORM entityRelationships]) {
+                if ([[r.sourceClass description] isEqualToString:[self.class description]] && r.relationshipType == SRK_RELATE_ONETOONE) {
+                    
+                    /* this is a link field that needs to be updated */
+                    
+                    NSObject* e = [self.embeddedEntities objectForKey:r.entityPropertyName];
+                    if(e && [e isKindOfClass:[SRKObject class]]) {
+                        [self setField:[NSString stringWithFormat:@"%@",r.entityPropertyName] value:((SRKObject*)e).Id];
+                    }
+                    
+                }
+            }
+            
+            SRKTransactionGroup* transaction = [SRKTransactionGroup isEfectiveTransaction] ? [SRKTransactionGroup createEffectiveCollection] : nil;
+            
+            if (transaction && transaction.transactionClosed) {
+                transaction = nil; /* this is a child transaction condition */
+            }
+            
+            if([[SharkORM new] commitObject:self inTransaction:transaction]) {
+                
+                self.exists = YES;
+                if (!transaction) {
+                    [self entityDidUpdate];
+                    
+                    /* now send out the live message as well as triggering the local event */
+                    if (![[self class] entityDoesNotRaiseEvents]) {
+                        SRKEvent* e = [SRKEvent new];
+                        e.event = SharkORMEventUpdate;
+                        e.entity = self;
+                        e.changedProperties = self.modifiedFieldNames;
+                        [[SRKRegistry sharedInstance] broadcast:e];
+                    }
+                    /* clear the modified fields list */
+                    @synchronized(self.changedValues) {
+                        [self.changedValues removeAllObjects];
+                        [self.dirtyFields removeAllObjects];
                         self.dirty = NO;
-					}
-				}
-				
-				return YES;
-				
-			}
-			
-		}
-		
-	}
-	
-	return NO;
-	
+                    }
+                }
+                
+                return YES;
+                
+            }
+            
+        }
+        
+    }
+    
+    return NO;
+}
+
+- (BOOL)__commitRawWithObjectChain:(SRKObjectChain *)chain {
+    return [self __commitRawWithObjectChain:chain ignoredEntities:NSArray.array];
 }
 
 - (BOOL)commit {
-	
-	/* make a unique test if neccesary */
-	NSArray* uniqueProperties = [self.class uniquePropertiesForClass];
-	if (uniqueProperties) {
-		NSMutableString* queryString = [NSMutableString new];
-		NSMutableArray* propertyValues = [NSMutableArray new];
-		for (NSString* property in uniqueProperties) {
-			if (!(queryString.length == 0)) {
-				[queryString appendString:@" AND "];
-			}
-			[queryString appendString:[NSString stringWithFormat:@" %@ = %%@ ", property]];
-			[propertyValues addObject:[self getField:property] ? [self getField:property] : [NSNull null]];
-		}
-		if (self.exists) {
-			[queryString appendString:@" AND Id != %@"];
-			[propertyValues addObject:self.Id];
-		}
-		if (queryString.length != 0) {
-			
-		}
-		if ([[[self.class query] whereWithFormat:queryString withParameters:propertyValues] count]) {
-			return NO;
-		}
-	}
-	
-	if(!self.context) {
-		
-		[self __commitRawWithObjectChain:[SRKObjectChain new]];
-		
-	} else {
-		
-		/* raise an error because you have tried to commit an entity that is within a context */
-		SRKError* err = [SRKError new];
-		err.errorMessage = @"You have attempted to commit an individual entity directly that is part of a context";
-		
-		if ([delegate respondsToSelector:@selector(databaseError:)]) {
-			[delegate performSelector:@selector(databaseError:) withObject:err];
-		}
-		
-	}
-	return YES;
+    return [self commitWithoutEmbedEntities:NSArray.array];
+}
+
+- (BOOL)commitWithoutEmbedEntities:(NSArray *)entities
+{
+    /* make a unique test if neccesary */
+    NSArray* uniqueProperties = [self.class uniquePropertiesForClass];
+    if (uniqueProperties) {
+        NSMutableString* queryString = [NSMutableString new];
+        NSMutableArray* propertyValues = [NSMutableArray new];
+        for (NSString* property in uniqueProperties) {
+            if (!(queryString.length == 0)) {
+                [queryString appendString:@" AND "];
+            }
+            [queryString appendString:[NSString stringWithFormat:@" %@ = %%@ ", property]];
+            [propertyValues addObject:[self getField:property] ? [self getField:property] : [NSNull null]];
+        }
+        if (self.exists) {
+            [queryString appendString:@" AND Id != %@"];
+            [propertyValues addObject:self.Id];
+        }
+        if (queryString.length != 0) {
+            
+        }
+        if ([[[self.class query] whereWithFormat:queryString withParameters:propertyValues] count]) {
+            return NO;
+        }
+    }
+    
+    if(!self.context) {
+        
+        [self __commitRawWithObjectChain:[SRKObjectChain new] ignoredEntities:entities];
+        
+    } else {
+        
+        /* raise an error because you have tried to commit an entity that is within a context */
+        SRKError* err = [SRKError new];
+        err.errorMessage = @"You have attempted to commit an individual entity directly that is part of a context";
+        
+        if ([delegate respondsToSelector:@selector(databaseError:)]) {
+            [delegate performSelector:@selector(databaseError:) withObject:err];
+        }
+        
+    }
+    return YES;
 }
 
 - (BOOL)entityWillInsert {
