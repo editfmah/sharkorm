@@ -522,6 +522,7 @@ static int obCount=0;
 		
 		/* we now need to convert any inbound object to the correct type as it may be a scalar target */
 		if ([value isKindOfClass:[NSNumber class]]) {
+            [self willChangeValueForKey:key];
 			/* this is a number, now work out what the target type is */
 			switch ([self.class getEntityPropertyType:key]) {
 				case SRK_PROPERTY_TYPE_INT:
@@ -562,6 +563,8 @@ static int obCount=0;
 													   [self performSelector:[[SRKUtilities new] generateSetSelectorForPropertyName:key] withObject:value];
 													   );
 			}
+            
+            [self didChangeValueForKey:key];
 		} else {
 			/* not a number */
 			SuppressPerformSelectorLeakWarning(
