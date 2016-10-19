@@ -2,6 +2,7 @@ Shark Changelog
 ===============
 ##v2.0.9 - Oct 19, 2016
 Fixed a bug where the high velocity calls to the orm from dispatched blocks, which were inadvertantly accessing some static variables caused the main thread to block forever and would never release.
+Upgraded to SQLite 3.15.0 - Took 3 seconds off our performance test, which is a 10k random read-write routine, across multiple tables with multiple record shapes and event trigers.  Was 15.03s now 11.98s.
 
 ##v2.0.8 - Aug 03, 2016
 ####Added Object dot notation support to query syntax
