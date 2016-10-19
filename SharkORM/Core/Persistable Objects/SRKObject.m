@@ -37,6 +37,7 @@
 #import "SRKUnsupportedObject.h"
 #import "SRKEncryptedObject.h"
 #import "SRKObjectChain.h"
+#import "SRKGlobals.h"
 
 @implementation SRKObject {
 	id cachedPrimaryKeyValue;
@@ -609,9 +610,9 @@ static id propertyIMP(SRKObject* self, SEL _cmd) {
 					
 					/* now we need to see if the value is unsupported or encrypted */
 					if ([columnValue isKindOfClass:[SRKUnsupportedObject class]]) {
-						if (delegate && [delegate respondsToSelector:@selector(decodeUnsupportedColumnValueForColumn:inEntity:data:)]) {
+						if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(decodeUnsupportedColumnValueForColumn:inEntity:data:)]) {
 							SRKUnsupportedObject* unObj = columnValue;
-							columnValue = [delegate decodeUnsupportedColumnValueForColumn:columnValue inEntity:[[self class] description]  data:unObj.object];
+							columnValue = [[[SRKGlobals sharedObject] delegate] decodeUnsupportedColumnValueForColumn:columnValue inEntity:[[self class] description]  data:unObj.object];
 						}
 					}
 					
@@ -2525,8 +2526,8 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 		SRKError* err = [SRKError new];
 		err.errorMessage = @"You have attempted to commit an individual entity directly that is part of a context";
 		
-		if ([delegate respondsToSelector:@selector(databaseError:)]) {
-			[delegate performSelector:@selector(databaseError:) withObject:err];
+		if ([[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
+			[[[SRKGlobals sharedObject] delegate] performSelector:@selector(databaseError:) withObject:err];
 		}
 		
 	}

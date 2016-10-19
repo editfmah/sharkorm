@@ -23,7 +23,6 @@
 
 
 #include "sqlite3.h"
-#import "SharkORM.h"
 #import "SRKDefinitions.h"
 #import "SRKObject+Private.h"
 #import "SRKRegistry.h"
@@ -35,7 +34,11 @@
 #import "SRKTransactionGroup.h"
 #import "SRKJoinObject.h"
 #import "FTSRegistry.h"
+#import "SRKGlobals.h"
 
+#define EventInsert 1
+#define EventUpdate 2
+#define EventDelete 4
 
 void dateFromString(sqlite3_context *context, int argc, sqlite3_value **argv);
 BOOL isNillOrNull(NSObject* ob);
@@ -58,14 +61,6 @@ typedef enum : int {
 } SRK_QUERY_TYPE;
 
 @implementation SharkORM
-
-static void** handles;
-static NSMutableDictionary* databaseHandleIndex;
-static SRKSettings* SharkORMSettings;
-static NSMutableArray* systemEntityRelationships;
-static NSMutableDictionary* tableSchemas;
-static NSMutableDictionary* primaryKeys;
-static NSMutableDictionary* primaryTypes;
 
 + (BOOL)NumberIsFraction:(NSNumber *)number {
     double dValue = [number doubleValue];
@@ -176,7 +171,7 @@ static NSMutableDictionary* primaryTypes;
 
 + (BOOL)column:(NSString*)column existsInTable:(NSString *)table {
 	
-	NSDictionary* d = [tableSchemas objectForKey:table];
+	NSDictionary* d = [[[SRKGlobals sharedObject] tableSchemas] objectForKey:table];
 	if ([d objectForKey:column]) {
 		return YES;
 	} else {
@@ -186,15 +181,15 @@ static NSMutableDictionary* primaryTypes;
 }
 
 + (NSArray *)fieldsForTable:(NSString *)table {
-    return [[tableSchemas objectForKey:table] allKeys];
+    return [[[[SRKGlobals sharedObject] tableSchemas] objectForKey:table] allKeys];
 }
 
 + (NSMutableDictionary*)tableSchemas {
-    return [tableSchemas copy];
+    return [[[SRKGlobals sharedObject] tableSchemas] copy];
 }
 
-+ (NSMutableArray*)entityRelationships {
-    return [systemEntityRelationships copy];
++ (NSArray*)entityRelationships {
+    return [[SRKGlobals sharedObject] systemEntityRelationshipsReadOnly];
 }
 
 + (NSMutableArray*)entityRelationshipsForClass:(Class)class {
@@ -226,64 +221,37 @@ static NSMutableDictionary* primaryTypes;
 }
 
 + (SRKSettings*)getSettings {
-    return SharkORMSettings;
+    return [[SRKGlobals sharedObject] settings];
 }
 
 + (void)setDelegate:(id)aDelegate {
     
-    delegate = aDelegate;
-    
-    /* now ask the delegate for the alternative settings */
-    if (delegate && [[delegate class] respondsToSelector:@selector(getCustomSettings)]) {
-        SharkORMSettings = [[delegate class] getCustomSettings];
-    } else if (delegate && [delegate respondsToSelector:@selector(getCustomSettings)]) {
-        SharkORMSettings = [delegate getCustomSettings];
-    }
-    
-    if(!SharkORMSettings) {
-        SharkORMSettings = [SRKSettings new];
-    }
+    [[SRKGlobals sharedObject] setDelegate:aDelegate];
     
 }
 
 +(sqlite3 *)defaultHandleForDatabase {
     
-    if (databaseHandleIndex.allKeys.count) {
-        NSNumber* n = [databaseHandleIndex objectForKey:[databaseHandleIndex.allKeys objectAtIndex:0]];
-        sqlite3* handle = handles[n.intValue];
-        return handle;
-    }
-    return nil;
+    return (sqlite3*)[[SRKGlobals sharedObject] defaultHandle];
     
 }
 
 +(sqlite3 *)handleForDatabaseNonBlocking:(NSString *)dbName {
-  
-    if ([databaseHandleIndex objectForKey:dbName]) {
-        NSNumber* n = [databaseHandleIndex objectForKey:dbName];
-        sqlite3* handle = handles[n.intValue];
-        return handle;
-    }
-    return nil;
-    
+    return [[SRKGlobals sharedObject] handleForName:dbName];
 }
 
 +(sqlite3 *)handleForDatabase:(NSString *)dbName {
     
     NSDate* startTime = [NSDate dateWithTimeIntervalSinceNow:1];
-    while (![databaseHandleIndex objectForKey:dbName]) {
+    while (![[SRKGlobals sharedObject] handleForName:dbName]) {
         [NSThread sleepForTimeInterval:0.01];
         if (startTime.timeIntervalSince1970 < [NSDate date].timeIntervalSince1970) {
             return nil;
         }
     }
     
-    if ([databaseHandleIndex objectForKey:dbName]) {
-        NSNumber* n = [databaseHandleIndex objectForKey:dbName];
-        sqlite3* handle = handles[n.intValue];
-        return handle;
-    }
-    return nil;
+    return [[SRKGlobals sharedObject] handleForName:dbName];
+    
 }
 
 +(NSString *)databaseNameForClass:(Class)classDecl {
@@ -294,13 +262,8 @@ static NSMutableDictionary* primaryTypes;
     }
     
     if (!dbName) {
-        if (databaseHandleIndex.allKeys.count) {
-            for (NSString* k in databaseHandleIndex.allKeys) {
-                if (((NSNumber*)[databaseHandleIndex objectForKey:k]).intValue == 0) {
-                    dbName = k;
-                    return dbName;
-                }
-            }
+        if ([[SRKGlobals sharedObject] countOfHandles]) {
+           return [[SRKGlobals sharedObject] defaultDatabaseName];
         }
     } else {
         return dbName;
@@ -315,30 +278,15 @@ static NSMutableDictionary* primaryTypes;
 	if (!dbName) {
 		return;
 	}
-	
-    if (!SRK_LOCK_WRITE) {
-        SRK_LOCK_WRITE = [NSObject new];
-    }
     
-    if (!databaseHandleIndex) {
-        databaseHandleIndex = [NSMutableDictionary new];
-    }
-    
-    if ([databaseHandleIndex objectForKey:dbName]) {
+    if ([[SRKGlobals sharedObject] handleForName:dbName]) {
         return;
     }
     
-    @synchronized(SRK_LOCK_WRITE) {
-        
-        if (!handles) {
-            handles = malloc(255*sizeof(sqlite3*));
-        }
+    @synchronized([[SRKGlobals sharedObject] writeLockObject]) {
         
         sqlite3* dbHandle = nil;
-        
-        if ([databaseHandleIndex objectForKey:dbName]) {
-            dbHandle = handles[((NSNumber*)[databaseHandleIndex objectForKey:dbName]).intValue];
-        }
+        dbHandle = [[SRKGlobals sharedObject] handleForName:dbName];
         
         if (dbHandle) {
             sqlite3_close(dbHandle);
@@ -349,18 +297,16 @@ static NSMutableDictionary* primaryTypes;
         
         if (!dbHandle) {
             
-            sqlite3_open([[SharkORMSettings.databaseLocation stringByAppendingPathComponent: [NSString stringWithFormat:@"%@.db", dbName]] UTF8String], &dbHandle); // double pointer to allow void* casts later on!
+            sqlite3_open([[[[SRKGlobals sharedObject] settings].databaseLocation stringByAppendingPathComponent: [NSString stringWithFormat:@"%@.db", dbName]] UTF8String], &dbHandle); // double pointer to allow void* casts later on!
 			
 #ifdef DEBUG
-			NSLog(@"%s",[[SharkORMSettings.databaseLocation stringByAppendingPathComponent: [NSString stringWithFormat:@"%@.db", dbName]] UTF8String]);
+			NSLog(@"%s",[[[[SRKGlobals sharedObject] settings].databaseLocation stringByAppendingPathComponent: [NSString stringWithFormat:@"%@.db", dbName]] UTF8String]);
 #endif
 			
-            sqlite3_exec(dbHandle, [NSString stringWithFormat:@"PRAGMA journal_mode=%@; PRAGMA default_cache_size = 200; PRAGMA cache_size = 200;", SharkORMSettings.sqliteJournalingMode].UTF8String, 0, 0, 0);
+            sqlite3_exec(dbHandle, [NSString stringWithFormat:@"PRAGMA journal_mode=%@; PRAGMA default_cache_size = 200; PRAGMA cache_size = 200;", [[SRKGlobals sharedObject] settings].sqliteJournalingMode].UTF8String, 0, 0, 0);
             
             /* now store the handle within the void** array */
-            handles[databaseHandleIndex.allKeys.count] = dbHandle;
-            [databaseHandleIndex setObject:@(databaseHandleIndex.allKeys.count) forKey:dbName];
-            
+            [[SRKGlobals sharedObject] addHandle:dbHandle forDBName:dbName];
             [SharkORM registerSqliteExtensionsInDatabase:dbName];
             
             if (dbHandle) {
@@ -380,33 +326,15 @@ static NSMutableDictionary* primaryTypes;
         }
 		
         /* now cache the system relationships for a performance improvement, only one relationship per table for this implementation */
-        if (!systemEntityRelationships) {
-            systemEntityRelationships = [[NSMutableArray alloc] init];
-        }
-        
-        
-        /* now cache the schemas for fast joins and efficient queries */
-        if (!tableSchemas) {
-            tableSchemas = [[NSMutableDictionary alloc] init];
-        }
-        
-        if (!primaryKeys) {
-            primaryKeys = [[NSMutableDictionary alloc] init];
-        }
-        
-        if (!primaryTypes) {
-            primaryTypes = [[NSMutableDictionary alloc] init];
-        }
-        
         [SharkORM registerSystemExtensions:dbHandle];
         [SharkORM cacheDatabaseMetricsAfterChangeInDatabase:dbName];
         
     };
     
     /* now notify the delegate that the database has opened */
-    if (delegate) {
-        if ([delegate respondsToSelector:@selector(databaseOpened)]) {
-            [delegate performSelector:@selector(databaseOpened)];
+    if ([[SRKGlobals sharedObject] delegate]) {
+        if ([[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseOpened)]) {
+            [[[SRKGlobals sharedObject] delegate] performSelector:@selector(databaseOpened)];
         }
     }
     
@@ -416,7 +344,7 @@ static NSMutableDictionary* primaryTypes;
     
     [SharkORM cacheSchemaForDatabase:@"SQLITE_master" withHandle:[SharkORM handleForDatabase:dbName]];
     
-    for (NSString* tablename in tableSchemas.allKeys) {
+    for (NSString* tablename in [[SRKGlobals sharedObject] tableSchemas].allKeys) {
         
         [SharkORM cachePrmaryKeyForTable:tablename inDatabase:dbName];
         [SharkORM cachePrmaryKeyTypeTable:tablename inDatabase:dbName];
@@ -518,7 +446,7 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
                 
             }
             
-            [tableSchemas setObject:fieldDef forKey:tableName];
+            [[[SRKGlobals sharedObject] tableSchemas] setObject:fieldDef forKey:tableName];
             
             sqlite3_finalize(fieldNames);
         }
@@ -558,7 +486,7 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
                                               );
                 
                 if (priKey) {
-                    [primaryKeys setObject:[NSString stringWithUTF8String:sqlite3_column_name(statement, i)] forKey:table];
+                    [[[SRKGlobals sharedObject] primaryKeys] setObject:[NSString stringWithUTF8String:sqlite3_column_name(statement, i)] forKey:table];
                 }
                 
             }
@@ -605,11 +533,11 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
                 if (priKey) {
                     
                     if ([[NSString stringWithUTF8String:dataType] isEqualToString:@"INTEGER"]) {
-                        [primaryTypes setObject:[NSNumber numberWithInt:(int)SQLITE_INTEGER] forKey:table];
+                        [[[SRKGlobals sharedObject] primaryTypes] setObject:[NSNumber numberWithInt:(int)SQLITE_INTEGER] forKey:table];
                     }
                     
                     if ([[NSString stringWithUTF8String:dataType] isEqualToString:@"TEXT"]) {
-                        [primaryTypes setObject:[NSNumber numberWithInt:(int)SQLITE_TEXT] forKey:table];
+                        [[[SRKGlobals sharedObject] primaryTypes] setObject:[NSNumber numberWithInt:(int)SQLITE_TEXT] forKey:table];
                     }
                     
                 }
@@ -722,20 +650,23 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
     
     NSMutableDictionary* fields = [NSMutableDictionary new];
     [fields setObject:pri forKey:SRK_DEFAULT_PRIMARY_KEY_NAME];
-    [tableSchemas setObject:fields forKey:tableName];
+    [[[SRKGlobals sharedObject] tableSchemas] setObject:fields forKey:tableName];
     
-    [primaryKeys setObject:SRK_DEFAULT_PRIMARY_KEY_NAME forKey:tableName];
-    [primaryTypes setObject:[NSNumber numberWithInt:keyType] forKey:tableName];
+    [[[SRKGlobals sharedObject] primaryKeys] setObject:SRK_DEFAULT_PRIMARY_KEY_NAME forKey:tableName];
+    [[[SRKGlobals sharedObject] primaryTypes] setObject:[NSNumber numberWithInt:keyType] forKey:tableName];
     
 }
 
 +(void)executeSQL:(NSString*)sql inDatabase:(NSString *)dbName {
+    sqlite3* handle = nil;
     if (!dbName) {
         /* get the default database */
-        dbName = [databaseHandleIndex allKeys].firstObject;
+        handle = [[SRKGlobals sharedObject] defaultHandle];
+    } else {
+        handle = [[SRKGlobals sharedObject] handleForName:dbName];
     }
 	char* error = 0;
-    sqlite3_exec([SharkORM handleForDatabase:dbName], [sql UTF8String], nil, nil, &error);
+    sqlite3_exec(handle, [sql UTF8String], nil, nil, &error);
 	if (error) {
 		free(error);
 	}
@@ -751,7 +682,7 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
 
 + (void)removeColumnFromTable:(NSString*)tableName columnName:(NSString*)columnName inDatabase:(NSString*)dbName {
     
-    NSMutableDictionary* fields = [tableSchemas objectForKey:tableName];
+    NSMutableDictionary* fields = [[[SRKGlobals sharedObject] tableSchemas] objectForKey:tableName];
     NSObject* removedObject = nil;
     for (NSString* fieldName in fields.allKeys) {
         if ([fieldName isEqualToString:columnName]) {
@@ -763,7 +694,7 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
         [fields removeObjectForKey:removedObject];
     }
     
-    [tableSchemas setObject:fields forKey:tableName];
+    [[[SRKGlobals sharedObject] tableSchemas] setObject:fields forKey:tableName];
     
     /* re-jig the table now */
     
@@ -795,14 +726,14 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
     /* remove from the cache as well */
     
     NSMutableArray* relToRemove = [NSMutableArray new];
-    for (SRKRelationship * r in systemEntityRelationships) {
+    for (SRKRelationship * r in [[SRKGlobals sharedObject] systemEntityRelationshipsReadOnly]) {
         if (([[r.sourceClass description] isEqualToString:tableName] && [r.sourceProperty isEqualToString:columnName]) || ([[r.targetClass description] isEqualToString:tableName] && [r.targetProperty isEqualToString:columnName])) {
             [relToRemove addObject:r];
         }
     }
     
     for (NSObject* o in relToRemove) {
-        [systemEntityRelationships removeObject:o];
+        [[[SRKGlobals sharedObject] systemEntityRelationships] removeObject:o];
     }
     
 }
@@ -810,7 +741,7 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
 + (NSString*)currentSqliteTypeForColumn:(NSString*)column inTable:(NSString*)tableName {
     
     NSString* retVal = @"";
-    NSDictionary* d = [tableSchemas objectForKey:tableName];
+    NSDictionary* d = [[[SRKGlobals sharedObject] tableSchemas] objectForKey:tableName];
     if (d) {
         NSString* def = [d objectForKey:column];
         if (def) {
@@ -824,7 +755,7 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
     
     int retVal = 0;
     
-    NSDictionary* d = [tableSchemas objectForKey:tableName];
+    NSDictionary* d = [[[SRKGlobals sharedObject] tableSchemas] objectForKey:tableName];
     if (d) {
         NSString* def = [d objectForKey:column];
         if (def) {
@@ -929,9 +860,9 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
         
         sqlite3_exec([SharkORM handleForDatabase:dbName], [execSql UTF8String], nil, nil, nil);
         
-        NSMutableDictionary* fields = [tableSchemas objectForKey:tableName];
+        NSMutableDictionary* fields = [[[SRKGlobals sharedObject] tableSchemas] objectForKey:tableName];
         [fields setObject:type forKey:columnName];
-        [tableSchemas setObject:fields forKey:tableName];
+        [[[SRKGlobals sharedObject] tableSchemas] setObject:fields forKey:tableName];
     }
 	
 	if (value) {
@@ -950,12 +881,12 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
 				
 			} else {
 				/* error in prepare statement */
-				if (delegate && [delegate respondsToSelector:@selector(databaseError:)]) {
+				if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
 					
 					SRKError* e = [SRKError new];
 					e.sqlQuery = sql;
 					e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg([SharkORM handleForDatabase:dbName])];
-					[delegate databaseError:e];
+					[[[SRKGlobals sharedObject] delegate] databaseError:e];
 					
 				}
 			}
@@ -970,7 +901,7 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
 +(void)addEntityRelationship:(SRKRelationship*)r inDatabase:(NSString *)dbName {
     
 	/* standard relationship allocation */
-	[systemEntityRelationships addObject:r];
+	[[[SRKGlobals sharedObject] systemEntityRelationships] addObject:r];
 	[self indexFieldInTable:[r.targetClass description] columnName:r.targetProperty inDatabase:dbName];
 	
 	/* now create the inverse of the relationship to allow one-to-many optimisation */
@@ -1019,7 +950,7 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
 +(void)refactorTableFromEntityDefinition:(NSDictionary*)definition forTable:(NSString*)table inDatabase:(NSString *)dbName primaryKeyAsString:(BOOL)pkIsString {
     
     /* check the table even exists */
-    if ([primaryKeys objectForKey:table] == nil) {
+    if ([[[SRKGlobals sharedObject] primaryKeys] objectForKey:table] == nil) {
         if (pkIsString) {
             [SharkORM createTableNamed:table withPrimaryKeyType:SRK_PRIKEY_GUID inDatabase:dbName];
         } else {
@@ -1029,7 +960,7 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
     }
     
     /* build a list of all the fields that no longer exist in the table */
-    NSMutableDictionary* currentFields = [tableSchemas objectForKey:table];
+    NSMutableDictionary* currentFields = [[[SRKGlobals sharedObject] tableSchemas] objectForKey:table];
     
     /* add in any new fields */
     NSMutableDictionary* newFields = [NSMutableDictionary new];
@@ -1067,12 +998,12 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
 +(void)removeMissingFieldsFromEntityDefinition:(NSDictionary*)definition forTable:(NSString*)table inDatabase:(NSString *)dbName {
     
     /* check the table even exists */
-    if ([primaryKeys objectForKey:table] == nil) {
+    if ([[[SRKGlobals sharedObject] primaryKeys] objectForKey:table] == nil) {
         [SharkORM createTableNamed:table withPrimaryKeyType:SRK_PRIKEY_INTEGER inDatabase:dbName];
     }
     
     /* build a list of all the fields that no longer exist in the table */
-    NSMutableDictionary* currentFields = [tableSchemas objectForKey:table];
+    NSMutableDictionary* currentFields = [[[SRKGlobals sharedObject] tableSchemas] objectForKey:table];
     NSMutableArray* nonPresentFields = [NSMutableArray new];
     
     for (NSString* f in currentFields.allKeys) {
@@ -1193,7 +1124,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 +(void)closeDatabaseNamed:(NSString*)dbName {
     if ([SharkORM handleForDatabase:dbName]) {
         sqlite3_close([SharkORM handleForDatabase:dbName]);
-		[databaseHandleIndex removeObjectForKey:dbName];
+        [[SRKGlobals sharedObject] removeHandleForName:dbName];
     }
 }
 
@@ -1243,8 +1174,8 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
         e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg(dbHandle)];
         
         /* error in prepare statement */
-        if (delegate && [delegate respondsToSelector:@selector(databaseError:)]) {
-            [delegate databaseError:e];
+        if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
+            [[[SRKGlobals sharedObject] delegate] databaseError:e];
         }
         
         returnValue.error = e;
@@ -1266,7 +1197,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     
     NSString* retVal = @"";
     
-    NSString* key = [primaryKeys objectForKey:tableName];
+    NSString* key = [[[SRKGlobals sharedObject] primaryKeys] objectForKey:tableName];
     if (key) {
         retVal = key;
     }
@@ -1279,7 +1210,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     
     int retVal = 0;
     
-    NSNumber* type = [primaryTypes objectForKey:tableName];
+    NSNumber* type = [[[SRKGlobals sharedObject] primaryTypes] objectForKey:tableName];
     if (type) {
         retVal = [type intValue];
     }
@@ -1369,9 +1300,9 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                         /*  this object is not key coding compliant */
                         
                         /* object type was not supported, send to delegate for processing */
-                        if (delegate && [delegate respondsToSelector:@selector(encodeUnsupportedColumnValueForColumn:inEntity:value:)]) {
+                        if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(encodeUnsupportedColumnValueForColumn:inEntity:value:)]) {
                             
-                            NSData* response = [delegate encodeUnsupportedColumnValueForColumn:key inEntity:className value:value];
+                            NSData* response = [[[SRKGlobals sharedObject] delegate] encodeUnsupportedColumnValueForColumn:key inEntity:className value:value];
                             if (response) {
                                 
                                 @try {
@@ -1390,12 +1321,12 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                                     
                                     /* still unsupported despite be handled by the delegate */
                                     
-                                    if (delegate && [delegate respondsToSelector:@selector(databaseError:)]) {
+                                    if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
                                         
                                         SRKError* e = [SRKError new];
                                         e.sqlQuery = sql;
                                         e.errorMessage = [NSString stringWithFormat:@"Unsupported data type detected by SharkORM despite being handled by the unsupported data type method on the delegate, column = %@, in entity = %@, value was %@", key, className, value];
-                                        [delegate databaseError:e];
+                                        [[[SRKGlobals sharedObject] delegate] databaseError:e];
                                         
                                     }
                                     [params addObject:[NSNull null]];
@@ -1427,7 +1358,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
             item.database = databaseNameForClass;
             item.statementSQL = sql;
             item.parameters = [NSArray arrayWithArray:params];
-            item.eventType = entity.exists ? SharkORMEventUpdate : SharkORMEventInsert;
+            item.eventType = entity.exists ? EventUpdate : EventInsert;
             
             [transaction addItem:item];
 
@@ -1448,7 +1379,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
             NSString*   databaseNameForClass = [SharkORM databaseNameForClass:entity.class];
             sqlite3*    databaseHandle = [SharkORM handleForDatabase:databaseNameForClass];
             
-            @synchronized(SRK_LOCK_WRITE) {
+            @synchronized([[SRKGlobals sharedObject] writeLockObject]) {
                 
                 sqlite3_stmt* statement;
                 
@@ -1530,9 +1461,9 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                                 /*  this object is not key coding compliant */
                                 
                                 /* object type was not supported, send to delegate for processing */
-                                if (delegate && [delegate respondsToSelector:@selector(encodeUnsupportedColumnValueForColumn:inEntity:value:)]) {
+                                if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(encodeUnsupportedColumnValueForColumn:inEntity:value:)]) {
                                     
-                                    NSData* response = [delegate encodeUnsupportedColumnValueForColumn:key inEntity:className value:value];
+                                    NSData* response = [[[SRKGlobals sharedObject] delegate] encodeUnsupportedColumnValueForColumn:key inEntity:className value:value];
                                     if (response) {
                                         
                                         @try {
@@ -1551,12 +1482,12 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                                             
                                             /* still unsupported despite be handled by the delegate */
                                             
-                                            if (delegate && [delegate respondsToSelector:@selector(databaseError:)]) {
+                                            if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
                                                 
                                                 SRKError* e = [SRKError new];
                                                 e.sqlQuery = sql;
                                                 e.errorMessage = [NSString stringWithFormat:@"Unsupported data type detected by SharkORM despite being handled by the unsupported data type method on the delegate, column = %@, in entity = %@, value was %@", key, className, value];
-                                                [delegate databaseError:e];
+                                                [[[SRKGlobals sharedObject] delegate] databaseError:e];
                                                 
                                             }
                                             
@@ -1637,12 +1568,12 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                             default:
                             {
                                 /* error in prepare statement */
-                                if (delegate && [delegate respondsToSelector:@selector(databaseError:)]) {
+                                if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
                                     
                                     SRKError* e = [SRKError new];
                                     e.sqlQuery = sql;
                                     e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg(databaseHandle)];
-                                    [delegate databaseError:e];
+                                    [[[SRKGlobals sharedObject] delegate] databaseError:e];
                                     
                                 }
                             }
@@ -1653,12 +1584,12 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                 } else {
                     // an error occoured
                     /* error in prepare statement */
-                    if (delegate && [delegate respondsToSelector:@selector(databaseError:)]) {
+                    if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
                         
                         SRKError* e = [SRKError new];
                         e.sqlQuery = sql;
                         e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg(databaseHandle)];
-                        [delegate databaseError:e];
+                        [[[SRKGlobals sharedObject] delegate] databaseError:e];
                         
                     }
                 }
@@ -1719,7 +1650,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
         NSString* databaseNameForClass = [SharkORM databaseNameForClass:entity.class];
         NSString* entityName = [entity.class description];
         
-        @synchronized(SRK_LOCK_WRITE) {
+        @synchronized([[SRKGlobals sharedObject] writeLockObject]) {
             
             sqlite3_stmt* statement;
             
@@ -1736,12 +1667,12 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                     succeded = YES;
                 } else {
                     /* error in prepare statement */
-                    if (delegate && [delegate respondsToSelector:@selector(databaseError:)]) {
+                    if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
                         
                         SRKError* e = [SRKError new];
                         e.sqlQuery = sql;
                         e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg([SharkORM handleForDatabase:databaseNameForClass])];
-                        [delegate databaseError:e];
+                        [[[SRKGlobals sharedObject] delegate] databaseError:e];
                         
                     }
                 }
@@ -1770,7 +1701,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     NSString* databaseNameForClass = [SharkORM databaseNameForClass:entity.class];
     NSString* entityName = [entity.class description];
     
-    @synchronized(SRK_LOCK_WRITE) {
+    @synchronized([[SRKGlobals sharedObject] writeLockObject]) {
         
         sqlite3_stmt* statement;
         
@@ -1786,12 +1717,12 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                 succeded = YES;
             } else {
                 /* error in prepare statement */
-                if (delegate && [delegate respondsToSelector:@selector(databaseError:)]) {
+                if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
                     
                     SRKError* e = [SRKError new];
                     e.sqlQuery = sql;
                     e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg([SharkORM handleForDatabase:databaseNameForClass])];
-                    [delegate databaseError:e];
+                    [[[SRKGlobals sharedObject] delegate] databaseError:e];
                     
                 }
             }
@@ -1883,12 +1814,12 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     } else {
         
         /* error in prepare statement */
-        if (delegate && [delegate conformsToProtocol:@protocol(SRKDelegate)] && [delegate respondsToSelector:@selector(databaseError:)]) {
+        if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] conformsToProtocol:@protocol(SRKDelegate)] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
             
             SRKError* e = [SRKError new];
             e.sqlQuery = sql;
             e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg([SharkORM handleForDatabase:classDecl])];
-            [delegate databaseError:e];
+            [[[SRKGlobals sharedObject] delegate] databaseError:e];
             
         }
         
@@ -1900,7 +1831,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     
     finishT = [[NSDate date] timeIntervalSince1970] - startT;
     
-    if (delegate && [delegate respondsToSelector:@selector(queryPerformedWithProfile:)]) {
+    if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(queryPerformedWithProfile:)]) {
         
         SRKQueryProfile* p = [SRKQueryProfile new];
         p.sqlQuery = sql;
@@ -1950,8 +1881,8 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
             
         }
         
-        if ([delegate respondsToSelector:@selector(queryPerformedWithProfile:)]) {
-            [delegate performSelector:@selector(queryPerformedWithProfile:) withObject:p];
+        if ([[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(queryPerformedWithProfile:)]) {
+            [[[SRKGlobals sharedObject] delegate] performSelector:@selector(queryPerformedWithProfile:) withObject:p];
             p = nil;
         }
 
@@ -1966,12 +1897,12 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 - (void)handleError:(sqlite3*)db sql:(NSString*)sql {
 	
 	/* error in prepare statement */
-	if (delegate && [delegate conformsToProtocol:@protocol(SRKDelegate)] && [delegate respondsToSelector:@selector(databaseError:)]) {
+	if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] conformsToProtocol:@protocol(SRKDelegate)] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
 		
 		SRKError* e = [SRKError new];
 		e.sqlQuery = sql;
 		e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg(db)];
-		[delegate databaseError:e];
+		[[[SRKGlobals sharedObject] delegate] databaseError:e];
 		
 	}
 	
@@ -1985,7 +1916,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 	__block NSTimeInterval firstResultT = [[NSDate date] timeIntervalSince1970];
 	__block NSTimeInterval lockwaitT = [[NSDate date] timeIntervalSince1970];
 	
-	if (query && (query.recordPerformance || [delegate respondsToSelector:@selector(queryPerformedWithProfile:)])) {
+	if (query && (query.recordPerformance || [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(queryPerformedWithProfile:)])) {
 		if(!query.performance) {
 			query.performance = [SRKQueryProfile new];
 		}
@@ -2022,7 +1953,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 				
 				else {
 					
-					for (NSString* qFieldName in ((NSMutableDictionary*)[tableSchemas objectForKey:tableName]).allKeys) {
+					for (NSString* qFieldName in ((NSMutableDictionary*)[[[SRKGlobals sharedObject] tableSchemas] objectForKey:tableName]).allKeys) {
 						[getFieldList addObject:[NSString stringWithFormat:SRK_FIELD_NAME_FORMAT, tableName, qFieldName, qFieldName]];
 					}
 					
@@ -2049,7 +1980,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 	}
 	
     /* see if there are any automatic joins made through object dot notation e.g. "department.name = 'Software'", where department is a property of type Department on Person */
-    for (NSString* qFieldName in ((NSMutableDictionary*)[tableSchemas objectForKey:tableName]).allKeys) {
+    for (NSString* qFieldName in ((NSMutableDictionary*)[[[SRKGlobals sharedObject] tableSchemas] objectForKey:tableName]).allKeys) {
         
         // we have the fields, now to check their types as to whether they are related objects
         Class class = query.classDecl;
@@ -2089,7 +2020,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 
 			/* now build up the additional selects for the joined data */
 			
-			for (NSString* qFieldName in [tableSchemas objectForKey:[join.joinOn description]]) {
+			for (NSString* qFieldName in [[[SRKGlobals sharedObject] tableSchemas] objectForKey:[join.joinOn description]]) {
                 [getFieldList addObject:[NSString stringWithFormat:SRK_JOINED_FIELD_NAME_FORMAT, [join.joinOn description], qFieldName, [join.joinOn description],qFieldName]];
 			}
 		}
@@ -2159,7 +2090,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 	
 	finishT = [[NSDate date] timeIntervalSince1970] - startT;
 	
-	if (query && (query.recordPerformance || [delegate respondsToSelector:@selector(queryPerformedWithProfile:)])) {
+	if (query && (query.recordPerformance || [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(queryPerformedWithProfile:)])) {
 		
 		SRKQueryProfile* p = query.performance;
 		p.sqlQuery = sql;
@@ -2209,8 +2140,8 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 			
 		}
 		
-		if ([delegate respondsToSelector:@selector(queryPerformedWithProfile:)]) {
-			[delegate performSelector:@selector(queryPerformedWithProfile:) withObject:p];
+		if ([[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(queryPerformedWithProfile:)]) {
+			[[[SRKGlobals sharedObject] delegate] performSelector:@selector(queryPerformedWithProfile:) withObject:p];
 			if (query && !query.recordPerformance) {
 				query.performance = nil;
 				p = nil;

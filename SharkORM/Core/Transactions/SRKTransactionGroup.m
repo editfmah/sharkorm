@@ -28,6 +28,7 @@
 #import "SharkORM+Private.h"
 #import "sqlite3.h"
 #import "SRKRegistry.h"
+#import "SRKGlobals.h"
 
 static NSMutableDictionary* transactionForThread = nil;
 
@@ -113,7 +114,7 @@ static NSMutableDictionary* transactionForThread = nil;
 		
 		
 		/* loop the transactions per database file */
-		@synchronized(SRK_LOCK_WRITE) {
+		@synchronized([[SRKGlobals sharedObject] writeLockObject]) {
 			
 			for (NSString* databaseNameForClass in self.usedDatabases) {
 				if (succeded) {
@@ -176,12 +177,12 @@ static NSMutableDictionary* transactionForThread = nil;
 												default:
 												{
 													/* error in upsert statement */
-													if (delegate && [delegate respondsToSelector:@selector(databaseError:)]) {
+													if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
 														
 														SRKError* e = [SRKError new];
 														e.sqlQuery = item.statementSQL;
 														e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg(databaseHandle)];
-														[delegate databaseError:e];
+														[[[SRKGlobals sharedObject] delegate] databaseError:e];
 														
 													}
 													succeded = NO;
@@ -190,12 +191,12 @@ static NSMutableDictionary* transactionForThread = nil;
 											}
 										} else {
 											/* error in prepare statement */
-											if (delegate && [delegate respondsToSelector:@selector(databaseError:)]) {
+											if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
 												
 												SRKError* e = [SRKError new];
 												e.sqlQuery = item.statementSQL;
 												e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg(databaseHandle)];
-												[delegate databaseError:e];
+												[[[SRKGlobals sharedObject] delegate] databaseError:e];
 												
 											}
 										}
