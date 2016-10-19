@@ -95,8 +95,4 @@ typedef enum {
 	SRK_COLUMN_TYPE_ENTITYCOLLECTION = 100
 } SRKColumnStorageType;
 
-/* global variables for use across all SharkORM instances */
-static NSObject*   SRK_LOCK_WRITE;
-static id<SRKDelegate> delegate;
-
 #endif /* SRKDefinitions_h */
