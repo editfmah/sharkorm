@@ -37,6 +37,18 @@
 		E09B720E1D4F530A00B68A80 /* SRKAES256Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E09B720C1D4F530A00B68A80 /* SRKAES256Extension.m */; };
 		E09B720F1D4F531000B68A80 /* SRKAES256Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E09B720C1D4F530A00B68A80 /* SRKAES256Extension.m */; };
 		E09B72101D4F531300B68A80 /* SRKAES256Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E09B720C1D4F530A00B68A80 /* SRKAES256Extension.m */; };
+		E0A83F261DB75E82003F608B /* SRKGlobals.h in Headers */ = {isa = PBXBuildFile; fileRef = E0A83F241DB75E82003F608B /* SRKGlobals.h */; };
+		E0A83F271DB75E82003F608B /* SRKGlobals.m in Sources */ = {isa = PBXBuildFile; fileRef = E0A83F251DB75E82003F608B /* SRKGlobals.m */; };
+		E0A83F281DB75E82003F608B /* SRKGlobals.m in Sources */ = {isa = PBXBuildFile; fileRef = E0A83F251DB75E82003F608B /* SRKGlobals.m */; };
+		E0A83F291DB75E82003F608B /* SRKGlobals.m in Sources */ = {isa = PBXBuildFile; fileRef = E0A83F251DB75E82003F608B /* SRKGlobals.m */; };
+		E0A83F2B1DB7B59E003F608B /* sqlite mods.txt in Resources */ = {isa = PBXBuildFile; fileRef = E0A83F2A1DB7B59E003F608B /* sqlite mods.txt */; };
+		E0A83F2C1DB7B59E003F608B /* sqlite mods.txt in Resources */ = {isa = PBXBuildFile; fileRef = E0A83F2A1DB7B59E003F608B /* sqlite mods.txt */; };
+		E0A83F2D1DB7B59E003F608B /* sqlite mods.txt in Resources */ = {isa = PBXBuildFile; fileRef = E0A83F2A1DB7B59E003F608B /* sqlite mods.txt */; };
+		E0A83F311DB7B5C9003F608B /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = E0A83F2E1DB7B5C9003F608B /* sqlite3.c */; };
+		E0A83F321DB7B5C9003F608B /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = E0A83F2E1DB7B5C9003F608B /* sqlite3.c */; };
+		E0A83F331DB7B5C9003F608B /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = E0A83F2E1DB7B5C9003F608B /* sqlite3.c */; };
+		E0A83F341DB7B5C9003F608B /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = E0A83F2F1DB7B5C9003F608B /* sqlite3.h */; };
+		E0A83F351DB7B5C9003F608B /* sqlite3ext.h in Headers */ = {isa = PBXBuildFile; fileRef = E0A83F301DB7B5C9003F608B /* sqlite3ext.h */; };
 		E0C450A61D107AA8003FA21D /* SRKEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413631CF632120085166C /* SRKEvent.m */; };
 		E0C450A71D107AA8003FA21D /* SRKEventBlockHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413651CF632120085166C /* SRKEventBlockHolder.m */; };
 		E0C450A81D107AA8003FA21D /* SRKEventHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413671CF632120085166C /* SRKEventHandler.m */; };
@@ -66,7 +78,6 @@
 		E0C450C01D107AA8003FA21D /* SRKSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413931CF632120085166C /* SRKSettings.m */; };
 		E0C450C11D107AA8003FA21D /* SRKSQLiteHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413951CF632120085166C /* SRKSQLiteHandle.m */; };
 		E0C450C21D107AA8003FA21D /* SRKUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413971CF632120085166C /* SRKUtilities.m */; };
-		E0C450C31D107ABF003FA21D /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = E0F413A11CF632120085166C /* sqlite3.c */; };
 		E0C450C61D10865A003FA21D /* Query.m in Sources */ = {isa = PBXBuildFile; fileRef = E0C450C51D10865A003FA21D /* Query.m */; };
 		E0DFA42B1D107A1800DFDB6F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E0DFA42A1D107A1800DFDB6F /* main.m */; };
 		E0DFA42E1D107A1800DFDB6F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E0DFA42D1D107A1800DFDB6F /* AppDelegate.m */; };
@@ -163,10 +174,6 @@
 		E0F413F41CF632120085166C /* SRKTransactionGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F4139E1CF632120085166C /* SRKTransactionGroup.h */; };
 		E0F413F51CF632120085166C /* SRKTransactionGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4139F1CF632120085166C /* SRKTransactionGroup.m */; };
 		E0F413F61CF632120085166C /* SRKTransactionGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4139F1CF632120085166C /* SRKTransactionGroup.m */; };
-		E0F413F71CF632120085166C /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = E0F413A11CF632120085166C /* sqlite3.c */; };
-		E0F413F81CF632120085166C /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = E0F413A11CF632120085166C /* sqlite3.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		E0F413F91CF632120085166C /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413A21CF632120085166C /* sqlite3.h */; };
-		E0F413FA1CF632120085166C /* sqlite3ext.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F413A31CF632120085166C /* sqlite3ext.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -223,6 +230,12 @@
 		E092CB071D00DBE800C6C8CD /* Performance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Performance.m; sourceTree = "<group>"; };
 		E09B720B1D4F530A00B68A80 /* SRKAES256Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKAES256Extension.h; sourceTree = "<group>"; };
 		E09B720C1D4F530A00B68A80 /* SRKAES256Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKAES256Extension.m; sourceTree = "<group>"; };
+		E0A83F241DB75E82003F608B /* SRKGlobals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKGlobals.h; sourceTree = "<group>"; };
+		E0A83F251DB75E82003F608B /* SRKGlobals.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKGlobals.m; sourceTree = "<group>"; };
+		E0A83F2A1DB7B59E003F608B /* sqlite mods.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "sqlite mods.txt"; sourceTree = "<group>"; };
+		E0A83F2E1DB7B5C9003F608B /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqlite3.c; sourceTree = "<group>"; };
+		E0A83F2F1DB7B5C9003F608B /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
+		E0A83F301DB7B5C9003F608B /* sqlite3ext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3ext.h; sourceTree = "<group>"; };
 		E0C450C41D10865A003FA21D /* Query.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Query.h; sourceTree = "<group>"; };
 		E0C450C51D10865A003FA21D /* Query.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Query.m; sourceTree = "<group>"; };
 		E0DFA4271D107A1800DFDB6F /* TestTargetApplication.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestTargetApplication.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -302,9 +315,6 @@
 		E0F4139D1CF632120085166C /* SRKTransactionElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKTransactionElement.m; sourceTree = "<group>"; };
 		E0F4139E1CF632120085166C /* SRKTransactionGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKTransactionGroup.h; sourceTree = "<group>"; };
 		E0F4139F1CF632120085166C /* SRKTransactionGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKTransactionGroup.m; sourceTree = "<group>"; };
-		E0F413A11CF632120085166C /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqlite3.c; sourceTree = "<group>"; };
-		E0F413A21CF632120085166C /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
-		E0F413A31CF632120085166C /* sqlite3ext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3ext.h; sourceTree = "<group>"; };
 		E0F413FB1CF632F80085166C /* SharkORMTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SharkORMTests-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -536,6 +546,7 @@
 		E0F413611CF632120085166C /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				E092CB041D0095A300C6C8CD /* DBAccess.h */,
 				E0F413621CF632120085166C /* Events */,
 				E0F4136A1CF632120085166C /* FTS */,
 				E0F4136D1CF632120085166C /* FuzzyStore */,
@@ -543,12 +554,13 @@
 				E0F413731CF632120085166C /* Persistable Objects */,
 				E0F4137C1CF632120085166C /* Queries */,
 				E0F413851CF632120085166C /* Registry */,
-				E0F413981CF632120085166C /* Transactions */,
-				E0F4138A1CF632120085166C /* SharkORM+Private.h */,
 				E0F4138B1CF632120085166C /* SharkORM.h */,
 				E0F4138C1CF632120085166C /* SharkORM.m */,
+				E0F4138A1CF632120085166C /* SharkORM+Private.h */,
 				E0F4138D1CF632120085166C /* SRKDefinitions.h */,
 				E0F4138E1CF632120085166C /* SRKError.m */,
+				E0A83F241DB75E82003F608B /* SRKGlobals.h */,
+				E0A83F251DB75E82003F608B /* SRKGlobals.m */,
 				E0F4138F1CF632120085166C /* SRKLazyLoader.h */,
 				E0F413901CF632120085166C /* SRKLazyLoader.m */,
 				E0F413911CF632120085166C /* SRKRelationship.h */,
@@ -558,7 +570,7 @@
 				E0F413951CF632120085166C /* SRKSQLiteHandle.m */,
 				E0F413961CF632120085166C /* SRKUtilities.h */,
 				E0F413971CF632120085166C /* SRKUtilities.m */,
-				E092CB041D0095A300C6C8CD /* DBAccess.h */,
+				E0F413981CF632120085166C /* Transactions */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -668,9 +680,10 @@
 		E0F413A01CF632120085166C /* SQLite */ = {
 			isa = PBXGroup;
 			children = (
-				E0F413A11CF632120085166C /* sqlite3.c */,
-				E0F413A21CF632120085166C /* sqlite3.h */,
-				E0F413A31CF632120085166C /* sqlite3ext.h */,
+				E0A83F2E1DB7B5C9003F608B /* sqlite3.c */,
+				E0A83F2F1DB7B5C9003F608B /* sqlite3.h */,
+				E0A83F301DB7B5C9003F608B /* sqlite3ext.h */,
+				E0A83F2A1DB7B59E003F608B /* sqlite mods.txt */,
 			);
 			path = SQLite;
 			sourceTree = "<group>";
@@ -686,7 +699,9 @@
 				E0F413D81CF632120085166C /* SharkORM.h in Headers */,
 				E092CB051D00964700C6C8CD /* DBAccess.h in Headers */,
 				E0F413DB1CF632120085166C /* SRKDefinitions.h in Headers */,
+				E0A83F341DB7B5C9003F608B /* sqlite3.h in Headers */,
 				E0F413B21CF632120085166C /* SRKFuzzyStore.h in Headers */,
+				E0A83F261DB75E82003F608B /* SRKGlobals.h in Headers */,
 				E0F413D71CF632120085166C /* SharkORM+Private.h in Headers */,
 				E0F413AC1CF632120085166C /* SRKEventRegistryObject.h in Headers */,
 				E0F413DE1CF632120085166C /* SRKLazyLoader.h in Headers */,
@@ -696,16 +711,15 @@
 				E0F413E91CF632120085166C /* SRKUtilities.h in Headers */,
 				E0F413D41CF632120085166C /* SRKRegistryEntry.h in Headers */,
 				E0F413CC1CF632120085166C /* SRKQueryAsyncHandler+Private.h in Headers */,
+				E0A83F351DB7B5C9003F608B /* sqlite3ext.h in Headers */,
 				E0F413AF1CF632120085166C /* FTSRegistry.h in Headers */,
 				E0F413BE1CF632120085166C /* SRKResultSet+Private.h in Headers */,
 				E0F413E61CF632120085166C /* SRKSQLiteHandle.h in Headers */,
 				E09B720D1D4F530A00B68A80 /* SRKAES256Extension.h in Headers */,
 				E0F413C61CF632120085166C /* SRKJoinObject.h in Headers */,
-				E0F413FA1CF632120085166C /* sqlite3ext.h in Headers */,
 				E0F413EC1CF632120085166C /* SRKContext.h in Headers */,
 				E0F413C91CF632120085166C /* SRKQuery+Private.h in Headers */,
 				E0F413A61CF632120085166C /* SRKEventBlockHolder.h in Headers */,
-				E0F413F91CF632120085166C /* sqlite3.h in Headers */,
 				E0F413B51CF632120085166C /* SRKIndexDefinition+Private.h in Headers */,
 				E0F413F11CF632120085166C /* SRKTransactionElement.h in Headers */,
 				E0F413A91CF632120085166C /* SRKEventHandler+Private.h in Headers */,
@@ -779,17 +793,20 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Adrian Herridge";
 				TargetAttributes = {
 					E0DFA4261D107A1800DFDB6F = {
 						CreatedOnToolsVersion = 7.3.1;
+						LastSwiftMigration = 0800;
 					};
 					E0F413461CF6312A0085166C = {
 						CreatedOnToolsVersion = 7.3.1;
+						LastSwiftMigration = 0800;
 					};
 					E0F413501CF6312A0085166C = {
 						CreatedOnToolsVersion = 7.3.1;
+						LastSwiftMigration = 0800;
 						TestTargetID = E0DFA4261D107A1800DFDB6F;
 					};
 				};
@@ -821,6 +838,7 @@
 			files = (
 				E0DFA4391D107A1800DFDB6F /* LaunchScreen.storyboard in Resources */,
 				E0DFA4361D107A1800DFDB6F /* Assets.xcassets in Resources */,
+				E0A83F2D1DB7B59E003F608B /* sqlite mods.txt in Resources */,
 				E0DFA4341D107A1800DFDB6F /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -829,6 +847,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E0A83F2B1DB7B59E003F608B /* sqlite mods.txt in Resources */,
 				E012E0361D0AEDDE00B6F741 /* TODO.rtf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -837,6 +856,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E0A83F2C1DB7B59E003F608B /* sqlite mods.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -872,6 +892,7 @@
 				E0C450AA1D107AA8003FA21D /* FTSRegistry.m in Sources */,
 				E07C4F351D45F71400DB6CAB /* SRKStringObject.m in Sources */,
 				E0C450C21D107AA8003FA21D /* SRKUtilities.m in Sources */,
+				E0A83F331DB7B5C9003F608B /* sqlite3.c in Sources */,
 				E0C450B71D107AA8003FA21D /* SRKRegistryEntry.m in Sources */,
 				E0C450C01D107AA8003FA21D /* SRKSettings.m in Sources */,
 				E0C450AE1D107AA8003FA21D /* SRKObject.m in Sources */,
@@ -881,7 +902,7 @@
 				E0C450B61D107AA8003FA21D /* SRKRegistry.m in Sources */,
 				E0C450B91D107AA8003FA21D /* SRKTransaction.m in Sources */,
 				E0C450AC1D107AA8003FA21D /* SRKIndexDefinition.m in Sources */,
-				E0C450C31D107ABF003FA21D /* sqlite3.c in Sources */,
+				E0A83F291DB75E82003F608B /* SRKGlobals.m in Sources */,
 				E0C450A61D107AA8003FA21D /* SRKEvent.m in Sources */,
 				E07C4F2F1D45F12500DB6CAB /* SRKObjectChain.m in Sources */,
 			);
@@ -910,12 +931,13 @@
 				E09B720E1D4F530A00B68A80 /* SRKAES256Extension.m in Sources */,
 				E0F413B31CF632120085166C /* SRKFuzzyStore.m in Sources */,
 				E0F413B91CF632120085166C /* SRKEncryptedObject.m in Sources */,
+				E0A83F311DB7B5C9003F608B /* sqlite3.c in Sources */,
 				E0F413D21CF632120085166C /* SRKRegistry.m in Sources */,
 				E0F413ED1CF632120085166C /* SRKContext.m in Sources */,
-				E0F413F71CF632120085166C /* sqlite3.c in Sources */,
 				E0F413B61CF632120085166C /* SRKIndexDefinition.m in Sources */,
 				3A330F631D25461500483626 /* SRKObjectChain.m in Sources */,
 				E0F413DC1CF632120085166C /* SRKError.m in Sources */,
+				E0A83F271DB75E82003F608B /* SRKGlobals.m in Sources */,
 				E0F413EF1CF632120085166C /* SRKTransaction.m in Sources */,
 				E0F413DF1CF632120085166C /* SRKLazyLoader.m in Sources */,
 				E0F413A71CF632120085166C /* SRKEventBlockHolder.m in Sources */,
@@ -941,13 +963,14 @@
 				E0F413AB1CF632120085166C /* SRKEventHandler.m in Sources */,
 				E00320491CFA58FF00240C44 /* Person.m in Sources */,
 				E0F413E81CF632120085166C /* SRKSQLiteHandle.m in Sources */,
+				E0A83F321DB7B5C9003F608B /* sqlite3.c in Sources */,
 				E003204B1CFA58FF00240C44 /* StringIdRelatedObject.m in Sources */,
 				E0F413CE1CF632120085166C /* SRKQueryAsyncHandler.m in Sources */,
 				E0F413DA1CF632120085166C /* SharkORM.m in Sources */,
 				E003204A1CFA58FF00240C44 /* StringIdObject.m in Sources */,
 				E0E3ACDB1D11C483006803F7 /* Events.m in Sources */,
 				E0E3ACD21D11B80A006803F7 /* Relationship.m in Sources */,
-				E0F413F81CF632120085166C /* sqlite3.c in Sources */,
+				E0A83F281DB75E82003F608B /* SRKGlobals.m in Sources */,
 				E0F413DD1CF632120085166C /* SRKError.m in Sources */,
 				E0F413571CF6312A0085166C /* BaseTestCase.m in Sources */,
 				E0F413D31CF632120085166C /* SRKRegistry.m in Sources */,
@@ -1032,6 +1055,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = sharksync.TestTargetApplication;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 2.3;
 			};
 			name = Debug;
 		};
@@ -1043,6 +1067,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = sharksync.TestTargetApplication;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 2.3;
 			};
 			name = Release;
 		};
@@ -1060,8 +1085,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1108,8 +1135,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1129,6 +1158,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1139,10 +1169,7 @@
 		E0F4135C1CF6312A0085166C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					x86_64,
-				);
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1154,6 +1181,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = sharksync.SharkORM;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 2.3;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 armv7 armv7s x86_64";
 			};
@@ -1162,10 +1190,7 @@
 		E0F4135D1CF6312A0085166C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					x86_64,
-				);
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1177,6 +1202,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = sharksync.SharkORM;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 2.3;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 armv7 armv7s x86_64";
 			};
@@ -1192,6 +1218,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SharkORMTests/SharkORMTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 2.3;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestTargetApplication.app/TestTargetApplication";
 			};
 			name = Debug;
@@ -1205,6 +1232,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = sharksync.SharkORMTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SharkORMTests/SharkORMTests-Bridging-Header.h";
+				SWIFT_VERSION = 2.3;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestTargetApplication.app/TestTargetApplication";
 			};
 			name = Release;

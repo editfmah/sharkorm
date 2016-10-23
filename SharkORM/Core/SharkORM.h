@@ -25,8 +25,8 @@
 #ifndef __SHARKORM_H
 #define __SHARKORM_H
 
-#define SHARK_DATE              20160803
-#define SHARK_VER               2.00.08
+#define SHARK_DATE              20161019
+#define SHARK_VER               2.00.09
 
 #import <Foundation/Foundation.h>
 #import <objc/message.h>
@@ -70,11 +70,10 @@ typedef void(^SRKTransactionBlockBlock)();
  */
 NSString* makeLikeParameter(NSString* param);
 
-typedef enum {
+typedef enum : int {
     SRK_RELATE_ONETOONE = 1,
     SRK_RELATE_ONETOMANY = 2,
 } SRKRelationshipType;
-
 
 /**
  * Settings class for SharkORM, returned from the delegate when the engine is initialized.

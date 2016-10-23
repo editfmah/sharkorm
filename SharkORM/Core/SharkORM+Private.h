@@ -44,7 +44,7 @@
 -(double)fetchSumForQuery:(SRKQuery*)query field:(NSString*)fieldname;
 -(NSArray*)fetchDistinctForQuery:(SRKQuery*)query field:(NSString*)fieldname;
 -(NSArray*)fetchIDsForQuery:(SRKQuery*)query;
-+(NSMutableArray*)entityRelationships;
++(NSArray*)entityRelationships;
 +(NSMutableArray*)entityRelationshipsForClass:(Class)class;
 +(SRKRelationship*)entityRelationshipsForProperty:(NSString*)property inClass:(Class)class;
 +(NSMutableDictionary*)tableSchemas;

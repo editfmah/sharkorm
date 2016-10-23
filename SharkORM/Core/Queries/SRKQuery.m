@@ -33,6 +33,7 @@
 #import "SRKJoinObject.h"
 #import "SRKRegistry.h"
 #import "SRKObject+Private.h"
+#import "SRKGlobals.h"
 
 @implementation SRKQuery
 
@@ -423,8 +424,8 @@
 			SRKError* err = [SRKError new];
 			err.errorMessage = [NSString stringWithFormat:@"You have attempted to query the class '%@' using the fts (Full Text Search) query object.  But this class does not implement the 'FTSParametersForEntity' method, so the query returned no results.", self.classDecl];
 			
-			if ([delegate respondsToSelector:@selector(databaseError:)]) {
-				[delegate performSelector:@selector(databaseError:) withObject:err];
+			if ([[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
+				[[[SRKGlobals sharedObject] delegate] performSelector:@selector(databaseError:) withObject:err];
 			}
 			return [SRKResultSet new]; /* no results, as no FTS objects to query */
 		}

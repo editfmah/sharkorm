@@ -25,6 +25,9 @@
 #import "SRKLazyLoader.h"
 #import "SRKObject+Private.h"
 
+#define RELATE_ONETOONE  1
+#define RELATE_ONETOMANY 2
+
 @implementation SRKLazyLoader
 
 @synthesize relationship, parentEntity, relatedEntity, exists;
@@ -43,7 +46,7 @@
 
 - (id)fetchNode {
 	
-	if (self.relationship.relationshipType == SRK_RELATE_ONETOONE) {
+	if (self.relationship.relationshipType == RELATE_ONETOONE) {
 		
 		/* load this entity up based on the relationship */
 		NSString* entityNameInSourceObject = self.relationship.sourceProperty;
@@ -63,7 +66,7 @@
 		}
 		
 		
-	} else if (self.relationship.relationshipType == SRK_RELATE_ONETOMANY) {
+	} else if (self.relationship.relationshipType == RELATE_ONETOMANY) {
 		
 		/* fetch a set of results for this relationship as one-to-many */
 		

@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "SharkORM"
-  s.version      = "2.0.8"
+  s.version      = "2.0.9"
   s.summary      = "SQLite based ORM for iOS, tvOS & macOS"
   s.description  = <<-DESC
 Shark is an open source ORM, designed from the start to be low maintenance and natural to use, developers choose shark for its power and simplicity.
@@ -27,7 +27,7 @@ Your object model is tuneable with indexes and query optimisations and it is ent
   s.social_media_url   = "http://twitter.com/editfmah"
   s.ios.deployment_target = "7.0"
   s.osx.deployment_target = "10.8"
-  s.tvos.deployment_target = "9.0"
+  #s.tvos.deployment_target = "9.0"
   s.source       = { :git => "https://github.com/sharksync/sharkorm.git", :tag => "#{s.version}" }
   s.source_files  = "SharkORM/**/*.{h,m,c}"
   s.public_header_files = "SharkORM/Core/DBAccess.h", "SharkORM/Core/SharkORM.h"
