@@ -424,7 +424,7 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
     sqlite3_stmt* tableNames;
     NSString *sql = [NSString stringWithFormat:@"SELECT name FROM %@ WHERE type='table';", database];
     if (sqlite3_prepare_v2(db, [sql UTF8String], -1, &tableNames, nil) == SQLITE_OK) {
-        if (SharkORMSettings.printSql) {
+        if ([SRKGlobals sharedObject].settings.printSql) {
             SRKLog(sql);
         }
         
@@ -469,7 +469,7 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
     
     if (sqlite3_prepare_v2([SharkORM handleForDatabase:dbName], [sql UTF8String], -1, &statement, nil) == SQLITE_OK) {
         
-        if (SharkORMSettings.printSql) {
+        if ([SRKGlobals sharedObject].settings.printSql) {
             SRKLog(sql);
         }
         
@@ -517,7 +517,7 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
     
     if (sqlite3_prepare_v2([SharkORM handleForDatabase:dbName], [sql UTF8String], -1, &statement, nil) == SQLITE_OK) {
         
-        if (SharkORMSettings.printSql) {
+        if ([SRKGlobals sharedObject].settings.printSql) {
             SRKLog(sql);
         }
         
@@ -591,7 +591,7 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
 	if (sqlite3_prepare_v2(hnd, [sql UTF8String], -1, &statement, nil) == SQLITE_OK) {
         
         /* see if there is a row */
-        if (SharkORMSettings.printSql) {
+        if ([SRKGlobals sharedObject].settings.printSql) {
             SRKLog(sql);
         }
         
@@ -625,7 +625,7 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
     NSString *sql = @"SELECT revision FROM _schemaRevision LIMIT 1;";
     
 	if (sqlite3_prepare_v2(hnd, sql.UTF8String, -1, &statement, nil) == SQLITE_OK) {
-        if (SharkORMSettings.printSql) {
+        if ([SRKGlobals sharedObject].settings.printSql) {
             SRKLog(sql);
         }
         
@@ -891,7 +891,7 @@ void notifyPKChangeInTransaction(sqlite3_context *context, int argc, sqlite3_val
 		sql = [NSString stringWithFormat:@"UPDATE %@ SET %@ = ?;", tableName , columnName];
 		
 		if (sqlite3_prepare_v2([SharkORM handleForDatabase:dbName], [sql UTF8String], -1, &statement, nil) == SQLITE_OK) {
-            if (SharkORMSettings.printSql) {
+            if ([SRKGlobals sharedObject].settings.printSql) {
                 SRKLog(sql);
             }
             
@@ -1161,7 +1161,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     int prepareResult = sqlite3_prepare_v2(dbHandle, [sql UTF8String], (int)sql.length, &statement, NULL);
     if (prepareResult == SQLITE_OK) {
         
-        if (SharkORMSettings.printSql) {
+        if ([SRKGlobals sharedObject].settings.printSql) {
             SRKLog(sql);
         }
         
@@ -1429,7 +1429,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                 NSString* sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ (%@) VALUES (%@);", className , fieldNames, placeholders];
                 
                 if (sqlite3_prepare_v2([SharkORM handleForDatabase:databaseNameForClass], [sql UTF8String], (int)sql.length, &statement, NULL) == SQLITE_OK) {
-                    if (SharkORMSettings.printSql) {
+                    if ([SRKGlobals sharedObject].settings.printSql) {
                         SRKLog(sql);
                     }
                     /* now bind the data into the table */
@@ -1687,7 +1687,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
             if (sqlite3_prepare_v2([SharkORM handleForDatabase:databaseNameForClass], [sql UTF8String], -1, &statement, nil) == SQLITE_OK) {
                 
                 [[SRKUtilities new] bindParameters:@[entity.Id] toStatement:statement];
-                if (SharkORMSettings.printSql) {
+                if ([SRKGlobals sharedObject].settings.printSql) {
                     SRKLog(sql);
                 }
                 int result = sqlite3_step(statement);
@@ -1738,7 +1738,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
         NSString* sql = [NSString stringWithFormat:@"UPDATE %@ SET %@ = ? WHERE %@ = ?;", entityName, SRK_DEFAULT_PRIMARY_KEY_NAME , SRK_DEFAULT_PRIMARY_KEY_NAME];
         
         if (sqlite3_prepare_v2([SharkORM handleForDatabase:databaseNameForClass], [sql UTF8String], -1, &statement, nil) == SQLITE_OK) {
-            if (SharkORMSettings.printSql) {
+            if ([SRKGlobals sharedObject].settings.printSql) {
                 SRKLog(sql);
             }
             [[SRKUtilities new] bindParameters:@[newPrimaryKey,entity.Id] toStatement:statement];
@@ -1811,7 +1811,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     parseT = [[NSDate date] timeIntervalSince1970];
     
     if (sqlite3_prepare_v2([SharkORM handleForDatabase:[SharkORM databaseNameForClass:classDecl]], [sql UTF8String], -1, &statement, nil) == SQLITE_OK) {
-        if (SharkORMSettings.printSql) {
+        if ([SRKGlobals sharedObject].settings.printSql) {
             SRKLog(sql);
         }
         parseT = [[NSDate date] timeIntervalSince1970] - parseT;
@@ -1881,7 +1881,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
         NSString* planStr = [NSString stringWithFormat:@"EXPLAIN QUERY PLAN %@", sql];
         
         if (sqlite3_prepare_v2([SharkORM handleForDatabase:[SharkORM databaseNameForClass:classDecl]], [planStr UTF8String], -1, &plan, nil) == SQLITE_OK) {
-            if (SharkORMSettings.printSql) {
+            if ([SRKGlobals sharedObject].settings.printSql) {
                 SRKLog(planStr);
             }
             int status = sqlite3_step(plan);
@@ -2098,7 +2098,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 			[[SRKUtilities new] bindParameters:query.parameters toStatement:statement];
 		}
         
-        if (SharkORMSettings.printSql) {
+        if ([SRKGlobals sharedObject].settings.printSql) {
             SRKLog(sql);
         }
 		
@@ -2147,7 +2147,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 		
 		if (sqlite3_prepare_v2([SharkORM handleForDatabase:[SharkORM databaseNameForClass:NSClassFromString(tableName)]], [planStr UTF8String], -1, &plan, nil) == SQLITE_OK) {
             
-            if (SharkORMSettings.printSql) {
+            if ([SRKGlobals sharedObject].settings.printSql) {
                 SRKLog(planStr);
             }
 			int status = sqlite3_step(plan);

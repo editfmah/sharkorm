@@ -396,7 +396,7 @@ typedef     void(^contextExecutionBlock)();
 + (SRKEventHandler*)eventHandler;
 
 /// The primary key column, this is common and mandatory across all persistable classes.
-@property (nonatomic, strong)   NSString* Id;
+@property (nonatomic, strong)   NSNumber* Id;
 
 /// Joined data, if set this contains the results of the query from adjoining tables
 @property (nonatomic, strong, readonly)   NSDictionary* joinedResults;
