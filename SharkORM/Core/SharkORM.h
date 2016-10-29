@@ -98,6 +98,9 @@ typedef enum : int {
 /// tells SharkORM if you wish to retain values for lightweight objects once they are done with.
 @property BOOL                      retainLightweightObjects;
 
+/// tells SharkORM if you wish to print sql statement when access database.
+@property (nonatomic)               BOOL printSql;
+
 @end
 
 /**
@@ -393,7 +396,7 @@ typedef     void(^contextExecutionBlock)();
 + (SRKEventHandler*)eventHandler;
 
 /// The primary key column, this is common and mandatory across all persistable classes.
-@property (nonatomic, strong)   NSNumber* Id;
+@property (nonatomic, strong)   NSString* Id;
 
 /// Joined data, if set this contains the results of the query from adjoining tables
 @property (nonatomic, strong, readonly)   NSDictionary* joinedResults;
@@ -428,6 +431,14 @@ typedef     void(^contextExecutionBlock)();
  * @return BOOL returns NO if the operation failed to complete.
  */
 - (BOOL)commit;
+
+/**
+ * Inserts or updates the object within the database and ignore all embed entities modification provided in the list.
+ 
+ *
+ * @return BOOL returns NO if the operation failed to complete.
+ */
+- (BOOL)commitWithoutEmbedEntities:(NSArray *)entities;
 
 /* these methods should be overloaded in the business object class */
 /**
