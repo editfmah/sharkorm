@@ -127,6 +127,7 @@ static SRKGlobals* this;
 }
 
 - (void)setDelegate:(id<SRKDelegate>)delegate {
+    
     self.ormDelegate = delegate;
     
     /* now ask the delegate for the alternative settings */
