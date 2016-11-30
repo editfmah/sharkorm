@@ -208,10 +208,10 @@ typedef enum : int {
  */
 +(void)closeDatabaseNamed:(NSString*)dbName;
 /**
- * Performs a free text query and returns the result as a SRKRawResults object.
+ * Performs a free text query and returns the result as a INSERT INTO object.
  *
  * @param (NSString*) The query to be performed.
- * @return (SRK;
+ * @return (SRKRawResults*);
  */
 +(SRKRawResults*)rawQuery:(NSString*)sql;
 @end
@@ -625,9 +625,9 @@ typedef     void(^contextExecutionBlock)();
 @interface SRKStringObject : SRKObject <NSCopying>
 
 //NOTE:  There is no way around this, for convenience for the developer to 'know' the type.  The base class inspects the value to check its class, but this is bad OO practice that leads to convenient and nice API for the developer so suck it up, it is NOT dangerous as the public facing API is strongly typed and safe, and well anticipated by the backstore.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Ww"
+
 /// The primary key column, this is common and mandatory across all persistable classes.  In this case it is forced to NSString* to allow string primary keys in Swift.
+
 @property (nonatomic, strong)   NSString* Id;
 #pragma clang diagnostic pop
 
