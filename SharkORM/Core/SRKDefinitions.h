@@ -71,6 +71,8 @@
 
 #define SRK_DEFAULT_PRIMARY_KEY_NAME				@"Id"
 
+#define SRKLog(format,...) NSLog([NSString stringWithFormat:@"%%s [Line %%d] - %@", format], __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+
 #define SuppressPerformSelectorLeakWarning(Stuff) \
 do { \
 _Pragma("clang diagnostic push") \

@@ -28,6 +28,7 @@
 #import "SharkORM+Private.h"
 #import "sqlite3.h"
 #import "SRKRegistry.h"
+#import "SharkORM+Private.h"
 #import "SRKGlobals.h"
 
 static NSMutableDictionary* transactionForThread = nil;
@@ -129,6 +130,11 @@ static NSMutableDictionary* transactionForThread = nil;
 										sqlite3_stmt* statement;
 										int priKeyType = [SharkORM primaryKeyType:[item.originalObject.class description]];
 										if (sqlite3_prepare_v2([SharkORM handleForDatabase:databaseNameForClass], [item.statementSQL UTF8String], (int)item.statementSQL.length, &statement, NULL) == SQLITE_OK) {
+                                            
+                                            if ([SharkORM getSettings].printSql) {
+                                                SRKLog(item.statementSQL);
+                                            }
+                                            
 											/* now bind the data into the table */
 											int idx = 1;
 											for (id value in item.parameters) {

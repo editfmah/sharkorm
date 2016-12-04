@@ -98,6 +98,9 @@ typedef enum : int {
 /// tells SharkORM if you wish to retain values for lightweight objects once they are done with.
 @property BOOL                      retainLightweightObjects;
 
+/// tells SharkORM if you wish to print sql statement when access database.
+@property (nonatomic)               BOOL printSql;
+
 @end
 
 /**
@@ -428,6 +431,14 @@ typedef     void(^contextExecutionBlock)();
  * @return BOOL returns NO if the operation failed to complete.
  */
 - (BOOL)commit;
+
+/**
+ * Inserts or updates the object within the database and ignore all embed entities modification provided in the list.
+ 
+ *
+ * @return BOOL returns NO if the operation failed to complete.
+ */
+- (BOOL)commitWithoutEmbedEntities:(NSArray *)entities;
 
 /* these methods should be overloaded in the business object class */
 /**
