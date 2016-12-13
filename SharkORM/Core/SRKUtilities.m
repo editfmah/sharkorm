@@ -29,7 +29,7 @@
 
 + (NSString*)generateGUID {
 	
-	return [[NSUUID UUID] UUIDString];
+	return [[[NSUUID UUID] UUIDString] lowercaseString];
 	
 }
 
