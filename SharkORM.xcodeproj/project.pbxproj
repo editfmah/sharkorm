@@ -69,8 +69,6 @@
 		E0C450B71D107AA8003FA21D /* SRKRegistryEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413891CF632120085166C /* SRKRegistryEntry.m */; };
 		E0C450B81D107AA8003FA21D /* SRKContext.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4139A1CF632120085166C /* SRKContext.m */; };
 		E0C450B91D107AA8003FA21D /* SRKTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4139B1CF632120085166C /* SRKTransaction.m */; };
-		E0C450BA1D107AA8003FA21D /* SRKTransactionElement.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4139D1CF632120085166C /* SRKTransactionElement.m */; };
-		E0C450BB1D107AA8003FA21D /* SRKTransactionGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4139F1CF632120085166C /* SRKTransactionGroup.m */; };
 		E0C450BC1D107AA8003FA21D /* SharkORM.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4138C1CF632120085166C /* SharkORM.m */; };
 		E0C450BD1D107AA8003FA21D /* SRKError.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4138E1CF632120085166C /* SRKError.m */; };
 		E0C450BE1D107AA8003FA21D /* SRKLazyLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413901CF632120085166C /* SRKLazyLoader.m */; };
@@ -168,12 +166,6 @@
 		E0F413EE1CF632120085166C /* SRKContext.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4139A1CF632120085166C /* SRKContext.m */; };
 		E0F413EF1CF632120085166C /* SRKTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4139B1CF632120085166C /* SRKTransaction.m */; };
 		E0F413F01CF632120085166C /* SRKTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4139B1CF632120085166C /* SRKTransaction.m */; };
-		E0F413F11CF632120085166C /* SRKTransactionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F4139C1CF632120085166C /* SRKTransactionElement.h */; };
-		E0F413F21CF632120085166C /* SRKTransactionElement.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4139D1CF632120085166C /* SRKTransactionElement.m */; };
-		E0F413F31CF632120085166C /* SRKTransactionElement.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4139D1CF632120085166C /* SRKTransactionElement.m */; };
-		E0F413F41CF632120085166C /* SRKTransactionGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = E0F4139E1CF632120085166C /* SRKTransactionGroup.h */; };
-		E0F413F51CF632120085166C /* SRKTransactionGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4139F1CF632120085166C /* SRKTransactionGroup.m */; };
-		E0F413F61CF632120085166C /* SRKTransactionGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4139F1CF632120085166C /* SRKTransactionGroup.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -225,6 +217,7 @@
 		E04FFAB61D1C8FB700F7866D /* SRKRawResults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKRawResults.m; sourceTree = "<group>"; };
 		E07C4F2D1D451BAA00DB6CAB /* SwiftStringId.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftStringId.swift; sourceTree = "<group>"; };
 		E07C4F311D45F71400DB6CAB /* SRKStringObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKStringObject.m; sourceTree = "<group>"; };
+		E08DF4391E02BAD9003884DE /* SRKTransaction+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SRKTransaction+Private.h"; sourceTree = "<group>"; };
 		E092CB041D0095A300C6C8CD /* DBAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DBAccess.h; sourceTree = "<group>"; };
 		E092CB061D00DBE800C6C8CD /* Performance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Performance.h; sourceTree = "<group>"; };
 		E092CB071D00DBE800C6C8CD /* Performance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Performance.m; sourceTree = "<group>"; };
@@ -311,10 +304,6 @@
 		E0F413991CF632120085166C /* SRKContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKContext.h; sourceTree = "<group>"; };
 		E0F4139A1CF632120085166C /* SRKContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKContext.m; sourceTree = "<group>"; };
 		E0F4139B1CF632120085166C /* SRKTransaction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKTransaction.m; sourceTree = "<group>"; };
-		E0F4139C1CF632120085166C /* SRKTransactionElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKTransactionElement.h; sourceTree = "<group>"; };
-		E0F4139D1CF632120085166C /* SRKTransactionElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKTransactionElement.m; sourceTree = "<group>"; };
-		E0F4139E1CF632120085166C /* SRKTransactionGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKTransactionGroup.h; sourceTree = "<group>"; };
-		E0F4139F1CF632120085166C /* SRKTransactionGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKTransactionGroup.m; sourceTree = "<group>"; };
 		E0F413FB1CF632F80085166C /* SharkORMTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SharkORMTests-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -554,6 +543,7 @@
 				E0F413731CF632120085166C /* Persistable Objects */,
 				E0F4137C1CF632120085166C /* Queries */,
 				E0F413851CF632120085166C /* Registry */,
+				E0F413981CF632120085166C /* Transactions */,
 				E0F4138B1CF632120085166C /* SharkORM.h */,
 				E0F4138C1CF632120085166C /* SharkORM.m */,
 				E0F4138A1CF632120085166C /* SharkORM+Private.h */,
@@ -570,7 +560,6 @@
 				E0F413951CF632120085166C /* SRKSQLiteHandle.m */,
 				E0F413961CF632120085166C /* SRKUtilities.h */,
 				E0F413971CF632120085166C /* SRKUtilities.m */,
-				E0F413981CF632120085166C /* Transactions */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -669,10 +658,7 @@
 				E0F413991CF632120085166C /* SRKContext.h */,
 				E0F4139A1CF632120085166C /* SRKContext.m */,
 				E0F4139B1CF632120085166C /* SRKTransaction.m */,
-				E0F4139C1CF632120085166C /* SRKTransactionElement.h */,
-				E0F4139D1CF632120085166C /* SRKTransactionElement.m */,
-				E0F4139E1CF632120085166C /* SRKTransactionGroup.h */,
-				E0F4139F1CF632120085166C /* SRKTransactionGroup.m */,
+				E08DF4391E02BAD9003884DE /* SRKTransaction+Private.h */,
 			);
 			path = Transactions;
 			sourceTree = "<group>";
@@ -706,7 +692,6 @@
 				E0F413AC1CF632120085166C /* SRKEventRegistryObject.h in Headers */,
 				E0F413DE1CF632120085166C /* SRKLazyLoader.h in Headers */,
 				E0F413D11CF632120085166C /* SRKRegistry.h in Headers */,
-				E0F413F41CF632120085166C /* SRKTransactionGroup.h in Headers */,
 				E0F413E11CF632120085166C /* SRKRelationship.h in Headers */,
 				E0F413E91CF632120085166C /* SRKUtilities.h in Headers */,
 				E0F413D41CF632120085166C /* SRKRegistryEntry.h in Headers */,
@@ -721,7 +706,6 @@
 				E0F413C91CF632120085166C /* SRKQuery+Private.h in Headers */,
 				E0F413A61CF632120085166C /* SRKEventBlockHolder.h in Headers */,
 				E0F413B51CF632120085166C /* SRKIndexDefinition+Private.h in Headers */,
-				E0F413F11CF632120085166C /* SRKTransactionElement.h in Headers */,
 				E0F413A91CF632120085166C /* SRKEventHandler+Private.h in Headers */,
 				E0F413C11CF632120085166C /* SRKUnsupportedObject.h in Headers */,
 				E0F413B81CF632120085166C /* SRKEncryptedObject.h in Headers */,
@@ -798,15 +782,15 @@
 				TargetAttributes = {
 					E0DFA4261D107A1800DFDB6F = {
 						CreatedOnToolsVersion = 7.3.1;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0820;
 					};
 					E0F413461CF6312A0085166C = {
 						CreatedOnToolsVersion = 7.3.1;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0820;
 					};
 					E0F413501CF6312A0085166C = {
 						CreatedOnToolsVersion = 7.3.1;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0820;
 						TestTargetID = E0DFA4261D107A1800DFDB6F;
 					};
 				};
@@ -887,7 +871,6 @@
 				E0C450B51D107AA8003FA21D /* SRKQueryProfile.m in Sources */,
 				E09B72101D4F531300B68A80 /* SRKAES256Extension.m in Sources */,
 				E0DFA42B1D107A1800DFDB6F /* main.m in Sources */,
-				E0C450BB1D107AA8003FA21D /* SRKTransactionGroup.m in Sources */,
 				E0C450B31D107AA8003FA21D /* SRKQuery.m in Sources */,
 				E0C450AA1D107AA8003FA21D /* FTSRegistry.m in Sources */,
 				E07C4F351D45F71400DB6CAB /* SRKStringObject.m in Sources */,
@@ -896,7 +879,6 @@
 				E0C450B71D107AA8003FA21D /* SRKRegistryEntry.m in Sources */,
 				E0C450C01D107AA8003FA21D /* SRKSettings.m in Sources */,
 				E0C450AE1D107AA8003FA21D /* SRKObject.m in Sources */,
-				E0C450BA1D107AA8003FA21D /* SRKTransactionElement.m in Sources */,
 				E0C450BF1D107AA8003FA21D /* SRKRelationship.m in Sources */,
 				E0C450AF1D107AA8003FA21D /* SRKResultSet.m in Sources */,
 				E0C450B61D107AA8003FA21D /* SRKRegistry.m in Sources */,
@@ -919,8 +901,6 @@
 				E0F413C71CF632120085166C /* SRKJoinObject.m in Sources */,
 				E0F413C21CF632120085166C /* SRKUnsupportedObject.m in Sources */,
 				E0F413CF1CF632120085166C /* SRKQueryProfile.m in Sources */,
-				E0F413F51CF632120085166C /* SRKTransactionGroup.m in Sources */,
-				E0F413F21CF632120085166C /* SRKTransactionElement.m in Sources */,
 				E0F413A41CF632120085166C /* SRKEvent.m in Sources */,
 				E0F413B01CF632120085166C /* FTSRegistry.m in Sources */,
 				E0F413AD1CF632120085166C /* SRKEventRegistryObject.m in Sources */,
@@ -985,7 +965,6 @@
 				E0F413C81CF632120085166C /* SRKJoinObject.m in Sources */,
 				E0F413A81CF632120085166C /* SRKEventBlockHolder.m in Sources */,
 				E0F413E31CF632120085166C /* SRKRelationship.m in Sources */,
-				E0F413F61CF632120085166C /* SRKTransactionGroup.m in Sources */,
 				E0F413EE1CF632120085166C /* SRKContext.m in Sources */,
 				E040B5BF1D1479E900FCC830 /* Examples.m in Sources */,
 				E0F413D61CF632120085166C /* SRKRegistryEntry.m in Sources */,
@@ -996,7 +975,6 @@
 				E0E3ACD81D11BC6A006803F7 /* Multithreaded.m in Sources */,
 				E07C4F2E1D451BAA00DB6CAB /* SwiftStringId.swift in Sources */,
 				E07C4F341D45F71400DB6CAB /* SRKStringObject.m in Sources */,
-				E0F413F31CF632120085166C /* SRKTransactionElement.m in Sources */,
 				E09B720F1D4F531000B68A80 /* SRKAES256Extension.m in Sources */,
 				E04FFAB91D1C8FB700F7866D /* SRKRawResults.m in Sources */,
 				E00320631CFB8F0B00240C44 /* Persistence.m in Sources */,
@@ -1055,7 +1033,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = sharksync.TestTargetApplication;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -1067,7 +1045,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = sharksync.TestTargetApplication;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -1181,7 +1159,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = sharksync.SharkORM;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 armv7 armv7s x86_64";
 			};
@@ -1202,7 +1180,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = sharksync.SharkORM;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 armv7 armv7s x86_64";
 			};
@@ -1218,7 +1196,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SharkORMTests/SharkORMTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestTargetApplication.app/TestTargetApplication";
 			};
 			name = Debug;
@@ -1232,7 +1210,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = sharksync.SharkORMTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SharkORMTests/SharkORMTests-Bridging-Header.h";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestTargetApplication.app/TestTargetApplication";
 			};
 			name = Release;
