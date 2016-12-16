@@ -37,6 +37,7 @@
 		E09B720E1D4F530A00B68A80 /* SRKAES256Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E09B720C1D4F530A00B68A80 /* SRKAES256Extension.m */; };
 		E09B720F1D4F531000B68A80 /* SRKAES256Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E09B720C1D4F530A00B68A80 /* SRKAES256Extension.m */; };
 		E09B72101D4F531300B68A80 /* SRKAES256Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E09B720C1D4F530A00B68A80 /* SRKAES256Extension.m */; };
+		E0A0CDFB1E016B1500942AE5 /* Transactions.m in Sources */ = {isa = PBXBuildFile; fileRef = E0A0CDFA1E016B1500942AE5 /* Transactions.m */; };
 		E0A83F261DB75E82003F608B /* SRKGlobals.h in Headers */ = {isa = PBXBuildFile; fileRef = E0A83F241DB75E82003F608B /* SRKGlobals.h */; };
 		E0A83F271DB75E82003F608B /* SRKGlobals.m in Sources */ = {isa = PBXBuildFile; fileRef = E0A83F251DB75E82003F608B /* SRKGlobals.m */; };
 		E0A83F281DB75E82003F608B /* SRKGlobals.m in Sources */ = {isa = PBXBuildFile; fileRef = E0A83F251DB75E82003F608B /* SRKGlobals.m */; };
@@ -223,6 +224,8 @@
 		E092CB071D00DBE800C6C8CD /* Performance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Performance.m; sourceTree = "<group>"; };
 		E09B720B1D4F530A00B68A80 /* SRKAES256Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKAES256Extension.h; sourceTree = "<group>"; };
 		E09B720C1D4F530A00B68A80 /* SRKAES256Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKAES256Extension.m; sourceTree = "<group>"; };
+		E0A0CDF91E016B1500942AE5 /* Transactions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Transactions.h; sourceTree = "<group>"; };
+		E0A0CDFA1E016B1500942AE5 /* Transactions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Transactions.m; sourceTree = "<group>"; };
 		E0A83F241DB75E82003F608B /* SRKGlobals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKGlobals.h; sourceTree = "<group>"; };
 		E0A83F251DB75E82003F608B /* SRKGlobals.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKGlobals.m; sourceTree = "<group>"; };
 		E0A83F2A1DB7B59E003F608B /* sqlite mods.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "sqlite mods.txt"; sourceTree = "<group>"; };
@@ -453,6 +456,15 @@
 			path = Joins;
 			sourceTree = "<group>";
 		};
+		E0A0CDF81E016B1500942AE5 /* Transactions */ = {
+			isa = PBXGroup;
+			children = (
+				E0A0CDF91E016B1500942AE5 /* Transactions.h */,
+				E0A0CDFA1E016B1500942AE5 /* Transactions.m */,
+			);
+			path = Transactions;
+			sourceTree = "<group>";
+		};
 		E0DFA4281D107A1800DFDB6F /* TestTargetApplication */ = {
 			isa = PBXGroup;
 			children = (
@@ -511,6 +523,7 @@
 		E0F413551CF6312A0085166C /* SharkORMTests */ = {
 			isa = PBXGroup;
 			children = (
+				E0A0CDF81E016B1500942AE5 /* Transactions */,
 				3A44877B1D1E856400BD9CB5 /* Other Tests */,
 				E0215CA11D195B3800876ABC /* Subclass Tests */,
 				E040B5C01D1496FB00FCC830 /* Joins */,
@@ -982,6 +995,7 @@
 				E00320471CFA58FF00240C44 /* Department.m in Sources */,
 				E0F413BD1CF632120085166C /* SRKObject.m in Sources */,
 				E0F413BA1CF632120085166C /* SRKEncryptedObject.m in Sources */,
+				E0A0CDFB1E016B1500942AE5 /* Transactions.m in Sources */,
 				E0C450C61D10865A003FA21D /* Query.m in Sources */,
 				E0F413D01CF632120085166C /* SRKQueryProfile.m in Sources */,
 				E040B5C31D14970D00FCC830 /* Joins.m in Sources */,
