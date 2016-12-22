@@ -34,6 +34,7 @@
 #import "SRKJoinObject.h"
 #import "FTSRegistry.h"
 #import "SRKGlobals.h"
+#import "SRKTransaction+Private.h"
 
 #define EventInsert 1
 #define EventUpdate 2
@@ -1204,12 +1205,36 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     
     @autoreleasepool {
         
-        
         int         priKeyType = [SharkORM primaryKeyType:[entity.class description]];
         
         NSString*   className = [entity.class description];
         NSString*   databaseNameForClass = [SharkORM databaseNameForClass:entity.class];
         sqlite3*    databaseHandle = [SharkORM handleForDatabase:databaseNameForClass];
+        
+        // the following will block if there is a transaction occouring for anything other than a current transaction block
+        [SRKTransaction blockUntilTransactionFinished];
+        
+        if ([SRKTransaction transactionIsInProgress]) {
+            
+            // check to see if there was an error within the transaction so far and return if there was.
+            if ([SRKTransaction currentTransactionStatus] != SRKTransactionPassed) {
+                return NO;
+            }
+            
+            // this means we ar ecurrently within a transaction, so we need to create an information object to describe what is happening before the commit
+            if (!entity.transactionInfo) {
+                SRKTransactionInfo* info = [SRKTransactionInfo new];
+                info.eventType = entity.exists ? EventUpdate : EventInsert;
+                [info copyObjectValuesIntoRestorePoint:entity];
+                entity.transactionInfo = info;
+            } else {
+                entity.transactionInfo.eventType = entity.exists ? EventUpdate : EventInsert;
+            }
+            
+            [SRKTransaction startTransactionForDatabaseConnection:databaseNameForClass];
+            [SRKTransaction addReferencedObjectToTransactionList:entity];
+            
+        }
         
         @synchronized([[SRKGlobals sharedObject] writeLockObject]) {
             
@@ -1238,116 +1263,12 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                 
                 /* now bind the data into the table */
                 
-                int idx = 1;
-                
+                NSMutableArray* values = [NSMutableArray new];
                 for (NSString* key in keys) {
-                    
-                    NSObject* value = [entity getField:key];
-                    
-                    if ([value isKindOfClass:[NSNumber class]]) {
-                        CFNumberType numberType = CFNumberGetType((CFNumberRef)(NSNumber*)value);
-                        if (numberType == kCFNumberSInt64Type || numberType == kCFNumberLongLongType) {
-                            sqlite3_bind_int64(statement, idx, [(NSNumber*)value longLongValue]);
-                        } else {
-                            sqlite3_bind_double(statement, idx, [(NSNumber*)value doubleValue]);
-                        }
-                    } else if ([value isKindOfClass:[NSString class]]) {
-                        
-                        sqlite3_bind_text16(statement, idx, [(NSString*)value cStringUsingEncoding:NSUTF16StringEncoding],@([(NSString*)value lengthOfBytesUsingEncoding:NSUTF16StringEncoding]).intValue , SQLITE_TRANSIENT);
-                        
-                    } else if ([value isKindOfClass:[NSDate class]]) {
-                        
-                        /* find out what method we are using for dates */
-                        if ([[SharkORM getSettings] useEpochDates]) {
-                            
-                            sqlite3_bind_double(statement, idx, (double)[(NSDate*)value timeIntervalSince1970]);
-                            
-                        } else {
-                            
-                            NSString* comValue;
-                            NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-                            [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-                            comValue = [NSString stringWithFormat:@"%@", [dateFormat stringFromDate:(NSDate*)value]];
-                            sqlite3_bind_text(statement, idx, [(NSString*)comValue UTF8String], -1, SQLITE_TRANSIENT);
-                            
-                        }
-                        
-                    } else if ([value isKindOfClass:[NSData class]]) {
-                        
-                        NSData* d = (NSData*)value;
-                        sqlite3_bind_blob(statement, idx, [d bytes], @([d length]).intValue, SQLITE_TRANSIENT);
-                        
-                    } else if ([value isKindOfClass:[NSObject class]]) {
-                        
-                        
-                        if ([value respondsToSelector:@selector(encodeWithCoder:)]) {
-                            
-                            NSMutableData *data = [[NSMutableData alloc]init];
-                            NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
-                            [archiver encodeObject:value];
-                            [archiver finishEncoding];
-                            sqlite3_bind_blob(statement, idx, [data bytes], @([data length]).intValue, SQLITE_TRANSIENT);
-                            
-                        } else {
-                            
-                            /*  this object is not key coding compliant */
-                            
-                            /* object type was not supported, send to delegate for processing */
-                            if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(encodeUnsupportedColumnValueForColumn:inEntity:value:)]) {
-                                
-                                NSData* response = [[[SRKGlobals sharedObject] delegate] encodeUnsupportedColumnValueForColumn:key inEntity:className value:value];
-                                if (response) {
-                                    
-                                    @try {
-                                        
-                                        SRKUnsupportedObject* uObj = [SRKUnsupportedObject new];
-                                        uObj.object = response;
-                                        
-                                        NSMutableData *data = [[NSMutableData alloc]init];
-                                        NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc]initForWritingWithMutableData:data];
-                                        [archiver encodeObject:uObj];
-                                        [archiver finishEncoding];
-                                        sqlite3_bind_blob(statement, idx, [data bytes], @([data length]).intValue, SQLITE_TRANSIENT);
-                                        
-                                    }
-                                    @catch (NSException *exception) {
-                                        
-                                        /* still unsupported despite be handled by the delegate */
-                                        
-                                        if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
-                                            
-                                            SRKError* e = [SRKError new];
-                                            e.sqlQuery = sql;
-                                            e.errorMessage = [NSString stringWithFormat:@"Unsupported data type detected by SharkORM despite being handled by the unsupported data type method on the delegate, column = %@, in entity = %@, value was %@", key, className, value];
-                                            [[[SRKGlobals sharedObject] delegate] databaseError:e];
-                                            
-                                        }
-                                        
-                                        sqlite3_bind_null(statement, idx);
-                                    }
-                                    @finally {
-                                        
-                                    }
-                                    
-                                    
-                                    
-                                } else {
-                                    
-                                    sqlite3_bind_null(statement, idx);
-                                    
-                                }
-                                
-                            }
-                        }
-                        
-                    }  else {
-                        
-                        sqlite3_bind_null(statement, idx);
-                        
-                    }
-                    
-                    idx++;
+                    [values addObject:[entity getField:key] ? [entity getField:key] : [NSNull null]];
                 }
+                
+                [[SRKUtilities new] bindParameters:values toStatement:statement];
                 
                 bool keepTrying = YES;
                 while (keepTrying) {
@@ -1399,6 +1320,12 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                             break;
                         default:
                         {
+                            
+                            if (entity.transactionInfo) {
+                                // we are in a transaction, and it's gone south so mark the transaction as failed
+                                [SRKTransaction failTransactionWithCode:SRKTransactionFailed];
+                            }
+                            
                             /* error in prepare statement */
                             if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
                                 
@@ -1414,6 +1341,12 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                 }
                 
             } else {
+                
+                if (entity.transactionInfo) {
+                    // we are in a transaction, and it's gone south so mark the transaction as failed
+                    [SRKTransaction failTransactionWithCode:SRKTransactionFailed];
+                }
+                
                 // an error occoured
                 /* error in prepare statement */
                 if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
@@ -1432,17 +1365,22 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
             /* check to see if this object is a fts object and clear the existing row */
             if ([[entity class] FTSParametersForEntity]) {
                 NSMutableString* propertiesList = [NSMutableString new];
+                
                 for (NSString* p in [[entity class] FTSParametersForEntity]) {
                     if (propertiesList.length > 0) {
                         [propertiesList appendString:@", "];
                     }
                     [propertiesList appendString:p];
                 }
-                if (priKeyType == SQLITE_INTEGER) {
-                    [SharkORM executeSQL:[NSString stringWithFormat:@"INSERT INTO fts_%@(docid, %@) SELECT Id, %@ FROM %@ WHERE Id = %@", [[entity class] description],propertiesList,propertiesList, [[entity class] description], [entity getField:SRK_DEFAULT_PRIMARY_KEY_NAME]] inDatabase:nil];
-                } else {
-                    [SharkORM executeSQL:[NSString stringWithFormat:@"INSERT INTO fts_%@(docid, %@) SELECT Id, %@ FROM %@ WHERE Id = '%@'", [[entity class] description],propertiesList,propertiesList, [[entity class] description], [entity getField:SRK_DEFAULT_PRIMARY_KEY_NAME]] inDatabase:nil];
+                
+                if ([entity.class FTSParametersForEntity] != nil) {
+                    if (priKeyType == SQLITE_INTEGER) {
+                        [SharkORM executeSQL:[NSString stringWithFormat:@"INSERT INTO fts_%@(docid, %@) SELECT Id, %@ FROM %@ WHERE Id = %@", [[entity class] description],propertiesList,propertiesList, [[entity class] description], [entity getField:SRK_DEFAULT_PRIMARY_KEY_NAME]] inDatabase:nil];
+                    } else {
+                        [SharkORM executeSQL:[NSString stringWithFormat:@"INSERT INTO fts_%@(docid, %@) SELECT Id, %@ FROM %@ WHERE Id = '%@'", [[entity class] description],propertiesList,propertiesList, [[entity class] description], [entity getField:SRK_DEFAULT_PRIMARY_KEY_NAME]] inDatabase:nil];
+                    }
                 }
+                
             }
             
         }
@@ -1461,6 +1399,31 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     NSString* databaseNameForClass = [SharkORM databaseNameForClass:entity.class];
     NSString* entityName = [entity.class description];
     
+    // the following will block if there is a transaction occouring for anything other than a current transaction block
+    [SRKTransaction blockUntilTransactionFinished];
+    
+    if ([SRKTransaction transactionIsInProgress]) {
+        
+        // check to see if there was an error within the transaction so far and return if there was.
+        if ([SRKTransaction currentTransactionStatus] != SRKTransactionPassed) {
+            return NO;
+        }
+        
+        // this means we ar ecurrently within a transaction, so we need to create an information object to describe what is happening before the commit
+        if (!entity.transactionInfo) {
+            SRKTransactionInfo* info = [SRKTransactionInfo new];
+            info.eventType = EventDelete;
+            [info copyObjectValuesIntoRestorePoint:entity];
+            entity.transactionInfo = info;
+        } else {
+            entity.transactionInfo.eventType = EventDelete;
+        }
+        
+        [SRKTransaction startTransactionForDatabaseConnection:databaseNameForClass];
+        [SRKTransaction addReferencedObjectToTransactionList:entity];
+        
+    }
+    
     @synchronized([[SRKGlobals sharedObject] writeLockObject]) {
         
         sqlite3_stmt* statement;
@@ -1477,6 +1440,12 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                 [entity setSterilised:YES];
                 succeded = YES;
             } else {
+                
+                if (entity.transactionInfo) {
+                    // we are in a transaction, and it's gone south so mark the transaction as failed
+                    [SRKTransaction failTransactionWithCode:SRKTransactionFailed];
+                }
+                
                 /* error in prepare statement */
                 if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
                     
@@ -1487,6 +1456,13 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                     
                 }
             }
+        } else {
+            
+            if (entity.transactionInfo) {
+                // we are in a transaction, and it's gone south so mark the transaction as failed
+                [SRKTransaction failTransactionWithCode:SRKTransactionFailed];
+            }
+            
         }
         
         sqlite3_finalize(statement);
@@ -1510,6 +1486,31 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     NSString* databaseNameForClass = [SharkORM databaseNameForClass:entity.class];
     NSString* entityName = [entity.class description];
     
+    // the following will block if there is a transaction occouring for anything other than a current transaction block
+    [SRKTransaction blockUntilTransactionFinished];
+    
+    if ([SRKTransaction transactionIsInProgress]) {
+        
+        // check to see if there was an error within the transaction so far and return if there was.
+        if ([SRKTransaction currentTransactionStatus] != SRKTransactionPassed) {
+            return;
+        }
+        
+        // this means we ar ecurrently within a transaction, so we need to create an information object to describe what is happening before the commit
+        if (!entity.transactionInfo) {
+            SRKTransactionInfo* info = [SRKTransactionInfo new];
+            info.eventType = EventUpdate;
+            [info copyObjectValuesIntoRestorePoint:entity];
+            entity.transactionInfo = info;
+        } else {
+            entity.transactionInfo.eventType = EventUpdate;
+        }
+        
+        [SRKTransaction addReferencedObjectToTransactionList:entity];
+        [SRKTransaction startTransactionForDatabaseConnection:databaseNameForClass];
+        
+    }
+    
     @synchronized([[SRKGlobals sharedObject] writeLockObject]) {
         
         sqlite3_stmt* statement;
@@ -1525,6 +1526,12 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
             if (result == SQLITE_DONE) {
                 succeded = YES;
             } else {
+                
+                if (entity.transactionInfo) {
+                    // we are in a transaction, and it's gone south so mark the transaction as failed
+                    [SRKTransaction failTransactionWithCode:SRKTransactionFailed];
+                }
+                
                 /* error in prepare statement */
                 if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
                     
@@ -1535,6 +1542,13 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                     
                 }
             }
+        } else {
+            
+            if (entity.transactionInfo) {
+                // we are in a transaction, and it's gone south so mark the transaction as failed
+                [SRKTransaction failTransactionWithCode:SRKTransactionFailed];
+            }
+            
         }
         
         sqlite3_finalize(statement);
@@ -1550,6 +1564,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
         if ([[entity class] FTSParametersForEntity]) {
             [SharkORM executeSQL:[NSString stringWithFormat:@"DELETE FROM fts_%@ WHERE docid = %@", [[entity class] description], entity.Id] inDatabase:nil];
         }
+        
     }
     
     return;
@@ -1587,6 +1602,8 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     
     parseT = [[NSDate date] timeIntervalSince1970];
     
+    [SRKTransaction blockUntilTransactionFinished];
+    
     if (sqlite3_prepare_v2([SharkORM handleForDatabase:[SharkORM databaseNameForClass:classDecl]], [sql UTF8String], -1, &statement, nil) == SQLITE_OK) {
         
         parseT = [[NSDate date] timeIntervalSince1970] - parseT;
@@ -1621,6 +1638,12 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
         }
         
     } else {
+        
+        // notify any running transaction that it has been failed
+        [SRKTransaction blockUntilTransactionFinished];
+        if ([SRKTransaction transactionIsInProgress]) {
+            [SRKTransaction failTransactionWithCode:SRKTransactionFailed];
+        }
         
         /* error in prepare statement */
         if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] conformsToProtocol:@protocol(SRKDelegate)] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
@@ -1704,6 +1727,12 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
 }
 
 - (void)handleError:(sqlite3*)db sql:(NSString*)sql {
+    
+    // notify any running transaction that it has been failed
+    [SRKTransaction blockUntilTransactionFinished];
+    if ([SRKTransaction transactionIsInProgress]) {
+        [SRKTransaction failTransactionWithCode:SRKTransactionFailed];
+    }
     
     /* error in prepare statement */
     if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] conformsToProtocol:@protocol(SRKDelegate)] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
@@ -1863,6 +1892,8 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     sqlite3_stmt* statement;
     
     parseT = [[NSDate date] timeIntervalSince1970];
+    
+    [SRKTransaction blockUntilTransactionFinished];
     
     if (sqlite3_prepare_v2([SharkORM handleForDatabase:[SharkORM databaseNameForClass:NSClassFromString(tableName)]], [sql UTF8String], -1, &statement, nil) == SQLITE_OK) {
         

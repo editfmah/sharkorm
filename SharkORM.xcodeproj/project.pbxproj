@@ -21,6 +21,10 @@
 		E00320631CFB8F0B00240C44 /* Persistence.m in Sources */ = {isa = PBXBuildFile; fileRef = E00320621CFB8F0B00240C44 /* Persistence.m */; };
 		E012E0361D0AEDDE00B6F741 /* TODO.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E012E0351D0AEDDD00B6F741 /* TODO.rtf */; };
 		E0215CA81D195C2700876ABC /* Subclass.m in Sources */ = {isa = PBXBuildFile; fileRef = E0215CA71D195C2700876ABC /* Subclass.m */; };
+		E02AC1B91E07EF2500E47406 /* SRKTransactionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = E02AC1B71E07EF2500E47406 /* SRKTransactionInfo.h */; };
+		E02AC1BA1E07EF2500E47406 /* SRKTransactionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = E02AC1B81E07EF2500E47406 /* SRKTransactionInfo.m */; };
+		E02AC1BB1E07EF2500E47406 /* SRKTransactionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = E02AC1B81E07EF2500E47406 /* SRKTransactionInfo.m */; };
+		E02AC1BC1E07EF2500E47406 /* SRKTransactionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = E02AC1B81E07EF2500E47406 /* SRKTransactionInfo.m */; };
 		E040B5BF1D1479E900FCC830 /* Examples.m in Sources */ = {isa = PBXBuildFile; fileRef = E040B5BE1D1479E900FCC830 /* Examples.m */; };
 		E040B5C31D14970D00FCC830 /* Joins.m in Sources */ = {isa = PBXBuildFile; fileRef = E040B5C21D14970D00FCC830 /* Joins.m */; };
 		E04FFAB81D1C8FB700F7866D /* SRKRawResults.m in Sources */ = {isa = PBXBuildFile; fileRef = E04FFAB61D1C8FB700F7866D /* SRKRawResults.m */; };
@@ -211,6 +215,8 @@
 		E012E0351D0AEDDD00B6F741 /* TODO.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; name = TODO.rtf; path = SharkORM/TODO.rtf; sourceTree = "<group>"; };
 		E0215CA61D195C2700876ABC /* Subclass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Subclass.h; sourceTree = "<group>"; };
 		E0215CA71D195C2700876ABC /* Subclass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Subclass.m; sourceTree = "<group>"; };
+		E02AC1B71E07EF2500E47406 /* SRKTransactionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKTransactionInfo.h; sourceTree = "<group>"; };
+		E02AC1B81E07EF2500E47406 /* SRKTransactionInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKTransactionInfo.m; sourceTree = "<group>"; };
 		E040B5BD1D1479E900FCC830 /* Examples.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Examples.h; sourceTree = "<group>"; };
 		E040B5BE1D1479E900FCC830 /* Examples.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Examples.m; sourceTree = "<group>"; };
 		E040B5C11D14970D00FCC830 /* Joins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Joins.h; sourceTree = "<group>"; };
@@ -422,13 +428,6 @@
 			path = "Sample Objects";
 			sourceTree = "<group>";
 		};
-		E00320461CFA58FF00240C44 /* Transaction Tests */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "Transaction Tests";
-			sourceTree = "<group>";
-		};
 		E0215CA11D195B3800876ABC /* Subclass Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -523,24 +522,23 @@
 		E0F413551CF6312A0085166C /* SharkORMTests */ = {
 			isa = PBXGroup;
 			children = (
-				E0A0CDF81E016B1500942AE5 /* Transactions */,
-				3A44877B1D1E856400BD9CB5 /* Other Tests */,
-				E0215CA11D195B3800876ABC /* Subclass Tests */,
-				E040B5C01D1496FB00FCC830 /* Joins */,
-				E040B5BC1D1479CF00FCC830 /* Examples */,
+				E00320601CFB8EA000240C44 /* BaseTestCase.h */,
+				E0F413561CF6312A0085166C /* BaseTestCase.m */,
 				E00320321CFA58FF00240C44 /* Events Test */,
+				E040B5BC1D1479CF00FCC830 /* Examples */,
+				E0F413581CF6312A0085166C /* Info.plist */,
+				E040B5C01D1496FB00FCC830 /* Joins */,
 				E00320331CFA58FF00240C44 /* Multithread Tests */,
+				3A44877B1D1E856400BD9CB5 /* Other Tests */,
 				E00320341CFA58FF00240C44 /* Performance Tests */,
 				E00320351CFA58FF00240C44 /* Persistence Tests */,
 				E00320361CFA58FF00240C44 /* Query Tests */,
 				E00320371CFA58FF00240C44 /* Relationship Tests */,
 				E00320381CFA58FF00240C44 /* Sample Objects */,
-				E00320461CFA58FF00240C44 /* Transaction Tests */,
-				E0F413581CF6312A0085166C /* Info.plist */,
-				E00320601CFB8EA000240C44 /* BaseTestCase.h */,
-				E0F413561CF6312A0085166C /* BaseTestCase.m */,
 				E0F413FB1CF632F80085166C /* SharkORMTests-Bridging-Header.h */,
+				E0215CA11D195B3800876ABC /* Subclass Tests */,
 				E00320581CFA5D0000240C44 /* Tests.h */,
+				E0A0CDF81E016B1500942AE5 /* Transactions */,
 			);
 			path = SharkORMTests;
 			sourceTree = "<group>";
@@ -672,6 +670,8 @@
 				E0F4139A1CF632120085166C /* SRKContext.m */,
 				E0F4139B1CF632120085166C /* SRKTransaction.m */,
 				E08DF4391E02BAD9003884DE /* SRKTransaction+Private.h */,
+				E02AC1B71E07EF2500E47406 /* SRKTransactionInfo.h */,
+				E02AC1B81E07EF2500E47406 /* SRKTransactionInfo.m */,
 			);
 			path = Transactions;
 			sourceTree = "<group>";
@@ -694,6 +694,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E02AC1B91E07EF2500E47406 /* SRKTransactionInfo.h in Headers */,
 				3A330F621D25461500483626 /* SRKObjectChain.h in Headers */,
 				E0F413D81CF632120085166C /* SharkORM.h in Headers */,
 				E092CB051D00964700C6C8CD /* DBAccess.h in Headers */,
@@ -882,6 +883,7 @@
 				E0C450AD1D107AA8003FA21D /* SRKEncryptedObject.m in Sources */,
 				E0DFA42E1D107A1800DFDB6F /* AppDelegate.m in Sources */,
 				E0C450B51D107AA8003FA21D /* SRKQueryProfile.m in Sources */,
+				E02AC1BC1E07EF2500E47406 /* SRKTransactionInfo.m in Sources */,
 				E09B72101D4F531300B68A80 /* SRKAES256Extension.m in Sources */,
 				E0DFA42B1D107A1800DFDB6F /* main.m in Sources */,
 				E0C450B31D107AA8003FA21D /* SRKQuery.m in Sources */,
@@ -926,6 +928,7 @@
 				E0F413B91CF632120085166C /* SRKEncryptedObject.m in Sources */,
 				E0A83F311DB7B5C9003F608B /* sqlite3.c in Sources */,
 				E0F413D21CF632120085166C /* SRKRegistry.m in Sources */,
+				E02AC1BA1E07EF2500E47406 /* SRKTransactionInfo.m in Sources */,
 				E0F413ED1CF632120085166C /* SRKContext.m in Sources */,
 				E0F413B61CF632120085166C /* SRKIndexDefinition.m in Sources */,
 				3A330F631D25461500483626 /* SRKObjectChain.m in Sources */,
@@ -977,6 +980,7 @@
 				E0F413EB1CF632120085166C /* SRKUtilities.m in Sources */,
 				E0F413C81CF632120085166C /* SRKJoinObject.m in Sources */,
 				E0F413A81CF632120085166C /* SRKEventBlockHolder.m in Sources */,
+				E02AC1BB1E07EF2500E47406 /* SRKTransactionInfo.m in Sources */,
 				E0F413E31CF632120085166C /* SRKRelationship.m in Sources */,
 				E0F413EE1CF632120085166C /* SRKContext.m in Sources */,
 				E040B5BF1D1479E900FCC830 /* Examples.m in Sources */,

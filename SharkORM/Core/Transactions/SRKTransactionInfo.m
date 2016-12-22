@@ -20,28 +20,31 @@
 //    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //    SOFTWARE.
 
-#ifndef SRKTransaction_Private_h
-#define SRKTransaction_Private_h
+#import "SRKTransactionInfo.h"
+#import "SRKObject+Private.h"
 
-#import "SharkORM.h"
+@implementation SRKTransactionInfo
 
-typedef enum : NSUInteger {
-    SRKTransactionFailed,
-    SRKTransactionPassed,
-    SRKTransactionBackstoreFailed,
-    SRKTransactionLogicFailed,
-} SRKTransactionStates;
+- (void)copyObjectValuesIntoRestorePoint:(SRKObject*)object {
+    
+    self.originalFieldData = [NSMutableDictionary dictionaryWithDictionary:object.fieldData.copy];
+    self.originalChangedValues = [NSMutableDictionary dictionaryWithDictionary:object.changedValues.copy];
+    self.originalPk = object.Id;
+    self.originalIsDirty = object.dirty;
+    self.originalDirtyFields = [NSMutableDictionary dictionaryWithDictionary:object.dirtyFields.copy];
+    self.originalEmbeddedEntities = [NSMutableDictionary dictionaryWithDictionary: object.embeddedEntities.copy];
 
-@interface SRKTransaction ()
+}
 
-+ (void)blockUntilTransactionFinished;
-+ (BOOL)transactionIsInProgress;
-+ (BOOL)transactionIsInProgressForThisThread;
-+ (void)addReferencedObjectToTransactionList:(id)referencedObject;
-+ (void)startTransactionForDatabaseConnection:(NSString*)database;
-+ (SRKTransactionStates)currentTransactionStatus;
-+ (void)failTransactionWithCode:(SRKTransactionStates)code;
+- (void)restoreValuesIntoObject:(SRKObject*)object {
+    
+    object.fieldData = self.originalFieldData;
+    object.changedValues = self.originalChangedValues;
+    object.Id = self.originalPk;
+    object.dirty = self.originalIsDirty;
+    object.dirtyFields = self.originalDirtyFields;
+    object.embeddedEntities = self.originalEmbeddedEntities;
+    
+}
 
 @end
-
-#endif /* SRKTransaction_Private_h */
