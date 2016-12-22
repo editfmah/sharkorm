@@ -697,6 +697,48 @@
     
 }
 
+- (void)test_failure_within_transaction_rolls_back_changes_no_commit {
+    
+    [self cleardown];
+    
+    __block BOOL first,second = false;
+    
+    Person* p1 = [Person new];
+    p1.age = 100;
+    [p1 commit];
+    
+    // now start two simultanious transactions that will both only contain their own records.
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+        [SRKTransaction transaction:^{
+            
+            p1.age = 127;
+            SRKResultSet* r = [[[Person query] whereWithFormat:@"aglew = 127" withParameters:nil] fetch];
+            first = YES;
+            
+        } withRollback:^{
+            
+            second = YES;
+            
+        }];
+        
+    });
+    
+    NSTimeInterval startTime = [[NSDate date] timeIntervalSince1970];
+    while (!first) {
+        if (([[NSDate date] timeIntervalSince1970] - startTime) > 10) {
+            XCTAssert(1==2, @"transaction error condition failed");
+            break;
+        }
+        [NSThread sleepForTimeInterval:0.1];
+    }
+    
+    XCTAssert(p1.age == 100, @"object values were not restored to pre transaction states");
+    
+    [self cleardown];
+    
+}
+
 - (void)test_failure_within_transaction_rolls_back_changes_manual_error {
     
     [self cleardown];

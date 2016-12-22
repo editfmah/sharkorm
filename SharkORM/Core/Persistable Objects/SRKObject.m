@@ -938,6 +938,8 @@ static void setPropertyIMP(SRKObject* self, SEL _cmd, id aValue) {
         [info copyObjectValuesIntoRestorePoint:self];
         self.transactionInfo = info;
         
+        [SRKTransaction addReferencedObjectToTransactionList:self];
+        
     }
 	
 	NSString* propertyName = [[SRKUtilities new] propertyNameFromSelector:_cmd forObject:self];
@@ -1044,6 +1046,8 @@ static void setPropertyEntityIMP(SRKObject* self, SEL _cmd, id aValue) {
         [info copyObjectValuesIntoRestorePoint:self];
         self.transactionInfo = info;
         
+        [SRKTransaction addReferencedObjectToTransactionList:self];
+        
     }
     
 	NSString* propertyName = [[SRKUtilities new] propertyNameFromSelector:_cmd forObject:self];
@@ -1137,6 +1141,8 @@ static void setPropertyEntityCollectionIMP(SRKObject* self, SEL _cmd, id aValue)
         SRKTransactionInfo* info = [SRKTransactionInfo new];
         [info copyObjectValuesIntoRestorePoint:self];
         self.transactionInfo = info;
+        
+        [SRKTransaction addReferencedObjectToTransactionList:self];
         
     }
     
