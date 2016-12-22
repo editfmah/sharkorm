@@ -83,6 +83,7 @@
 
 /* schema */
 +(int)getEntityPropertyType:(NSString*)propertyName;
++(int)getEntityPropertyType:(NSString*)propertyName forClass:(Class)entityClass;
 
 @end
 

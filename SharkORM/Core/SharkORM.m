@@ -418,7 +418,6 @@ void spatialCalc(sqlite3_context *context, int argc, sqlite3_value **argv)
                     NSString* fieldname = (NSString*)[[SRKUtilities new] sqlite3_column_objc:fieldNames column:1];
                     NSString* fieldType = (NSString*)[[SRKUtilities new] sqlite3_column_objc:fieldNames column:2];
                     
-                    
                     [fieldDef setObject:fieldType forKey:fieldname];
                     
                 }

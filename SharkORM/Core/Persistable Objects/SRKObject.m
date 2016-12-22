@@ -273,6 +273,10 @@ static int obCount=0;
 	
 }
 
++ (int)getEntityPropertyType:(NSString *)propertyName forClass:(Class)entityClass {
+    return [entityClass getEntityPropertyType:propertyName];
+}
+
 +(int)getEntityPropertyType:(NSString*)propertyName {
 	
 	/* now look within the entity to get its property types */
@@ -2061,49 +2065,6 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 		}
 		
 	}
-	
-}
-
-
-- (NSString*)replaceValue:(NSString*)v withObject:(NSObject*)o inString:(NSString*)s {
-	
-	
-	/* convert o */
-	if (o) {
-		if (![o isKindOfClass:[NSString class]]) {
-			
-			Class imgClassType = nil;
-			if (NSClassFromString(@"UIImage")) {
-				imgClassType = NSClassFromString(@"UIImage");
-			}
-			if (NSClassFromString(@"NSImage")) {
-				imgClassType = NSClassFromString(@"NSImage");
-			}
-			
-			if (imgClassType && [o isKindOfClass:imgClassType]) {
-				o = [NSString stringWithFormat:@"%@", o];
-			} else if ([o isKindOfClass:[NSNumber class]]) {
-				
-				NSNumber* thisObject = (NSNumber*)o;
-				o = [NSString stringWithFormat:@"%f", [thisObject doubleValue]];
-				
-			} else {
-				o = [NSString stringWithFormat:@"%@", o];
-			}
-			
-		}
-	}
-	else {
-		o = @"Nil value";
-	}
-	
-	NSString* newVal = [((NSString*)o) stringByAppendingString:@"                                                                                      "];
-	newVal = [newVal substringToIndex:v.length];
-	
-	/* clean up */
-	newVal = [newVal stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
-	
-	return [s stringByReplacingOccurrencesOfString:v withString:newVal];
 	
 }
 

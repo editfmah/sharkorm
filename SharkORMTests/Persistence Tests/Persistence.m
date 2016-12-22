@@ -275,6 +275,8 @@
     ob.doubelValue = 1234567.1234567;
     [ob commit];
     
+    SRKResultSet* r = [[MostObjectTypes query] fetch];
+    
 }
 
 - (void)test_string_pk_object {
