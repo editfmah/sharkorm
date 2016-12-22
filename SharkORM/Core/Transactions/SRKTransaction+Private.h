@@ -20,10 +20,28 @@
 //    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //    SOFTWARE.
 
+#ifndef SRKTransaction_Private_h
+#define SRKTransaction_Private_h
 
+#import "SharkORM.h"
 
-#import "SRKTransactionElement.h"
+typedef enum : NSUInteger {
+    SRKTransactionFailed,
+    SRKTransactionPassed,
+    SRKTransactionBackstoreFailed,
+    SRKTransactionLogicFailed,
+} SRKTransactionStates;
 
-@implementation SRKTransactionElement
+@interface SRKTransaction ()
+
++ (void)blockUntilTransactionFinished;
++ (BOOL)transactionIsInProgress;
++ (BOOL)transactionIsInProgressForThisThread;
++ (void)addReferencedObjectToTransactionList:(id)referencedObject;
++ (void)startTransactionForDatabaseConnection:(NSString*)database;
++ (SRKTransactionStates)currentTransactionStatus;
++ (void)failTransactionWithCode:(SRKTransactionStates)code;
 
 @end
+
+#endif /* SRKTransaction_Private_h */

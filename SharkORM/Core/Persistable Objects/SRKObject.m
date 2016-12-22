@@ -33,11 +33,11 @@
 #import "SRKIndexDefinition+Private.h"
 #import "FTSRegistry.h"
 #import "SRKLazyLoader.h"
-#import "SRKTransactionGroup.h"
 #import "SRKUnsupportedObject.h"
 #import "SRKEncryptedObject.h"
 #import "SRKObjectChain.h"
 #import "SRKGlobals.h"
+#import "SRKTransaction+Private.h"
 
 @implementation SRKObject {
 	id cachedPrimaryKeyValue;
@@ -928,6 +928,17 @@ static char* propertyCharPTRIMP(SRKObject* self, SEL _cmd) {
 static void setPropertyIMP(SRKObject* self, SEL _cmd, id aValue) {
 	
 	/* if we have turned up here then the user has tried to get or set a proeprty that does not exist, which is probably a @dynamic property */
+    
+    // we have an asignment/change to a property value, so we need to establish if we are currently within a transaction
+    
+    if (!self.transactionInfo && [SRKTransaction transactionIsInProgressForThisThread]) {
+        
+        // create a transaction object, which will create a restore point for this object were the transaction to fail
+        SRKTransactionInfo* info = [SRKTransactionInfo new];
+        [info copyObjectValuesIntoRestorePoint:self];
+        self.transactionInfo = info;
+        
+    }
 	
 	NSString* propertyName = [[SRKUtilities new] propertyNameFromSelector:_cmd forObject:self];
 	
@@ -1024,6 +1035,17 @@ static void setPropertyIMP(SRKObject* self, SEL _cmd, id aValue) {
 
 static void setPropertyEntityIMP(SRKObject* self, SEL _cmd, id aValue) {
 	
+    // we have an asignment/change to a property value, so we need to establish if we are currently within a transaction
+    
+    if (!self.transactionInfo && [SRKTransaction transactionIsInProgressForThisThread]) {
+        
+        // create a transaction object, which will create a restore point for this object were the transaction to fail
+        SRKTransactionInfo* info = [SRKTransactionInfo new];
+        [info copyObjectValuesIntoRestorePoint:self];
+        self.transactionInfo = info;
+        
+    }
+    
 	NSString* propertyName = [[SRKUtilities new] propertyNameFromSelector:_cmd forObject:self];
 	
 	/* test to see if this is actually a field or a related object e.g. an entity class */
@@ -1107,6 +1129,17 @@ static void setPropertyEntityIMP(SRKObject* self, SEL _cmd, id aValue) {
 
 static void setPropertyEntityCollectionIMP(SRKObject* self, SEL _cmd, id aValue) {
 	
+    // we have an asignment/change to a property value, so we need to establish if we are currently within a transaction
+    
+    if (!self.transactionInfo && [SRKTransaction transactionIsInProgressForThisThread]) {
+        
+        // create a transaction object, which will create a restore point for this object were the transaction to fail
+        SRKTransactionInfo* info = [SRKTransactionInfo new];
+        [info copyObjectValuesIntoRestorePoint:self];
+        self.transactionInfo = info;
+        
+    }
+    
 	NSString* propertyName = [[SRKUtilities new] propertyNameFromSelector:_cmd forObject:self];
 	
 	/* test to see if this is actually a field or a related object e.g. an entity class */
@@ -1959,6 +1992,13 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 	
 }
 
+- (void)rollback {
+    if (self.transactionInfo) {
+        [self.transactionInfo restoreValuesIntoObject:self];
+        self.transactionInfo = nil;
+    }
+}
+
 - (NSDictionary*)entityDictionary {
 	
 	// merge original and changed
@@ -2270,41 +2310,31 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 	
 	if ([self entityWillDelete]) {
 		
-		SRKTransactionGroup* transaction = [SRKTransactionGroup isEfectiveTransaction] ? [SRKTransactionGroup createEffectiveCollection] : nil;
-		
-		if (transaction && transaction.transactionClosed) {
-			transaction = nil; /* this is a child transaction condition */
-		}
-		
-		if ([[SharkORM new] removeObject:self inTransaction:transaction]) {
+		if ([[SharkORM new] removeObject:self]) {
 			
-			if (!transaction) {
-				
-				[self entityDidDelete];
-				
-				self.exists = NO;
-				
-				/* now send out the live message as well as tiggering the local event */
-				
-				if (![[self class] entityDoesNotRaiseEvents]) {
-					SRKEvent* e = [SRKEvent new];
-					e.event = SharkORMEventDelete;
-					e.entity = self;
-					e.changedProperties = nil;
-					[[SRKRegistry sharedInstance] broadcast:e];
-				}
-				
-				/* clear the modified fields list */
-				@synchronized(self.changedValues) {
-					[self.changedValues removeAllObjects];
-					[self.dirtyFields removeAllObjects];
-                    self.dirty = NO;
-				}
-				
-				/* now remove the primary key now the event has been broadcast */
-				self.Id = nil;
-				
-			}
+            [self entityDidDelete];
+            
+            self.exists = NO;
+            
+            /* now send out the live message as well as tiggering the local event */
+            
+            if (![[self class] entityDoesNotRaiseEvents] && ![SRKTransaction transactionIsInProgress]) {
+                SRKEvent* e = [SRKEvent new];
+                e.event = SharkORMEventDelete;
+                e.entity = self;
+                e.changedProperties = nil;
+                [[SRKRegistry sharedInstance] broadcast:e];
+            }
+            
+            /* clear the modified fields list */
+            @synchronized(self.changedValues) {
+                [self.changedValues removeAllObjects];
+                [self.dirtyFields removeAllObjects];
+                self.dirty = NO;
+            }
+            
+            /* now remove the primary key now the event has been broadcast */
+            self.Id = nil;
 			
 			return YES;
 		}
@@ -2377,36 +2407,29 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 				
 			}
 			
-			SRKTransactionGroup* transaction = [SRKTransactionGroup isEfectiveTransaction] ? [SRKTransactionGroup createEffectiveCollection] : nil;
 			
-			if (transaction && transaction.transactionClosed) {
-				transaction = nil; /* this is a child transaction condition */
-			}
-			
-			if([[SharkORM new] commitObject:self inTransaction:transaction]) {
+			if([[SharkORM new] commitObject:self]) {
 				
-				if (!transaction) {
-					self.exists = YES;
-					[self entityDidInsert];
-					
-					
-					/* now send out the live message as well as tiggering the local event */
-					
-					if (![[self class] entityDoesNotRaiseEvents]) {
-						SRKEvent* e = [SRKEvent new];
-						e.event = SharkORMEventInsert;
-						e.entity = self;
-						e.changedProperties = self.modifiedFieldNames;
-						[[SRKRegistry sharedInstance] broadcast:e];
-					}
-					
-					/* clear the modified fields list */
-					@synchronized(self.changedValues) {
-						[self.changedValues removeAllObjects];
-						[self.dirtyFields removeAllObjects];
-                        self.dirty = NO;
-					}
-				}
+                self.exists = YES;
+                [self entityDidInsert];
+                
+                
+                /* now send out the live message as well as tiggering the local event */
+                
+                if (![[self class] entityDoesNotRaiseEvents] && ![SRKTransaction transactionIsInProgress]) {
+                    SRKEvent* e = [SRKEvent new];
+                    e.event = SharkORMEventInsert;
+                    e.entity = self;
+                    e.changedProperties = self.modifiedFieldNames;
+                    [[SRKRegistry sharedInstance] broadcast:e];
+                }
+                
+                /* clear the modified fields list */
+                @synchronized(self.changedValues) {
+                    [self.changedValues removeAllObjects];
+                    [self.dirtyFields removeAllObjects];
+                    self.dirty = NO;
+                }
 				
 				return YES;
 				
@@ -2450,33 +2473,25 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 				}
 			}
 			
-			SRKTransactionGroup* transaction = [SRKTransactionGroup isEfectiveTransaction] ? [SRKTransactionGroup createEffectiveCollection] : nil;
-			
-			if (transaction && transaction.transactionClosed) {
-				transaction = nil; /* this is a child transaction condition */
-			}
-			
-			if([[SharkORM new] commitObject:self inTransaction:transaction]) {
+			if([[SharkORM new] commitObject:self]) {
 				
 				self.exists = YES;
-				if (!transaction) {
-					[self entityDidUpdate];
-					
-					/* now send out the live message as well as triggering the local event */
-					if (![[self class] entityDoesNotRaiseEvents]) {
-						SRKEvent* e = [SRKEvent new];
-						e.event = SharkORMEventUpdate;
-						e.entity = self;
-						e.changedProperties = self.modifiedFieldNames;
-						[[SRKRegistry sharedInstance] broadcast:e];
-					}
-					/* clear the modified fields list */
-					@synchronized(self.changedValues) {
-						[self.changedValues removeAllObjects];
-						[self.dirtyFields removeAllObjects];
-                        self.dirty = NO;
-					}
-				}
+                [self entityDidUpdate];
+                
+                /* now send out the live message as well as triggering the local event */
+                if (![[self class] entityDoesNotRaiseEvents] && ![SRKTransaction transactionIsInProgress]) {
+                    SRKEvent* e = [SRKEvent new];
+                    e.event = SharkORMEventUpdate;
+                    e.entity = self;
+                    e.changedProperties = self.modifiedFieldNames;
+                    [[SRKRegistry sharedInstance] broadcast:e];
+                }
+                /* clear the modified fields list */
+                @synchronized(self.changedValues) {
+                    [self.changedValues removeAllObjects];
+                    [self.dirtyFields removeAllObjects];
+                    self.dirty = NO;
+                }
 				
 				return YES;
 				

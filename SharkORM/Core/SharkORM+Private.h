@@ -34,8 +34,8 @@
 @interface SharkORM ()
 
 // form data methods
--(BOOL)removeObject:(SRKObject*)entity inTransaction:(SRKTransactionGroup*)transaction;
--(BOOL)commitObject:(SRKObject*)entity inTransaction:(SRKTransactionGroup*)transaction;
+-(BOOL)removeObject:(SRKObject*)entity;
+-(BOOL)commitObject:(SRKObject*)entity;
 -(void)replaceUUIDPrimaryKey:(SRKObject *)entity withNewUUIDKey:(NSString*)newPrimaryKey;
 +(void)refreshObject:(SRKObject*)entity;
 

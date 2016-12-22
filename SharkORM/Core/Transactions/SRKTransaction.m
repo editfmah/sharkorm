@@ -20,39 +20,146 @@
 //    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //    SOFTWARE.
 
-
-
 #import <Foundation/Foundation.h>
-#import "SRKTransactionGroup.h"
 #import "SharkORM.h"
+#import "SharkORM+Private.h"
+#import "SRKTransaction+Private.h"
+#import "SRKObject+Private.h"
+#import "SRKRegistry.h"
+
+static id                       transactionSemaphore;
+static BOOL                     transactionInProgress;
+static SRKTransactionStates     transactionResult;
+static NSMutableArray*          transactionReferencedObjects;
+static NSMutableArray*          transactionReferencedDatabases;
+static NSThread*                transactionThread;
+
+#define startTransactionStatement @"BEGIN TRANSACTION"
+#define commitTransactionStatement @"COMMIT"
+#define rollbackTransactionStatement @"ROLLBACK"
+
+// C-Style transaction status macro
+void SRKFailTransaction() {
+    transactionResult = SRKTransactionFailed;
+}
 
 @implementation SRKTransaction
 
-+ (void)privateTransaction:(SRKTransactionBlockBlock)transaction withRollback:(SRKTransactionBlockBlock)rollback {
-	
-	if (transaction) {
-		SRKTransactionGroup* c = [SRKTransactionGroup createNewCollection];
-		transaction();
-		if(![c commit]) {
-			if (rollback) {
-				rollback();
-			}
-		}
-	}
-	
++ (void)initialize {
+    transactionSemaphore = [NSObject new];
+    transactionInProgress = NO;
+    transactionReferencedObjects = [NSMutableArray new];
+    transactionReferencedDatabases = [NSMutableArray new];
+}
+
++ (void)blockUntilTransactionFinished {
+    if (transactionThread) {
+        BOOL isMyTransaction = false;
+        @synchronized (transactionThread) {
+            isMyTransaction = (transactionThread == [NSThread currentThread]);
+        }
+        if (!isMyTransaction) {
+            // wait here, until the transaction is complete.
+            @synchronized (transactionSemaphore) {
+            }
+        }
+    }
+}
+
++ (BOOL)transactionIsInProgress {
+    return transactionInProgress;
+}
+
++ (BOOL)transactionIsInProgressForThisThread {
+    if (transactionInProgress) {
+        BOOL isMyTransaction = false;
+        @synchronized (transactionThread) {
+            isMyTransaction = (transactionThread == [NSThread currentThread]);
+        }
+        if (isMyTransaction) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
++ (void)addReferencedObjectToTransactionList:(id)referencedObject {
+    [transactionReferencedObjects addObject:referencedObject];
+}
+
++ (void)startTransactionForDatabaseConnection:(NSString *)database {
+    if ([[transactionReferencedDatabases componentsJoinedByString:@"|"] rangeOfString:database].location == NSNotFound) {
+        [transactionReferencedDatabases addObject:database];
+        [SharkORM executeSQL:startTransactionStatement inDatabase:database];
+    }
+}
+
++ (void)failTransactionWithCode:(SRKTransactionStates)code {
+    transactionResult = code;
+}
+
++ (SRKTransactionStates)currentTransactionStatus {
+    return transactionResult;
 }
 
 + (void)transaction:(SRKTransactionBlockBlock)transaction withRollback:(SRKTransactionBlockBlock)rollback {
 	
 	if (transaction) {
-		SRKTransactionGroup* c = [SRKTransactionGroup createEffectiveCollection];
-		transaction();
-		if(![c commit]) {
-			if (rollback) {
-				rollback();
-			}
-		}
-		[SRKTransactionGroup clearEffectiveTransaction];
+        
+        // loop indefinately so we can lock on a semaphore, the current transaction will in fact lock the transaction or block waiting.
+        
+        // all reads and writes will block if they are not within the current transaction, until it has completed.  At that point they will release.  Paralell calls to a transaction will also block.
+        
+        //TODO:  Base transaction on separate database connections so they can be independant and not foul external queries and updates.  For now we levae this as a single crunch point for reliability.
+        
+        while (true) {
+            @synchronized (transactionSemaphore) {
+                
+                transactionResult = SRKTransactionPassed;
+                transactionInProgress = YES;
+                transactionThread = [NSThread currentThread];
+                transaction();
+                
+                if (transactionResult != SRKTransactionPassed) {
+                    
+                    if (rollback) {
+                        rollback();
+                    }
+                    // now rollback all the SRKObjects
+                    for (SRKObject* o in transactionReferencedObjects) {
+                        // rollback the object using the SRKTransactionInfo.
+                        [o rollback];
+                    }
+                    for (NSString* database in transactionReferencedDatabases) {
+                        [SharkORM executeSQL:rollbackTransactionStatement inDatabase:database];
+                    }
+                    
+                } else {
+                    
+                    for (NSString* database in transactionReferencedDatabases) {
+                        [SharkORM executeSQL:commitTransactionStatement inDatabase:database];
+                    }
+                    
+                    // now execute the event notifications for all objects within this transaction
+                    for (SRKObject* o in transactionReferencedObjects) {
+                        SRKEvent* e = [SRKEvent new];
+                        e.event = o.transactionInfo.eventType;
+                        e.entity = o;
+                        e.changedProperties = o.modifiedFieldNames;
+                        [[SRKRegistry sharedInstance] broadcast:e];
+                        o.transactionInfo = nil;
+                    }
+                }
+                
+                [transactionReferencedObjects removeAllObjects];
+                [transactionReferencedDatabases removeAllObjects];
+                transactionThread = nil;
+                transactionInProgress = NO;
+                break;
+                
+            }
+        }
+
 	}
 	
 }

@@ -45,6 +45,13 @@
 typedef void(^SRKTransactionBlockBlock)();
 
 /**
+ * Called from within a transaction block to manually fail a transaction and cause a rollback.  Example, `SRKFailTransaction();`
+ *
+ * @return void
+ */
+void SRKFailTransaction();
+
+/**
  * SRKTransaction class, for wrapping multiple insert/update/delete commands within a single operation.
  */
 @interface SRKTransaction : NSObject

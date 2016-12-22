@@ -24,6 +24,7 @@
 #define SRKObject_Private_h
 
 #import "SharkORM.h"
+#import "SRKTransactionInfo.h"
 
 @class SRKObject;
 @class SRKObjectChain;
@@ -46,10 +47,11 @@
 @property BOOL                                          isLightweightObject;
 @property BOOL                                          isLightweightObjectLoaded;
 @property (nonatomic, strong)   NSMutableDictionary*    embeddedEntities; // this will be used to store all of the set entities
-@property (nonatomic, weak)     id<SRKEventDelegate>     eventsDelegate;
-@property (nonatomic, weak)     SRKContext*              context;
+@property (nonatomic, weak)     id<SRKEventDelegate>    eventsDelegate;
+@property (nonatomic, weak)     SRKContext*             context;
 @property BOOL                                          isMarkedForDeletion;
 @property (strong) NSArray*                             creatorFunctionName;
+@property (strong) SRKTransactionInfo*                  transactionInfo;
 
 // methods for data access
 - (NSObject*)getField:(NSString*)fieldName;
@@ -70,7 +72,7 @@
 
 // database functions
 - (void)setBase; // used commit the changed values into the _fieldValues dictionary e.g. on init of null container and also after save
-
+- (void)rollback;
 
 /* transformation */
 - (id)transformInto:(id)targetObject;

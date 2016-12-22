@@ -20,17 +20,20 @@
 //    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //    SOFTWARE.
 
-
-
 #import <Foundation/Foundation.h>
 #import "SharkORM.h"
 
-@interface SRKTransactionElement : NSObject
+@interface SRKTransactionInfo : NSObject
 
-@property (strong, nonatomic) NSString*         statementSQL;
-@property (strong, nonatomic) NSString*         database;
-@property (strong, nonatomic) NSArray*          parameters;
-@property enum SharkORMEvent                    eventType;
-@property (strong, nonatomic) SRKObject*         originalObject;
+@property enum SharkORMEvent        eventType;
+@property NSMutableDictionary*      originalFieldData;
+@property NSMutableDictionary*      originalChangedValues;
+@property NSMutableDictionary*      originalDirtyFields;
+@property NSMutableDictionary*      originalEmbeddedEntities;
+@property BOOL                      originalIsDirty;
+@property id                        originalPk;
+
+- (void)copyObjectValuesIntoRestorePoint:(SRKObject*)object;
+- (void)restoreValuesIntoObject:(SRKObject*)object;
 
 @end

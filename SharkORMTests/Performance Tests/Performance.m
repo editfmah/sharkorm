@@ -18,7 +18,7 @@
         
         // small record tests
         
-        for (int i=0; i < 10000; i++) {
+        for (int i=0; i < 1000; i++) {
             @autoreleasepool {
                 Person* p = [Person new];
                 p.Name = [NSString stringWithFormat:@"%@", @(rand() % 9999999999)];

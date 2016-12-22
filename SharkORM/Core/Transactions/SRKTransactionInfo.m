@@ -20,26 +20,31 @@
 //    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //    SOFTWARE.
 
+#import "SRKTransactionInfo.h"
+#import "SRKObject+Private.h"
 
+@implementation SRKTransactionInfo
 
-#import <Foundation/Foundation.h>
-#import "SRKTransactionElement.h"
+- (void)copyObjectValuesIntoRestorePoint:(SRKObject*)object {
+    
+    self.originalFieldData = [NSMutableDictionary dictionaryWithDictionary:object.fieldData.copy];
+    self.originalChangedValues = [NSMutableDictionary dictionaryWithDictionary:object.changedValues.copy];
+    self.originalPk = object.Id;
+    self.originalIsDirty = object.dirty;
+    self.originalDirtyFields = [NSMutableDictionary dictionaryWithDictionary:object.dirtyFields.copy];
+    self.originalEmbeddedEntities = [NSMutableDictionary dictionaryWithDictionary: object.embeddedEntities.copy];
 
-@interface SRKTransactionGroup : NSObject
+}
 
-@property (strong, nonatomic) NSMutableArray*   transactionItems;
-@property (strong, nonatomic) NSMutableArray*   usedDatabases;
-@property (strong) NSString*					startTransactionStatement;
-@property (strong) NSString*					commitTransactionStatement;
-@property (strong) NSString*					rollbackTransactionStatement;
-@property BOOL									transactionClosed;
-
-- (void)addItem:(SRKTransactionElement*)item;
-- (id)commit;
-+ (SRKTransactionGroup*)createNewCollection;
-+ (SRKTransactionGroup*)createEffectiveCollection;
-+ (void)clearEffectiveTransaction;
-+ (BOOL)isEfectiveTransaction;
-+ (void)updateObjectForTransactionId:(NSString*)identifier withIndex:(NSNumber*)indexPosition newPrimaryKeyValue:(NSNumber*)pkValue;
+- (void)restoreValuesIntoObject:(SRKObject*)object {
+    
+    object.fieldData = self.originalFieldData;
+    object.changedValues = self.originalChangedValues;
+    object.Id = self.originalPk;
+    object.dirty = self.originalIsDirty;
+    object.dirtyFields = self.originalDirtyFields;
+    object.embeddedEntities = self.originalEmbeddedEntities;
+    
+}
 
 @end
