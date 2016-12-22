@@ -122,9 +122,6 @@ void SRKFailTransaction() {
                 
                 if (transactionResult != SRKTransactionPassed) {
                     
-                    if (rollback) {
-                        rollback();
-                    }
                     // now rollback all the SRKObjects
                     for (SRKObject* o in transactionReferencedObjects) {
                         // rollback the object using the SRKTransactionInfo.
@@ -132,6 +129,10 @@ void SRKFailTransaction() {
                     }
                     for (NSString* database in transactionReferencedDatabases) {
                         [SharkORM executeSQL:rollbackTransactionStatement inDatabase:database];
+                    }
+                    
+                    if (rollback) {
+                        rollback();
                     }
                     
                 } else {
