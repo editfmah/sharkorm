@@ -279,6 +279,22 @@
     
 }
 
+- (void)test_invalid_object_types {
+    
+    MostObjectTypes* ob = [MostObjectTypes new];
+    ob.number = @(42);
+    ob.array = @[@(1),@(2),@(3)];
+    ob.date = [NSDate date];
+    ob.dictionary = @{@"vc" : (NSDictionary*)[[UIViewController alloc] init]};
+    ob.intvalue = 42;
+    ob.floatValue = 42.424242f;
+    ob.doubelValue = 1234567.1234567;
+    [ob commit];
+    
+    MostObjectTypes* r = (id)[[MostObjectTypes query] fetch].firstObject;
+    
+}
+
 - (void)test_string_pk_object {
     
     StringIdObject* obj = [StringIdObject new];

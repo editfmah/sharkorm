@@ -281,8 +281,16 @@
             
             // try to serialize these objects if we can to JSON and store them as a string
             NSError* err;
-            NSData* serializedObject = [NSJSONSerialization dataWithJSONObject:p options:NSJSONWritingPrettyPrinted error:&err];
-            if (!err) {
+            NSData* serializedObject = nil;
+            @try {
+                serializedObject = [NSJSONSerialization dataWithJSONObject:p options:NSJSONWritingPrettyPrinted error:&err];
+            } @catch (NSException *exception) {
+                serializedObject = nil;
+            } @finally {
+                
+            }
+            
+            if (!err && serializedObject) {
                 
                 NSString* stringObject = [[NSString alloc] initWithData:serializedObject encoding:NSUTF8StringEncoding];
                 sqlite3_bind_text16(statement, paramCount, [stringObject cStringUsingEncoding:NSUTF16StringEncoding],@([stringObject lengthOfBytesUsingEncoding:NSUTF16StringEncoding]).intValue , SQLITE_TRANSIENT);
