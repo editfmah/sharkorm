@@ -131,10 +131,6 @@ void SRKFailTransaction() {
                         [SharkORM executeSQL:rollbackTransactionStatement inDatabase:database];
                     }
                     
-                    if (rollback) {
-                        rollback();
-                    }
-                    
                 } else {
                     
                     for (NSString* database in transactionReferencedDatabases) {
@@ -156,6 +152,16 @@ void SRKFailTransaction() {
                 [transactionReferencedDatabases removeAllObjects];
                 transactionThread = nil;
                 transactionInProgress = NO;
+                
+                if (transactionResult != SRKTransactionPassed) {
+                    
+                    // execute the rollback now the transaction is finished, because it will need to start a new one or may execute it's own DB updates.
+                    
+                    if (rollback) {
+                        rollback();
+                    }
+                }
+                
                 break;
                 
             }

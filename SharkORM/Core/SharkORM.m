@@ -1113,6 +1113,8 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     sqlite3_stmt* statement;
     sqlite3* dbHandle = [SharkORM defaultHandleForDatabase];
     
+    [SRKTransaction blockUntilTransactionFinished];
+    
     int prepareResult = sqlite3_prepare_v2(dbHandle, [sql UTF8String], (int)sql.length, &statement, NULL);
     if (prepareResult == SQLITE_OK) {
         
@@ -1145,6 +1147,10 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
         }
         
     } else {
+        
+        if ([SRKTransaction transactionIsInProgress]) {
+            [SRKTransaction failTransactionWithCode:SRKTransactionFailed];
+        }
         
         SRKError* e = [SRKError new];
         e.sqlQuery = sql;
