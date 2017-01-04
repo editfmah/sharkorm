@@ -379,6 +379,37 @@ typedef     void(^contextExecutionBlock)();
 @end
 
 /*
+ *      SRKCommitOptions
+ *
+ */
+
+/// a generic block to be executed after a commit/remove event.
+typedef void(^SRKCommitOptionsBlock)();
+
+
+/**
+ * Defines a set of options which will be taken into account on an object by object basis when commiting or removing entities from the data store.  All SRKObjects' have a commit options property, and it is automatically populated with the ORM defaults.
+ */
+@interface SRKCommitOptions : NSObject
+
+/// when TRUE all embedded/related entitied will be commited along with the originating entity.  Default is TRUE.
+@property BOOL                              commitChildObjects;
+/// when TRUE event notifications will be raised for any registered handlers attached to the entity.  Default is TRUE.
+@property BOOL                              triggerEvents;
+/// when populated with an array of child/related entities, these will not be commited or updated when the originating entity is written to or deleted from the data store.  Default is nil.
+@property NSArray*                          ignoreEntities;
+/// when TRUE errors will be raised within transactions and posted to the app delegate, when false syntax errors will not raise errors and will not fail a transaction block.  Default is TRUE.
+@property BOOL                              raiseErrors;
+/// when TRUE, the properties of this class object will be reset back to their defaults.  Any blocks that were assigned for post events will also be cleared and their memory released.
+@property BOOL                              resetOptionsAfterCommit;
+/// executed on the calling thread, after an object has been successfully persisted.
+@property (copy) SRKCommitOptionsBlock      postCommitBlock;
+/// executed on the calling thread, after an object has been successfully removed.
+@property (copy) SRKCommitOptionsBlock      postRemoveBlock;
+
+@end
+
+/*
  *      SRKObject
  *
  */
@@ -404,6 +435,9 @@ typedef     void(^contextExecutionBlock)();
 
 /// Joined data, if set this contains the results of the query from adjoining tables
 @property (nonatomic, strong, readonly)   NSDictionary* joinedResults;
+
+/// commit options class of type SRKCommitOptions.  Allows the developer to specify object specific options when commiting and removing entities from the data store.
+@property (nonatomic, strong)   SRKCommitOptions* commitOptions;
 
 /**
  * Initialises a new instance of the object, if an object already exists with the specified primary key then you will get that object back, if not you will net a new object with the primary key specified already.

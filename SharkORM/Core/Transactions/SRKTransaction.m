@@ -139,13 +139,30 @@ void SRKFailTransaction() {
                     
                     // now execute the event notifications for all objects within this transaction
                     for (SRKObject* o in transactionReferencedObjects) {
-                        SRKEvent* e = [SRKEvent new];
-                        e.event = o.transactionInfo.eventType;
-                        e.entity = o;
-                        e.changedProperties = o.modifiedFieldNames;
-                        [[SRKRegistry sharedInstance] broadcast:e];
+                        if (o.commitOptions.triggerEvents) {
+                            SRKEvent* e = [SRKEvent new];
+                            e.event = o.transactionInfo.eventType;
+                            e.entity = o;
+                            e.changedProperties = o.modifiedFieldNames;
+                            [[SRKRegistry sharedInstance] broadcast:e];
+                        }
                         o.transactionInfo = nil;
                     }
+                    
+                    // execute any post commit/remove blocks
+                    
+                    for (SRKObject* o in transactionReferencedObjects) {
+                        if (o.transactionInfo.eventType == SharkORMEventInsert || o.transactionInfo.eventType == SharkORMEventUpdate ) {
+                            if (o.commitOptions.postCommitBlock) {
+                                o.commitOptions.postCommitBlock();
+                            }
+                        } else if (o.transactionInfo.eventType == SharkORMEventDelete) {
+                            if (o.commitOptions.postRemoveBlock) {
+                                o.commitOptions.postRemoveBlock();
+                            }
+                        }
+                    }
+                    
                 }
                 
                 [transactionReferencedObjects removeAllObjects];
