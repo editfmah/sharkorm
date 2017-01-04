@@ -25,8 +25,8 @@
 #ifndef __SHARKORM_H
 #define __SHARKORM_H
 
-#define SHARK_DATE              20161019
-#define SHARK_VER               2.00.09
+#define SHARK_DATE              20170104
+#define SHARK_VER               2.01.00
 
 #import <Foundation/Foundation.h>
 #import <objc/message.h>

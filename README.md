@@ -344,8 +344,32 @@ thisPerson.commit()
 
 Objects are committed immediately and are written to the store in an atomic fashion.  They will become immediately queryable upon completion.
 
+###commitOptions (SRKCommitOptions)
+
+the commitOptions property is present in all SRKObjects, and allows the developer to control on an object-by-object basis how SharkORM behaves when asked to commit certain objects.
+
+The following properties are used to control the logic and add fine grain control:
+
+####postCommitBlock
+Called once a successful commit has completed
+####postRemoveBlock
+Called after an object has been removed from the data store
+####ignoreEntities
+Allows the developer to specify an array of child/related entities that will not be persisted when the parent object is commited.  
+####commitChildObjects
+If set, then all child/related entitied will not automatically be commited too.
+####resetOptionsAfterCommit
+If set, then all defaults will be restored and all blocks cleared.
+####raiseErrors
+Defauted to TRUE, but if set to false then an errors generated are ignored and not raised with the delegate.  Transactions will also not be failed.
+####triggerEvents
+Defaulted to TRUE, if set to false then events are no longer raised for insert,update,delete operations.
+
+
 ###Writing in Transactions
-For some batch storage situations, it may be better to batch a lot of writes into a single transaction, this will improve speed, but will also increase memory usage during that process as any event methods would have to be honoured during the commit.  Transactions are setup as follows:
+For some batch storage situations, it may be better to batch a lot of writes into a single transaction, this will improve speed, and give you atomicity over the persistence to the data store.  All changes to all objects will be rolled back upon any raised error within the block.  Event triggers will be not be executed until successful completion of the transaction.
+
+You may manually fail a transaction by calling SRKFailTransaction() within the block, allowing developers to abort and rollback based on applicaiton logic.
 
 `Objective-C`
 ```objective-c
@@ -353,7 +377,6 @@ For some batch storage situations, it may be better to batch a lot of writes int
     // Create a new object
     Person* thisPerson = [Person new];
     thisPerson.name = @"Adrian Herridge";
-    // although the commit is indicated, it is delayed until the transaction is closed.
     [thisPerson commit];
 } withRollback:^{}];
 ```
@@ -363,9 +386,10 @@ SRKTransaction.transaction({
     // Create a new object
     var thisPerson = Person()
     thisPerson.name = "Adrian Herridge";
-    // although the commit is indicated, it is delayed until the transaction is closed.
     thisPerson.commit()
-    }) { // the rollback on failure }
+    }) { 
+        // the rollback on failure 
+    }
 ```
 
 ##Querying
