@@ -27,6 +27,9 @@
 		E02AC1BC1E07EF2500E47406 /* SRKTransactionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = E02AC1B81E07EF2500E47406 /* SRKTransactionInfo.m */; };
 		E040B5BF1D1479E900FCC830 /* Examples.m in Sources */ = {isa = PBXBuildFile; fileRef = E040B5BE1D1479E900FCC830 /* Examples.m */; };
 		E040B5C31D14970D00FCC830 /* Joins.m in Sources */ = {isa = PBXBuildFile; fileRef = E040B5C21D14970D00FCC830 /* Joins.m */; };
+		E049CCED1E13B8B900EE8DF2 /* SRKCommitOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = E049CCEB1E13B8B900EE8DF2 /* SRKCommitOptions.m */; };
+		E049CCEE1E13B8B900EE8DF2 /* SRKCommitOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = E049CCEB1E13B8B900EE8DF2 /* SRKCommitOptions.m */; };
+		E049CCEF1E13B8B900EE8DF2 /* SRKCommitOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = E049CCEB1E13B8B900EE8DF2 /* SRKCommitOptions.m */; };
 		E04FFAB81D1C8FB700F7866D /* SRKRawResults.m in Sources */ = {isa = PBXBuildFile; fileRef = E04FFAB61D1C8FB700F7866D /* SRKRawResults.m */; };
 		E04FFAB91D1C8FB700F7866D /* SRKRawResults.m in Sources */ = {isa = PBXBuildFile; fileRef = E04FFAB61D1C8FB700F7866D /* SRKRawResults.m */; };
 		E04FFABA1D1C8FB700F7866D /* SRKRawResults.m in Sources */ = {isa = PBXBuildFile; fileRef = E04FFAB61D1C8FB700F7866D /* SRKRawResults.m */; };
@@ -221,6 +224,8 @@
 		E040B5BE1D1479E900FCC830 /* Examples.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Examples.m; sourceTree = "<group>"; };
 		E040B5C11D14970D00FCC830 /* Joins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Joins.h; sourceTree = "<group>"; };
 		E040B5C21D14970D00FCC830 /* Joins.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Joins.m; sourceTree = "<group>"; };
+		E049CCEB1E13B8B900EE8DF2 /* SRKCommitOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKCommitOptions.m; sourceTree = "<group>"; };
+		E049CCF01E153E7E00EE8DF2 /* SRKCommitOptions+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SRKCommitOptions+Private.h"; sourceTree = "<group>"; };
 		E04FFAB61D1C8FB700F7866D /* SRKRawResults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKRawResults.m; sourceTree = "<group>"; };
 		E07C4F2D1D451BAA00DB6CAB /* SwiftStringId.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftStringId.swift; sourceTree = "<group>"; };
 		E07C4F311D45F71400DB6CAB /* SRKStringObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKStringObject.m; sourceTree = "<group>"; };
@@ -633,6 +638,8 @@
 				3A330F601D25461500483626 /* SRKObjectChain.h */,
 				3A330F611D25461500483626 /* SRKObjectChain.m */,
 				E07C4F311D45F71400DB6CAB /* SRKStringObject.m */,
+				E049CCEB1E13B8B900EE8DF2 /* SRKCommitOptions.m */,
+				E049CCF01E153E7E00EE8DF2 /* SRKCommitOptions+Private.h */,
 			);
 			path = "Persistable Objects";
 			sourceTree = "<group>";
@@ -897,6 +904,7 @@
 				E0C450BF1D107AA8003FA21D /* SRKRelationship.m in Sources */,
 				E0C450AF1D107AA8003FA21D /* SRKResultSet.m in Sources */,
 				E0C450B61D107AA8003FA21D /* SRKRegistry.m in Sources */,
+				E049CCEF1E13B8B900EE8DF2 /* SRKCommitOptions.m in Sources */,
 				E0C450B91D107AA8003FA21D /* SRKTransaction.m in Sources */,
 				E0C450AC1D107AA8003FA21D /* SRKIndexDefinition.m in Sources */,
 				E0A83F291DB75E82003F608B /* SRKGlobals.m in Sources */,
@@ -929,6 +937,7 @@
 				E0A83F311DB7B5C9003F608B /* sqlite3.c in Sources */,
 				E0F413D21CF632120085166C /* SRKRegistry.m in Sources */,
 				E02AC1BA1E07EF2500E47406 /* SRKTransactionInfo.m in Sources */,
+				E049CCED1E13B8B900EE8DF2 /* SRKCommitOptions.m in Sources */,
 				E0F413ED1CF632120085166C /* SRKContext.m in Sources */,
 				E0F413B61CF632120085166C /* SRKIndexDefinition.m in Sources */,
 				3A330F631D25461500483626 /* SRKObjectChain.m in Sources */,
@@ -984,6 +993,7 @@
 				E0F413E31CF632120085166C /* SRKRelationship.m in Sources */,
 				E0F413EE1CF632120085166C /* SRKContext.m in Sources */,
 				E040B5BF1D1479E900FCC830 /* Examples.m in Sources */,
+				E049CCEE1E13B8B900EE8DF2 /* SRKCommitOptions.m in Sources */,
 				E0F413D61CF632120085166C /* SRKRegistryEntry.m in Sources */,
 				E003204D1CFA58FF00240C44 /* WidePerson.m in Sources */,
 				E0F413F01CF632120085166C /* SRKTransaction.m in Sources */,

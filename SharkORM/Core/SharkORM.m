@@ -1326,20 +1326,25 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                         default:
                         {
                             
-                            if (entity.transactionInfo) {
-                                // we are in a transaction, and it's gone south so mark the transaction as failed
-                                [SRKTransaction failTransactionWithCode:SRKTransactionFailed];
+                            // check we are not ignoring errors in the commit options.
+                            if (entity.commitOptions.raiseErrors) {
+                                
+                                if (entity.transactionInfo) {
+                                    // we are in a transaction, and it's gone south so mark the transaction as failed
+                                    [SRKTransaction failTransactionWithCode:SRKTransactionFailed];
+                                }
+                                
+                                /* error in prepare statement */
+                                if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
+                                    
+                                    SRKError* e = [SRKError new];
+                                    e.sqlQuery = sql;
+                                    e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg(databaseHandle)];
+                                    [[[SRKGlobals sharedObject] delegate] databaseError:e];
+                                    
+                                }
                             }
                             
-                            /* error in prepare statement */
-                            if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
-                                
-                                SRKError* e = [SRKError new];
-                                e.sqlQuery = sql;
-                                e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg(databaseHandle)];
-                                [[[SRKGlobals sharedObject] delegate] databaseError:e];
-                                
-                            }
                         }
                             break;
                     }
@@ -1347,19 +1352,24 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                 
             } else {
                 
-                if (entity.transactionInfo) {
-                    // we are in a transaction, and it's gone south so mark the transaction as failed
-                    [SRKTransaction failTransactionWithCode:SRKTransactionFailed];
-                }
-                
-                // an error occoured
-                /* error in prepare statement */
-                if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
+                // check we are not ignoring errors in the commit options.
+                if (entity.commitOptions.raiseErrors) {
                     
-                    SRKError* e = [SRKError new];
-                    e.sqlQuery = sql;
-                    e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg(databaseHandle)];
-                    [[[SRKGlobals sharedObject] delegate] databaseError:e];
+                    if (entity.transactionInfo) {
+                        // we are in a transaction, and it's gone south so mark the transaction as failed
+                        [SRKTransaction failTransactionWithCode:SRKTransactionFailed];
+                    }
+                    
+                    // an error occoured
+                    /* error in prepare statement */
+                    if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
+                        
+                        SRKError* e = [SRKError new];
+                        e.sqlQuery = sql;
+                        e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg(databaseHandle)];
+                        [[[SRKGlobals sharedObject] delegate] databaseError:e];
+                        
+                    }
                     
                 }
             }
@@ -1392,6 +1402,11 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
         
         [entity setBase];
         
+    }
+    
+    // if we are not within a transaction then execute any supplied blocks within the commit object
+    if (succeded && entity.commitOptions.postCommitBlock && ![SRKTransaction transactionIsInProgress]) {
+        entity.commitOptions.postCommitBlock();
     }
     
     return succeded;
@@ -1446,26 +1461,37 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                 succeded = YES;
             } else {
                 
+                // check we are not ignoring errors in the commit options.
+                if (entity.commitOptions.raiseErrors) {
+                    
+                    if (entity.transactionInfo) {
+                        // we are in a transaction, and it's gone south so mark the transaction as failed
+                        [SRKTransaction failTransactionWithCode:SRKTransactionFailed];
+                    }
+                    
+                    /* error in prepare statement */
+                    if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
+                        
+                        SRKError* e = [SRKError new];
+                        e.sqlQuery = sql;
+                        e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg([SharkORM handleForDatabase:databaseNameForClass])];
+                        [[[SRKGlobals sharedObject] delegate] databaseError:e];
+                        
+                    }
+                    
+                }
+                
+            }
+        } else {
+            
+            // check we are not ignoring errors in the commit options.
+            if (entity.commitOptions.raiseErrors) {
+                
                 if (entity.transactionInfo) {
                     // we are in a transaction, and it's gone south so mark the transaction as failed
                     [SRKTransaction failTransactionWithCode:SRKTransactionFailed];
                 }
                 
-                /* error in prepare statement */
-                if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
-                    
-                    SRKError* e = [SRKError new];
-                    e.sqlQuery = sql;
-                    e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg([SharkORM handleForDatabase:databaseNameForClass])];
-                    [[[SRKGlobals sharedObject] delegate] databaseError:e];
-                    
-                }
-            }
-        } else {
-            
-            if (entity.transactionInfo) {
-                // we are in a transaction, and it's gone south so mark the transaction as failed
-                [SRKTransaction failTransactionWithCode:SRKTransactionFailed];
             }
             
         }
@@ -1479,6 +1505,12 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
         if ([[entity class] FTSParametersForEntity]) {
             [SharkORM executeSQL:[NSString stringWithFormat:@"DELETE FROM fts_%@ WHERE docid = %@", [[entity class] description], entity.Id] inDatabase:nil];
         }
+        
+        // if we are not within a transaction then execute any supplied blocks within the commit object
+        if (entity.commitOptions.postRemoveBlock && ![SRKTransaction transactionIsInProgress]) {
+            entity.commitOptions.postRemoveBlock();
+        }
+        
     }
     
     return succeded;
@@ -1532,26 +1564,37 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                 succeded = YES;
             } else {
                 
+                // check we are not ignoring errors in the commit options.
+                if (entity.commitOptions.raiseErrors) {
+                    
+                    if (entity.transactionInfo) {
+                        // we are in a transaction, and it's gone south so mark the transaction as failed
+                        [SRKTransaction failTransactionWithCode:SRKTransactionFailed];
+                    }
+                    
+                    /* error in prepare statement */
+                    if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
+                        
+                        SRKError* e = [SRKError new];
+                        e.sqlQuery = sql;
+                        e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg([SharkORM handleForDatabase:databaseNameForClass])];
+                        [[[SRKGlobals sharedObject] delegate] databaseError:e];
+                        
+                    }
+                    
+                }
+                
+            }
+        } else {
+            
+            // check we are not ignoring errors in the commit options.
+            if (entity.commitOptions.raiseErrors) {
+                
                 if (entity.transactionInfo) {
                     // we are in a transaction, and it's gone south so mark the transaction as failed
                     [SRKTransaction failTransactionWithCode:SRKTransactionFailed];
                 }
                 
-                /* error in prepare statement */
-                if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
-                    
-                    SRKError* e = [SRKError new];
-                    e.sqlQuery = sql;
-                    e.errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg([SharkORM handleForDatabase:databaseNameForClass])];
-                    [[[SRKGlobals sharedObject] delegate] databaseError:e];
-                    
-                }
-            }
-        } else {
-            
-            if (entity.transactionInfo) {
-                // we are in a transaction, and it's gone south so mark the transaction as failed
-                [SRKTransaction failTransactionWithCode:SRKTransactionFailed];
             }
             
         }

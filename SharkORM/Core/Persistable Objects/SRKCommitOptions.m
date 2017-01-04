@@ -20,68 +20,26 @@
 //    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //    SOFTWARE.
 
-
-
 #import "SharkORM.h"
-#import "SRKObject+Private.h"
-#import "SharkORM+Private.h"
-#import "SRKObjectChain.h"
 
-@interface SRKContext ()
+@implementation SRKCommitOptions
 
-@property (nonatomic, strong)   NSMutableArray* entities;
-
-@end
-
-@implementation SRKContext
-
-- (id)init {
-	self = [super init];
-	if (self) {
-		self.entities = [NSMutableArray new];
-	}
-	return self;
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        [self setDefaultOptions];
+    }
+    return self;
 }
 
-- (void)addEntityToContext:(SRKObject*)entity {
-	[self.entities addObject:entity];
-	entity.context = self;
-}
-
-- (void)removeEntityFromContext:(SRKObject*)entity {
-	[self.entities removeObject:entity];
-	entity.context = nil;
-}
-
-- (BOOL)isEntityInContext:(SRKObject*)entity {
-	return [self.entities containsObject:entity];
-}
-
-- (BOOL)commit {
-	
-	/* commit all the objects within a transaction */
-	
-	__block BOOL success = YES;
-    
-    [SRKTransaction transaction:^{
-        
-        for (SRKObject* ob in self.entities) {
-            
-            if (ob.isMarkedForDeletion) {
-                [ob __removeRaw];
-            } else {
-                [ob __commitRawWithObjectChain:[SRKObjectChain new]];
-            }
-        }
-        
-    } withRollback:^{
-        
-        success = NO;
-        
-    }];
-		
-	return success;
-	
+- (void)setDefaultOptions {
+    self.postCommitBlock = nil;
+    self.postRemoveBlock = nil;
+    self.ignoreEntities = nil;
+    self.commitChildObjects = YES;
+    self.resetOptionsAfterCommit = NO;
+    self.raiseErrors = YES;
+    self.triggerEvents = YES;
 }
 
 @end
