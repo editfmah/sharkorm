@@ -1,8 +1,25 @@
 Shark Changelog
 ===============
+##v2.1.0 - Jan 4, 2017
+
+New transaction module, all changes made within a transaction block will be rolled back on error.  Including any modification of property values of referenced but uncommited objects, it is like the block never ran! (as far as the entities are concerned).  Transactions are now much faster, and there is a slightly lower memory impact.
+
+Fixed a bug with persisting NSArray & NSDictionary objects within a transaction.
+
+You may now manually fail a transaction by calling SRKFailTransaction() within the block, allowing developers to abort and rollback based on applicaiton logic.
+
+UUID primary keys are now generated in lowercase.
+
+Added *..commitOptions (property)*, which allows for far greated control over how SharkORM commits individual objects.  You can guess what most things do from the properties on the class (postCommitBlock,postRemoveBlock,ignoreEntities,commitChildObjects,resetOptionsAfterCommit,raiseErrors,triggerEvents).
+
+Work on the Swift version has now officially started, hopefully resulting in an importable module very soon.
+
 ##v2.0.9 - Oct 19, 2016
+
 Fixed a bug where the high velocity calls to the orm from dispatched blocks, which were inadvertantly accessing some static variables caused the main thread to block forever and would never release.
+
 Upgraded to SQLite 3.15.0 - Took 3 seconds off our performance test, which is a 10k random read-write routine, across multiple tables with multiple record shapes and event trigers.  Was 15.03s now 11.98s.
+
 
 ##v2.0.8 - Aug 03, 2016
 ####Added Object dot notation support to query syntax

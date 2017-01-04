@@ -13,10 +13,10 @@ Shark is designed to get your app working quickly, integrated as source code, or
 
 | Shark Version | Minimum iOS Target  |                                   Notes                                   |
 |:--------------------:|:---------------------------:|:----------------------------:|:-------------------------------------------------------------------------:|
-|          2.x.x         |            iOS 6 as source, iOS 8 as framework            | Xcode 7 is required. |
-|          2.x.x         |            tvOS 9 as source and framework            | Xcode 7 is required. |
-|          2.x.x         |            macOS 10.8 as source and framework            | Xcode 7 is required. |
-|          2.x.x         |            watchOS 2 as source and framework            | Xcode 7 is required. |
+|          2.x.x         |            iOS 7 as source, iOS 8 as framework            | Xcode 8 is required. |
+|          2.x.x         |            tvOS 9 as source and framework            | Xcode 8 is required. |
+|          2.x.x         |            macOS 10.8 as source and framework            | Xcode 8 is required. |
+|          2.x.x         |            watchOS 2 as source and framework            | Xcode 8 is required. |
 
 
 ###Install From Cocoapods
@@ -321,7 +321,7 @@ Shark looks to simplify the persistence of objects down to a simple method `comm
 Person* thisPerson = [Person new];
 
 // Set some properties
-thisPerson.age = 37;
+thisPerson.age = 38;
 thisPerson.payrollNumber = 123456;
 thisPerson.name = @"Adrian Herridge";
 
@@ -334,7 +334,7 @@ thisPerson.name = @"Adrian Herridge";
 var thisPerson = Person()
 
 // Set some properties
-thisPerson.age = 37;
+thisPerson.age = 38;
 thisPerson.payrollNumber = 123456;
 thisPerson.name = "Adrian Herridge";
 
@@ -344,26 +344,26 @@ thisPerson.commit()
 
 Objects are committed immediately and are written to the store in an atomic fashion.  They will become immediately queryable upon completion.
 
-###commitOptions (SRKCommitOptions)
+###.commitOptions (property)
 
 the commitOptions property is present in all SRKObjects, and allows the developer to control on an object-by-object basis how SharkORM behaves when asked to commit certain objects.
 
 The following properties are used to control the logic and add fine grain control:
 
-####postCommitBlock
+**postCommitBlock**
 Called once a successful commit has completed
-####postRemoveBlock
+**postRemoveBlock**
 Called after an object has been removed from the data store
-####ignoreEntities
+**ignoreEntities**
 Allows the developer to specify an array of child/related entities that will not be persisted when the parent object is commited.  
-####commitChildObjects
+**commitChildObjects**
 If set, then all child/related entitied will not automatically be commited too.
-####resetOptionsAfterCommit
+**resetOptionsAfterCommit**
 If set, then all defaults will be restored and all blocks cleared.
-####raiseErrors
-Defauted to TRUE, but if set to false then an errors generated are ignored and not raised with the delegate.  Transactions will also not be failed.
-####triggerEvents
-Defaulted to TRUE, if set to false then events are no longer raised for insert,update,delete operations.
+**raiseErrors**
+If set to false then any errors generated are ignored and not raised with the delegate.  Transactions will also not be failed.
+**triggerEvents**
+If set to true then events are raised for insert,update,delete operations.
 
 
 ###Writing in Transactions
