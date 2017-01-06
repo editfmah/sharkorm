@@ -1,5 +1,12 @@
 Shark Changelog
 ===============
+
+##v2.1.1 - Jan 4, 2017
+
+Upgraded to SQLite v3.16.1.
+
+Fixed a reported issue where the limits configured in SQLite were too low for SharkORM to operate in extreme circumstances.
+
 ##v2.1.0 - Jan 4, 2017
 
 New transaction module, all changes made within a transaction block will be rolled back on error.  Including any modification of property values of referenced but uncommited objects, it is like the block never ran! (as far as the entities are concerned).  Transactions are now much faster, and there is a slightly lower memory impact.

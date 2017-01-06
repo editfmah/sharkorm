@@ -352,18 +352,25 @@ The following properties are used to control the logic and add fine grain contro
 
 **postCommitBlock**
 Called once a successful commit has completed
+
 **postRemoveBlock**
 Called after an object has been removed from the data store
+
 **ignoreEntities**
-Allows the developer to specify an array of child/related entities that will not be persisted when the parent object is commited.  
+Allows the developer to specify an array of child/related entities that will not be persisted when the parent object is commited. 
+
 **commitChildObjects**
 If set, then all child/related entitied will not automatically be commited too.
+
 **resetOptionsAfterCommit**
 If set, then all defaults will be restored and all blocks cleared.
+
 **raiseErrors**
 If set to false then any errors generated are ignored and not raised with the delegate.  Transactions will also not be failed.
+
 **triggerEvents**
 If set to true then events are raised for insert,update,delete operations.
+
 
 
 ###Writing in Transactions
