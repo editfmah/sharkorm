@@ -39,6 +39,7 @@
 #import "SRKGlobals.h"
 #import "SRKTransaction+Private.h"
 #import "SRKCommitOptions+Private.h"
+#import <UIKit/UIKit.h>
 
 @implementation SRKObject {
     id cachedPrimaryKeyValue;
@@ -609,25 +610,37 @@ static id propertyIMP(SRKObject* self, SEL _cmd) {
                 /* check to see if the original column is an NSData column, if not this object needs re-inflating */
                 if([self.class getEntityPropertyType:columnName] != SRK_PROPERTY_TYPE_DATA && [self.class getEntityPropertyType:columnName] != SRK_PROPERTY_TYPE_MUTABLEDATA) {
                     
-                    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:columnValue];
-                    columnValue = [unarchiver decodeObject];
-                    [unarchiver finishDecoding];
-                    
-                    /* now we need to see if the value is unsupported or encrypted */
-                    if ([columnValue isKindOfClass:[SRKUnsupportedObject class]]) {
-                        if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(decodeUnsupportedColumnValueForColumn:inEntity:data:)]) {
-                            SRKUnsupportedObject* unObj = columnValue;
-                            columnValue = [[[SRKGlobals sharedObject] delegate] decodeUnsupportedColumnValueForColumn:columnValue inEntity:[[self class] description]  data:unObj.object];
+                    if ([self.class getEntityPropertyType:columnName] == SRK_PROPERTY_TYPE_IMAGE) {
+                        
+                        NSData* val = (NSData*)columnValue;
+                        columnValue = [UIImage imageWithData:val];
+                        
+                        /* store the object so this method is only called the once */
+                        [self setFieldRaw:columnName value:columnValue];
+                        
+                    } else {
+                        
+                        NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:columnValue];
+                        columnValue = [unarchiver decodeObject];
+                        [unarchiver finishDecoding];
+                        
+                        /* now we need to see if the value is unsupported or encrypted */
+                        if ([columnValue isKindOfClass:[SRKUnsupportedObject class]]) {
+                            if ([[SRKGlobals sharedObject] delegate] && [[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(decodeUnsupportedColumnValueForColumn:inEntity:data:)]) {
+                                SRKUnsupportedObject* unObj = columnValue;
+                                columnValue = [[[SRKGlobals sharedObject] delegate] decodeUnsupportedColumnValueForColumn:columnValue inEntity:[[self class] description]  data:unObj.object];
+                            }
                         }
+                        
+                        if ([columnValue isKindOfClass:[SRKEncryptedObject class]]) {
+                            SRKEncryptedObject* encObj = columnValue;
+                            columnValue = encObj.decryptObject;
+                        }
+                        
+                        /* store the object so this method is only called the once */
+                        [self setFieldRaw:columnName value:columnValue];
+                        
                     }
-                    
-                    if ([columnValue isKindOfClass:[SRKEncryptedObject class]]) {
-                        SRKEncryptedObject* encObj = columnValue;
-                        columnValue = encObj.decryptObject;
-                    }
-                    
-                    /* store the object so this method is only called the once */
-                    [self setFieldRaw:columnName value:columnValue];
                     
                 } else if ([self.class getEntityPropertyType:columnName] == SRK_PROPERTY_TYPE_MUTABLEDATA) {
                     

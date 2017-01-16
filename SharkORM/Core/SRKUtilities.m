@@ -25,6 +25,7 @@
 #import "SRKUtilities.h"
 #import "SRKObject+Private.h"
 #import "SharkORM+Private.h"
+#import <UIKit/UIKit.h>
 
 @implementation SRKUtilities
 
@@ -270,7 +271,10 @@
                 sqlite3_bind_text16(statement, paramCount, [sId cStringUsingEncoding:NSUTF16StringEncoding],@([sId lengthOfBytesUsingEncoding:NSUTF16StringEncoding]).intValue , SQLITE_TRANSIENT);
             }
             
-        } else if ([p isKindOfClass:NSClassFromString(@"UIImage")]) {
+        } else if ([p isKindOfClass:NSClassFromString(TARGET_OS_MAC ? @"NSImage" : @"UIImage")]) {
+            
+            NSData* d = UIImagePNGRepresentation(((UIImage*)p));
+            sqlite3_bind_blob(statement, paramCount, [d bytes], @([d length]).intValue, SQLITE_TRANSIENT);
             
         } else if ([p isKindOfClass:[NSData class]]) {
             
@@ -528,7 +532,7 @@
                 
             } else if ([replacementChar isEqualToString:@"%f"]) {
                 
-                /* int type */
+                /* float type */
                 [types addObject:@"FLOAT"];
                 format = [format stringByReplacingCharactersInRange:NSMakeRange(startPosition.location, 2) withString:@"??"];
                 
@@ -540,25 +544,25 @@
                 
             } else if ([replacementChar isEqualToString:@"%u"]) {
                 
-                /* int type */
+                /* uint type */
                 [types addObject:@"UINT"];
                 format = [format stringByReplacingCharactersInRange:NSMakeRange(startPosition.location, 2) withString:@"??"];
                 
             } else if ([replacementChar isEqualToString:@"%l"]) {
                 
-                /* int type */
+                /* long type */
                 [types addObject:@"LONG"];
                 format = [format stringByReplacingCharactersInRange:NSMakeRange(startPosition.location, 2) withString:@"??"];
                 
             } else if ([replacementChar isEqualToString:@"%f"]) {
                 
-                /* int type */
+                /* double type */
                 [types addObject:@"DOUBLE"];
                 format = [format stringByReplacingCharactersInRange:NSMakeRange(startPosition.location, 2) withString:@"??"];
                 
             } else if ([replacementChar isEqualToString:@"%c"]) {
                 
-                /* int type */
+                /* uchar type */
                 [types addObject:@"UCHAR"];
                 format = [format stringByReplacingCharactersInRange:NSMakeRange(startPosition.location, 2) withString:@"??"];
                 
