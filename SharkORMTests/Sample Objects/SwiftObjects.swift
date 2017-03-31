@@ -29,6 +29,7 @@ class DepartmentSwift : SRKObject {
 
 class SwiftTestClass : SRKObject {
 	
+    dynamic var SwiftNumber: NSNumber?
 	dynamic var SwiftTestString : String?
 	dynamic var SwiftTestNumber : NSNumber?
 	dynamic var lowercaseField : String?

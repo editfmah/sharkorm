@@ -55,4 +55,18 @@
 - (NSMutableArray*)systemEntityRelationships;
 - (NSArray*)systemEntityRelationshipsReadOnly;
 
+// global event callbacks
+- (void)setInsertCallback:(SRKGlobalEventCallback)callback;
+- (void)setUpdateCallback:(SRKGlobalEventCallback)callback;
+- (void)setDeleteCallback:(SRKGlobalEventCallback)callback;
+- (SRKGlobalEventCallback)getInsertCallback;
+- (SRKGlobalEventCallback)getUpdateCallback;
+- (SRKGlobalEventCallback)getDeleteCallback;
+
+// schema information
+- (void)setFQNameForClass:(NSString*)shortName fullName:(NSString*)fullName;
+- (NSString*)getFQNameForClass:(NSString*)shortName;
+
+
+
 @end

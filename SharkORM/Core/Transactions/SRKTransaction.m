@@ -26,6 +26,7 @@
 #import "SRKTransaction+Private.h"
 #import "SRKObject+Private.h"
 #import "SRKRegistry.h"
+#import "SRKGlobals.h"
 
 static id                       transactionSemaphore;
 static BOOL                     transactionInProgress;
@@ -139,6 +140,33 @@ void SRKFailTransaction() {
                     
                     // now execute the event notifications for all objects within this transaction
                     for (SRKObject* o in transactionReferencedObjects) {
+                        
+                        // triger the global callbacks if they have been registered
+                        
+                        if (o.transactionInfo.eventType == SharkORMEventInsert) {
+                            // now raise a global event
+                            SRKGlobalEventCallback callback = [[SRKGlobals sharedObject] getInsertCallback];
+                            if (callback) {
+                                callback(o);
+                            }
+                        }
+                        
+                        if (o.transactionInfo.eventType == SharkORMEventUpdate) {
+                            // now raise a global event
+                            SRKGlobalEventCallback callback = [[SRKGlobals sharedObject] getUpdateCallback];
+                            if (callback) {
+                                callback(o);
+                            }
+                        }
+                        
+                        if (o.transactionInfo.eventType == SharkORMEventDelete) {
+                            // now raise a global event
+                            SRKGlobalEventCallback callback = [[SRKGlobals sharedObject] getDeleteCallback];
+                            if (callback) {
+                                callback(o);
+                            }
+                        }
+                        
                         if (o.commitOptions.triggerEvents) {
                             SRKEvent* e = [SRKEvent new];
                             e.event = o.transactionInfo.eventType;

@@ -130,7 +130,12 @@ typedef enum : int {
                 
                 
                 /* remove all existing data in these tables */
-                [[[NSClassFromString(currentT) query] fetchLightweight] removeAll];
+                NSString* currentTableName = currentT;
+                if (!NSClassFromString(currentTableName)) {
+                    currentTableName = [[SRKGlobals sharedObject] getFQNameForClass:currentT];
+                }
+                
+                [[[NSClassFromString(currentTableName) query] fetchLightweight] removeAll];
                 
                 NSArray* oldTableData = [results objectForKey:[NSString stringWithFormat:@"Z%@", currentT.uppercaseString]];
                 if (oldTableData) {
@@ -138,7 +143,7 @@ typedef enum : int {
                         
                         @autoreleasepool {
                             /* create a new SRKObject based on this class */
-                            SRKObject* newRecord = [NSClassFromString(currentT) new];
+                            SRKObject* newRecord = [NSClassFromString(currentTableName) new];
                             if (newRecord) {
                                 for (NSString* currentField in newRecord.fieldNames) {
                                     
@@ -227,6 +232,18 @@ typedef enum : int {
 + (void)setDelegate:(id)aDelegate {
     
     [[SRKGlobals sharedObject] setDelegate:aDelegate];
+    
+}
+
++ (void)setInsertCallbackBlock:(SRKGlobalEventCallback)callback {
+    
+}
+
++ (void)setUpdateCallbackBlock:(SRKGlobalEventCallback)callback {
+    
+}
+
++ (void)setDeleteCallbackBlock:(SRKGlobalEventCallback)callback {
     
 }
 
@@ -959,6 +976,9 @@ void spatialCalc(sqlite3_context *context, int argc, sqlite3_value **argv)
     /* now create the fields */
     /* now we check to see if there is a default value for this new column */
     Class entityClass = NSClassFromString(table);
+    if (!entityClass) {
+        entityClass = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:table]);
+    }
     NSDictionary* defaultValues = [entityClass defaultValuesForEntity];
     
     for (NSString* s in newFields.allKeys) {
@@ -1226,7 +1246,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                 return NO;
             }
             
-            // this means we ar ecurrently within a transaction, so we need to create an information object to describe what is happening before the commit
+            // this means we are currently within a transaction, so we need to create an information object to describe what is happening before the commit
             if (!entity.transactionInfo) {
                 SRKTransactionInfo* info = [SRKTransactionInfo new];
                 info.eventType = entity.exists ? EventUpdate : EventInsert;
@@ -1943,7 +1963,9 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
     
     [SRKTransaction blockUntilTransactionFinished];
     
-    if (sqlite3_prepare_v2([SharkORM handleForDatabase:[SharkORM databaseNameForClass:NSClassFromString(tableName)]], [sql UTF8String], -1, &statement, nil) == SQLITE_OK) {
+    Class entityClass = query.classDecl;
+    
+    if (sqlite3_prepare_v2([SharkORM handleForDatabase:[SharkORM databaseNameForClass:entityClass]], [sql UTF8String], -1, &statement, nil) == SQLITE_OK) {
         
         if (query.parameters && query.parameters.count) {
             /* loop through the parameters using the bind command, stops injection attacks */
@@ -1970,7 +1992,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
         
     } else {
         
-        [self handleError:[SharkORM handleForDatabase:[SharkORM databaseNameForClass:NSClassFromString(tableName)]] sql:sql];
+        [self handleError:[SharkORM handleForDatabase:[SharkORM databaseNameForClass:entityClass]] sql:sql];
         
     }
     
@@ -1993,7 +2015,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
         
         NSString* planStr = [NSString stringWithFormat:@"EXPLAIN QUERY PLAN %@", sql];
         
-        if (sqlite3_prepare_v2([SharkORM handleForDatabase:[SharkORM databaseNameForClass:NSClassFromString(tableName)]], [planStr UTF8String], -1, &plan, nil) == SQLITE_OK) {
+        if (sqlite3_prepare_v2([SharkORM handleForDatabase:[SharkORM databaseNameForClass:entityClass]], [planStr UTF8String], -1, &plan, nil) == SQLITE_OK) {
             
             int status = sqlite3_step(plan);
             

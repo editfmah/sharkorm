@@ -16,6 +16,6 @@
 @property NSNumber*         number;
 @property int               intvalue;
 @property float             floatValue;
-@property double            doubelValue;
+@property double            doubleValue;
 
 @end

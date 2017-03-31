@@ -10,12 +10,6 @@
 
 @implementation Query
 
-- (void)test {
-
-    
-    
-}
-
 - (void)setupCommonData {
     
     [self cleardown];
@@ -220,6 +214,62 @@
     
     XCTAssert(r,@"Failed to return a result set");
     XCTAssert(r.count == 3,@"incorrect number of results returned");
+    
+}
+
+- (void)test_batch_size_with_large_data_set {
+    
+    [self cleardown];
+    
+    Person* p1 = nil;
+    Person* p2 = nil;
+    Person* p3 = nil;
+    Person* p4 = nil;
+    
+    for (int i=0; i < 10000; i++) {
+        @autoreleasepool {
+            Person* p = [Person new];
+            p.Name = [NSString stringWithFormat:@"%@", @(rand() % 9999999999)];
+            p.age = rand();
+            p.seq = i;
+            [p commit];
+            if (i==50) {
+                p1 = p;
+            }
+            if (i==1050) {
+                p2 = p;
+            }
+            if (i==2050) {
+                p3 = p;
+            }
+            if (i==9000) {
+                p4 = p;
+            }
+        }
+    }
+    
+    SRKResultSet* results = [[[Person query] batchSize:1000] fetch];
+    int64_t count = results.count;
+    
+    XCTAssert(count > 0,@"batch count failed");
+    XCTAssert(count != 10000,@"batch count failed");
+    
+    int i=0;
+    for (Person* p in results) {
+        if (i==50) {
+            XCTAssert(p.age == p1.age,@"batch comparison failed");
+        }
+        if (i==1050) {
+            XCTAssert(p.age == p2.age,@"batch comparison failed");
+        }
+        if (i==2050) {
+            XCTAssert(p.age == p3.age,@"batch comparison failed");
+        }
+        if (i==9000) {
+            XCTAssert(p.age == p4.age,@"batch comparison failed");
+        }
+        i++;
+    }
     
 }
 

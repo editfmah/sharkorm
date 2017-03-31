@@ -406,7 +406,7 @@
         ob.dictionary = @{@"one" : @(1), @"two" : @(2)};
         ob.intvalue = 42;
         ob.floatValue = 42.424242f;
-        ob.doubelValue = 1234567.1234567;
+        ob.doubleValue = 1234567.1234567;
         [ob commit];
         
     } withRollback:^{

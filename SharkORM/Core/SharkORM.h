@@ -20,13 +20,11 @@
 //    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //    SOFTWARE.
 
-
-
 #ifndef __SHARKORM_H
 #define __SHARKORM_H
 
-#define SHARK_DATE              20170106
-#define SHARK_VER               2.01.01
+#define SHARK_DATE              20170308
+#define SHARK_VER               2.01.02
 
 #import <Foundation/Foundation.h>
 #import <objc/message.h>
@@ -175,6 +173,9 @@ typedef enum : int {
 /**
  * SharkORM class, always accessed through class methods, there is only ever a single instance of the database engine.
  */
+
+typedef void(^SRKGlobalEventCallback)(SRKObject* entity);
+
 @interface SharkORM : NSObject {
     
 }
@@ -221,6 +222,28 @@ typedef enum : int {
  * @return (SRKRawResults*);
  */
 +(SRKRawResults*)rawQuery:(NSString*)sql;
+/**
+ * Allows the developer to specify a block to be executed against all INSERT events.
+ *
+ * @param (^SRKGlobalEventCallback) The block to be executed when the ORM has instigated any INSERT.
+ * @return void;
+ */
++(void)setInsertCallbackBlock:(SRKGlobalEventCallback)callback;
+/**
+ * Allows the developer to specify a block to be executed against all UPDATE events.
+ *
+ * @param (^SRKGlobalEventCallback) The block to be executed when the ORM has instigated any UPDATE.
+ * @return void;
+ */
++(void)setUpdateCallbackBlock:(SRKGlobalEventCallback)callback;
+/**
+ * Allows the developer to specify a block to be executed against all DELETE events.
+ *
+ * @param (^SRKGlobalEventCallback) The block to be executed when the ORM has instigated any DELETE.
+ * @return void;
+ */
++(void)setDeleteCallbackBlock:(SRKGlobalEventCallback)callback;
+
 @end
 
 /*

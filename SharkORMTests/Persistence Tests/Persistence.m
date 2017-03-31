@@ -265,6 +265,8 @@
 
 - (void)test_all_object_types {
     
+    [[[MostObjectTypes query] fetchLightweight] removeAll];
+    
     MostObjectTypes* ob = [MostObjectTypes new];
     ob.number = @(42);
     ob.array = @[@(1),@(2),@(3)];
@@ -272,10 +274,13 @@
     ob.dictionary = @{@"one" : @(1), @"two" : @(2)};
     ob.intvalue = 42;
     ob.floatValue = 42.424242f;
-    ob.doubelValue = 1234567.1234567;
+    ob.doubleValue = 1234567.1234567;
     [ob commit];
     
     SRKResultSet* r = [[MostObjectTypes query] fetch];
+    for (MostObjectTypes* mot in r) {
+        NSLog(@"%@", mot);
+    }
     
 }
 
@@ -288,7 +293,7 @@
     ob.dictionary = @{@"vc" : (NSDictionary*)[[UIViewController alloc] init]};
     ob.intvalue = 42;
     ob.floatValue = 42.424242f;
-    ob.doubelValue = 1234567.1234567;
+    ob.doubleValue = 1234567.1234567;
     [ob commit];
     
     MostObjectTypes* r = (id)[[MostObjectTypes query] fetch].firstObject;
