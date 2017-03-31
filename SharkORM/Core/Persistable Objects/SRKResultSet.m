@@ -51,9 +51,10 @@
 - (instancetype)initWithArrayOfPrimaryKeys:(NSArray *)array andQuery:(SRKQuery*)query {
 	self = [super init];
 	if (self != nil) {
-        _arrayRecordPrimaryKeys = array;
 		_query = query;
-        _size = query.count;
+        _size = array.count;
+        _arrayRecordPrimaryKeys = array;
+        _dictionaryStore = [NSMutableDictionary new];
 	}
 	return self;
 }

@@ -252,7 +252,7 @@
     int64_t count = results.count;
     
     XCTAssert(count > 0,@"batch count failed");
-    XCTAssert(count != 10000,@"batch count failed");
+    XCTAssert(count == 10000,@"batch count failed");
     
     int i=0;
     for (Person* p in results) {
