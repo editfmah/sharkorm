@@ -80,7 +80,7 @@ You can use these classes in much the same way as any other class in the system,
 
 In Objective-C properties need to be implemented using `@dynamic`, this is to indicate to the ORM that it will control the fetching and setting of these values from the database, and in Swift the property is implemented as `var dynamic`
 
-## Schema (and changes)
+## Schema (Migration)
 The schema is automatically maintained from the class signatures and all additions, deletions & type changes are automatically made.
 
 Tables are created automatically by referencing a class which is a subclass of SRKObject.
