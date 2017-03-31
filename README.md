@@ -233,6 +233,12 @@ override class func defaultValuesForEntity() -> [NSObject : AnyObject] {
 ##Triggers
 Shark objects all have the same methods available for them, to enforce constraints and check validity before or after writes have been made.
 
+##Schema (and changes)
+The schema is automatically maintained from the class signatures and all additions, deletions & type changes are automatically made.
+
+Tables are created automatically by referencing a class which is a subclass of SRKObject.
+
+
 ###entityWillInsert(), entityWillUpdate(), entityWillDelete() returning bool
 Objects receive this method before any action has been carried out.  In here you can test to see if you wish the operation to continue.  If `true` is returned then the operation is told to continue, but if `false` is retuned then the transaction is aborted, and the commit returns false.
 `Objective-C`
