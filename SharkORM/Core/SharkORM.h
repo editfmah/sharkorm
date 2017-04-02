@@ -23,7 +23,7 @@
 #ifndef __SHARKORM_H
 #define __SHARKORM_H
 
-#define SHARK_DATE              20170331
+#define SHARK_DATE              20170402
 #define SHARK_VER               2.01.02
 
 #import <Foundation/Foundation.h>
@@ -458,12 +458,11 @@ typedef void(^SRKCommitOptionsBlock)();
 
 /**
  * Initialises a new instance of the object, if an object already exists with the specified primary key then you will get that object back, if not you will net a new object with the primary key specified already.
-
  *
  * @param (NSObject*)priKeyValue The primary key value to look up an existing object
  * @return SRKObject* Either an existing or new class.
  */
-- (id)initWithPrimaryKeyValue:(NSObject*)priKeyValue;
+- (instancetype)initWithPrimaryKeyValue:(NSObject*)priKeyValue;
 /**
  * Returns an object that matches the primary key value specified, if there is no match, nil is returned.
  
@@ -471,7 +470,14 @@ typedef void(^SRKCommitOptionsBlock)();
  * @param (NSObject*)priKeyValue The primary key value to look up an existing object
  * @return SRKObject* Either an existing object or nil.
  */
-+ (id)objectWithPrimaryKeyValue:(NSObject*)priKeyValue;
++ (instancetype)objectWithPrimaryKeyValue:(NSObject*)priKeyValue;
+/**
+ * Initialises a new instance of the object, the supplied dictionary will pre-populate the field values.
+ *
+ * @param (NSDictionary*)initialValues, in the format [<property as string>:<value as Any>]
+ * @return SRKObject*.  A new object with the pre-populated values.
+ */
+- (instancetype)initWithDictionary:(NSDictionary*)initialValues;
 /**
  * Removes the object form the database
 

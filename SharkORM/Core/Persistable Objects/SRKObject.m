@@ -1725,7 +1725,20 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
     
 }
 
-+ (id)objectWithPrimaryKeyValue:(NSObject*)priKeyValue {
+- (id)initWithDictionary:(NSDictionary *)initialValues {
+    
+    Class originalClass = ((SRKObject*)self).class;
+    self = [originalClass new];
+    if (self) {
+        for (NSString* property in initialValues.allKeys) {
+            setPropertyIMP(self, [[SRKUtilities new] generateSetSelectorForPropertyName:property], [initialValues valueForKey:property]);
+        }
+    }
+    return self;
+    
+}
+
++ (instancetype)objectWithPrimaryKeyValue:(NSObject*)priKeyValue {
     return [[[[((SRKObject*)self).class query] whereWithFormat:@"Id = %@", priKeyValue] limit:1] fetch].firstObject;
 }
 

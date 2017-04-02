@@ -315,5 +315,33 @@
     
 }
 
+- (void)test_initial_values {
+    
+    [self cleardown];
+    
+    Person* p = [[Person alloc] initWithDictionary:@{@"Name":@"Adrian Herridge",@"age":@(38)}];
+    
+    XCTAssert(p.age == 38,@"initial values population failed");
+    
+    [p commit];
+    
+    int64_t count = [[[Person query] where:@"Name = 'Adrian Herridge' AND age = 38 AND seq = 0 AND department IS NULL"] count];
+    
+    XCTAssert(count == 1,@"initial values population failed");
+    
+}
+
+- (void)test_initial_values_swift {
+    
+    [self cleardown];
+    
+    [SwiftTestClass testInitialValues];
+    
+    int64_t count = [[[Person query] where:@"Name = 'Adrian Herridge' AND age = 38 AND seq = 0 AND department IS NULL"] count];
+    
+    XCTAssert(count == 1,@"initial values population failed");
+    
+}
+
 
 @end
