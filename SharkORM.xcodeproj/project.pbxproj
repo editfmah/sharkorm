@@ -39,7 +39,6 @@
 		E07C4F341D45F71400DB6CAB /* SRKStringObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E07C4F311D45F71400DB6CAB /* SRKStringObject.m */; };
 		E07C4F351D45F71400DB6CAB /* SRKStringObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E07C4F311D45F71400DB6CAB /* SRKStringObject.m */; };
 		E07EFCDB1E904241006AF533 /* SchemaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E07EFCDA1E904241006AF533 /* SchemaTests.m */; };
-		E07EFCDC1E904241006AF533 /* SchemaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E07EFCDA1E904241006AF533 /* SchemaTests.m */; };
 		E092CB051D00964700C6C8CD /* DBAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = E092CB041D0095A300C6C8CD /* DBAccess.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E092CB081D00DBE800C6C8CD /* Performance.m in Sources */ = {isa = PBXBuildFile; fileRef = E092CB071D00DBE800C6C8CD /* Performance.m */; };
 		E09B720D1D4F530A00B68A80 /* SRKAES256Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E09B720B1D4F530A00B68A80 /* SRKAES256Extension.h */; };
@@ -896,7 +895,6 @@
 				E0C450B01D107AA8003FA21D /* SRKUnsupportedObject.m in Sources */,
 				E0C450AB1D107AA8003FA21D /* SRKFuzzyStore.m in Sources */,
 				E0C450BE1D107AA8003FA21D /* SRKLazyLoader.m in Sources */,
-				E07EFCDC1E904241006AF533 /* SchemaTests.m in Sources */,
 				E0C450B81D107AA8003FA21D /* SRKContext.m in Sources */,
 				E0C450A91D107AA8003FA21D /* SRKEventRegistryObject.m in Sources */,
 				E0C450C11D107AA8003FA21D /* SRKSQLiteHandle.m in Sources */,
