@@ -125,6 +125,21 @@ class Person: SRKObject {
 }
 ```
 
+### Initial values
+You can initialise an SRKObject with a dictionary, allowing you to populate an object programatically.
+
+Example:
+
+```objective-c
+// Obj-C
+Person* p = [[Person alloc] initWithDictionary:@{@"Name":@"Adrian Herridge",@"age":@(38)}];
+```
+```swift
+// Swift
+let p = Person(dictionary: ["Name" : "Adrian Herridge", "age" : 38])
+```
+
+
 ##Supported Types
 
 Shark supports the following types: `BOOL`, `bool`, `int`, `int64`, `uint`, `uint64`, `float`, `double`, `long`, `long long`, `unsigned long long`, `NSString`, `NSDate`, `NSData`, `NSNumber`.
