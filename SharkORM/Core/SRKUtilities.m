@@ -271,10 +271,15 @@
                 } else {
                     sqlite3_bind_double(statement, paramCount, [((SRKObject*)p).Id doubleValue]);
                 }
-            } else {
+            } else if (([obId isKindOfClass:[NSString class]])) {
                 NSString* sId = obId;
                 sqlite3_bind_text16(statement, paramCount, [sId cStringUsingEncoding:NSUTF16StringEncoding],@([sId lengthOfBytesUsingEncoding:NSUTF16StringEncoding]).intValue , SQLITE_TRANSIENT);
+            } else {
+                // no support for null primary keys or looking up deleted or non-existent objects.
+                sqlite3_bind_null(statement, paramCount);
             }
+            
+            
             
         } else if ([p isKindOfClass:NSClassFromString(TARGET_OS_MAC ? @"NSImage" : @"UIImage")]) {
             

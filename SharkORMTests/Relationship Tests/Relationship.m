@@ -87,6 +87,21 @@
     
 }
 
+- (void)test_one_to_one_to_one_object_linking_deleted_child_object {
+    
+    [self setupCommonData];
+    
+    Person* p = [[[[Person query] limit:1] fetch] firstObject];
+    [p.department remove];
+    [p commit];
+    
+    XCTAssert(p.department == nil, @"Deleting child object did not clear parent property");
+    
+    p = [[[[Person query] limit:1] fetch] firstObject];
+    XCTAssert(p.department == nil, @"Deleting child object did not clear parent property");
+    
+}
+
 - (void)test_one_to_one_object_linking_no_related_object {
     
     [self setupCommonData];

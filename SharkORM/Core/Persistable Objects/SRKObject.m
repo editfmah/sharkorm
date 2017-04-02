@@ -2424,6 +2424,10 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
                     NSObject* e = [self.embeddedEntities objectForKey:r.entityPropertyName];
                     if(e && [e isKindOfClass:[SRKObject class]]) {
                         [self setField:[NSString stringWithFormat:@"%@",r.entityPropertyName] value:((SRKObject*)e).Id];
+                        // if the new .Id value is NULL or .sterilized = TRUE then we need to remove this value.
+                        if (((SRKObject*)e).sterilised || ((SRKObject*)e).Id == nil) {
+                            [self.embeddedEntities removeObjectForKey:r.entityPropertyName];
+                        }
                     }
                     
                 }
@@ -2510,6 +2514,10 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
                     NSObject* e = [self.embeddedEntities objectForKey:r.entityPropertyName];
                     if(e && [e isKindOfClass:[SRKObject class]]) {
                         [self setField:[NSString stringWithFormat:@"%@",r.entityPropertyName] value:((SRKObject*)e).Id];
+                        // if the new .Id value is NULL or .sterilized = TRUE then we need to remove this value.
+                        if (((SRKObject*)e).sterilised || ((SRKObject*)e).Id == nil) {
+                            [self.embeddedEntities removeObjectForKey:r.entityPropertyName];
+                        }
                     }
                     
                 }

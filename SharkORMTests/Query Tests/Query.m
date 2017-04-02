@@ -318,4 +318,22 @@
     
 }
 
+- (void)test_nil_related_entity_as_parameter {
+    
+    [self cleardown];
+    
+    Person* p = [Person new];
+    p.Name = @"Adrian";
+    p.department = [Department new];
+    p.department.name = @"Dev";
+    [p commit];
+    
+    
+    Department* d = [[[Department query] fetch] firstObject];
+    [d remove];
+    
+    SRKResultSet* r = [[[Person query] whereWithFormat:@"department = %@", d] fetch];
+    
+}
+
 @end
