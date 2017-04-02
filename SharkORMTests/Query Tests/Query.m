@@ -288,4 +288,34 @@
     
 }
 
+- (void)test_date_parameters {
+    
+    [self cleardown];
+    
+    // fisrt should be excluded form the results
+    MostObjectTypes* mo0 = [MostObjectTypes new];
+    mo0.date = [NSDate date];
+    [mo0 commit];
+    [NSThread sleepForTimeInterval:0.1];
+    
+    NSDate* start = [NSDate date];
+    [NSThread sleepForTimeInterval:0.1];
+    
+    MostObjectTypes* mo1 = [MostObjectTypes new];
+    mo1.date = [NSDate date];
+    [mo1 commit];
+    
+    [NSThread sleepForTimeInterval:0.1];
+    
+    MostObjectTypes* mo2 = [MostObjectTypes new];
+    mo2.date = [NSDate date];
+    [mo2 commit];
+    
+    [NSThread sleepForTimeInterval:0.1];
+    int64_t count = [[[MostObjectTypes query] whereWithFormat:@"date >= %@ AND date <= %@", start, [NSDate date]] count];
+    
+    XCTAssert(count == 2, @"query with NSDate parameters failed");
+    
+}
+
 @end
