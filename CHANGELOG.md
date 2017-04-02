@@ -1,5 +1,9 @@
 Shark Changelog
 ===============
+## v2.1.3 - Mar 31, 2017
+
+Release, no changes.  Trying to fix a jammed up Cocoapods repository.
+
 ## v2.1.2 - Mar 31, 2017
 
 Changes to better support Swift3 interoperability.  Fixes all kinds of strange issues with the persistence of Arrays & Dictionaries coming back out as strings.
