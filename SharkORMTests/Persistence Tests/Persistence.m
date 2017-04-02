@@ -265,6 +265,8 @@
 
 - (void)test_all_object_types {
     
+    [[[MostObjectTypes query] fetchLightweight] removeAll];
+    
     MostObjectTypes* ob = [MostObjectTypes new];
     ob.number = @(42);
     ob.array = @[@(1),@(2),@(3)];
@@ -272,10 +274,13 @@
     ob.dictionary = @{@"one" : @(1), @"two" : @(2)};
     ob.intvalue = 42;
     ob.floatValue = 42.424242f;
-    ob.doubelValue = 1234567.1234567;
+    ob.doubleValue = 1234567.1234567;
     [ob commit];
     
     SRKResultSet* r = [[MostObjectTypes query] fetch];
+    for (MostObjectTypes* mot in r) {
+        NSLog(@"%@", mot);
+    }
     
 }
 
@@ -288,7 +293,7 @@
     ob.dictionary = @{@"vc" : (NSDictionary*)[[UIViewController alloc] init]};
     ob.intvalue = 42;
     ob.floatValue = 42.424242f;
-    ob.doubelValue = 1234567.1234567;
+    ob.doubleValue = 1234567.1234567;
     [ob commit];
     
     MostObjectTypes* r = (id)[[MostObjectTypes query] fetch].firstObject;
@@ -307,6 +312,34 @@
     
     StringIdObject* o2 = [StringIdObject objectWithPrimaryKeyValue:obj.Id];
     XCTAssert(o2 != nil, @"Retrieval of object with a string PK value failed");
+    
+}
+
+- (void)test_initial_values {
+    
+    [self cleardown];
+    
+    Person* p = [[Person alloc] initWithDictionary:@{@"Name":@"Adrian Herridge",@"age":@(38)}];
+    
+    XCTAssert(p.age == 38,@"initial values population failed");
+    
+    [p commit];
+    
+    int64_t count = [[[Person query] where:@"Name = 'Adrian Herridge' AND age = 38 AND seq = 0 AND department IS NULL"] count];
+    
+    XCTAssert(count == 1,@"initial values population failed");
+    
+}
+
+- (void)test_initial_values_swift {
+    
+    [self cleardown];
+    
+    [SwiftTestClass testInitialValues];
+    
+    int64_t count = [[[Person query] where:@"Name = 'Adrian Herridge' AND age = 38 AND seq = 0 AND department IS NULL"] count];
+    
+    XCTAssert(count == 1,@"initial values population failed");
     
 }
 

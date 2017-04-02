@@ -21,8 +21,35 @@
 //    SOFTWARE.
 
 
-#import "BaseTestCase.h"
+#import "SchemaTests.h"
 
-@interface Relationship : BaseTestCase
+@implementation SchemaObject
+
+@dynamic schemaField1,schemaField2;
+
++ (NSArray *)ignoredProperties {
+    return @[@"schemaField2"];
+}
+
+@end
+
+@implementation SchemaTests
+
+- (void)test_ignored_properties {
+    
+    // reference the object to create the table
+    SRKQuery* qry = [SchemaObject query];
+    
+    // now query the master database to check the ignored property is missing
+    SRKRawResults* results = [SharkORM rawQuery:@"SELECT * FROM sqlite_master WHERE type='table' AND name='SchemaObject'"];
+    XCTAssert([results rowCount] == 1, @"table schema was not created properly");
+    
+    results = [SharkORM rawQuery:@"SELECT * FROM sqlite_master WHERE type='table' AND name='SchemaObject' AND sql LIKE '%schemaField1%'"];
+    XCTAssert([results rowCount] == 1, @"table schema was not created properly");
+    
+    results = [SharkORM rawQuery:@"SELECT * FROM sqlite_master WHERE type='table' AND name='SchemaObject' AND sql LIKE '%schemaField2%'"];
+    XCTAssert([results rowCount] == 0, @"table schema was not created properly");
+    
+}
 
 @end

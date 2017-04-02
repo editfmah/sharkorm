@@ -23,6 +23,13 @@
 
 #import "BaseTestCase.h"
 
-@interface Relationship : BaseTestCase
+@interface SchemaObject : SRKObject
+
+@property (strong) NSString* schemaField1;
+@property (strong) NSString* schemaField2;
+
+@end
+
+@interface SchemaTests : BaseTestCase
 
 @end

@@ -397,6 +397,9 @@ static int obCount=0;
                     
                     NSString* className = [[[NSString stringWithUTF8String:typeEncoding] stringByReplacingOccurrencesOfString:@"@\"" withString:@""] stringByReplacingOccurrencesOfString:@"\"" withString:@""];
                     Class testClass = NSClassFromString(className);
+                    if (!testClass) {
+                        testClass = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:className]);
+                    }
                     if ([testClass isSubclassOfClass:[SRKObject class]]) {
                         [cachedPropertyList setObject:@(SRK_PROPERTY_TYPE_ENTITYOBJECT) forKey:propName];
                     }
@@ -1300,6 +1303,9 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
     while ([className rangeOfString:@"."].location != NSNotFound) {
         className = [className substringFromIndex:[className rangeOfString:@"."].location+1];
     }
+    if ([NSStringFromClass(self) rangeOfString:@"."].location != NSNotFound) {
+        [[SRKGlobals sharedObject] setFQNameForClass:className fullName:NSStringFromClass(self)];
+    }
     return className;
 }
 
@@ -1392,6 +1398,9 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
 + (void)setupOutstandingClasses {
     for (NSString* className in entitiesThatNeedRefactoring) {
         Class class = NSClassFromString(className);
+        if (!class) {
+            class = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:className]);
+        }
         [class setupClass];
     }
     entitiesThatNeedRefactoring = nil;
@@ -1449,6 +1458,9 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
                 
                 NSString* className = [[[NSString stringWithUTF8String:typeEncoding] stringByReplacingOccurrencesOfString:@"@\"" withString:@""] stringByReplacingOccurrencesOfString:@"\"" withString:@""];
                 Class testClass = NSClassFromString(className);
+                if (!testClass) {
+                    testClass = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:className]);
+                }
                 if ([testClass isSubclassOfClass:[SRKObject class]]) {
                     
                     /* ok this is a property based on a entity class linked to the db layer */
@@ -1458,6 +1470,9 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
                     SRKRelationship* r = [SRKRelationship new];
                     r.sourceClass = self.class;
                     r.targetClass = NSClassFromString(className);
+                    if (!r.targetClass) {
+                        r.targetClass = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:className]);
+                    }
                     r.sourceProperty = [NSString stringWithFormat:@"%@", name];
                     r.targetProperty = SRK_DEFAULT_PRIMARY_KEY_NAME;
                     r.entityPropertyName = [NSString stringWithString:name];
@@ -1710,7 +1725,20 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
     
 }
 
-+ (id)objectWithPrimaryKeyValue:(NSObject*)priKeyValue {
+- (id)initWithDictionary:(NSDictionary *)initialValues {
+    
+    Class originalClass = ((SRKObject*)self).class;
+    self = [originalClass new];
+    if (self) {
+        for (NSString* property in initialValues.allKeys) {
+            setPropertyIMP(self, [[SRKUtilities new] generateSetSelectorForPropertyName:property], [initialValues valueForKey:property]);
+        }
+    }
+    return self;
+    
+}
+
++ (instancetype)objectWithPrimaryKeyValue:(NSObject*)priKeyValue {
     return [[[[((SRKObject*)self).class query] whereWithFormat:@"Id = %@", priKeyValue] limit:1] fetch].firstObject;
 }
 
@@ -2295,6 +2323,14 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
         if ([[SharkORM new] removeObject:self]) {
             
             [self entityDidDelete];
+            // now raise a global event, but only if we are not within a transaction.
+            // Because a transaction will also raise the event
+            if (!self.transactionInfo) {
+                SRKGlobalEventCallback callback = [[SRKGlobals sharedObject] getDeleteCallback];
+                if (callback) {
+                    callback(self);
+                }
+            }
             
             self.exists = NO;
             
@@ -2377,7 +2413,7 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
                     // check to see if this object has already appeard in this chain.
                     if (![chain doesObjectExistInChain:o]) {
                         [(SRKObject*)o __commitRawWithObjectChain:[chain addObjectToChain:self]];
-                    } 
+                    }
                 }
             }
             
@@ -2409,15 +2445,24 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
                 self.exists = YES;
                 [self entityDidInsert];
                 
+                // now raise a global event
+                if (!self.transactionInfo) {
+                    SRKGlobalEventCallback callback = [[SRKGlobals sharedObject] getInsertCallback];
+                    if (callback) {
+                        callback(self);
+                    }
+                }
                 
                 /* now send out the live message as well as tiggering the local event */
                 
                 if (![[self class] entityDoesNotRaiseEvents] && ![SRKTransaction transactionIsInProgress] && self.commitOptions.triggerEvents) {
+                    
                     SRKEvent* e = [SRKEvent new];
                     e.event = SharkORMEventInsert;
                     e.entity = self;
                     e.changedProperties = self.modifiedFieldNames;
                     [[SRKRegistry sharedInstance] broadcast:e];
+                    
                 }
                 
                 /* clear the modified fields list */
@@ -2475,6 +2520,13 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
                 self.exists = YES;
                 [self entityDidUpdate];
                 
+                // now raise a global event
+                if (!self.transactionInfo) {
+                    SRKGlobalEventCallback callback = [[SRKGlobals sharedObject] getUpdateCallback];
+                    if (callback) {
+                        callback(self);
+                    }
+                }
                 /* now send out the live message as well as triggering the local event */
                 if (![[self class] entityDoesNotRaiseEvents] && ![SRKTransaction transactionIsInProgress] && self.commitOptions.triggerEvents) {
                     SRKEvent* e = [SRKEvent new];

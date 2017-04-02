@@ -29,12 +29,15 @@
 }
 
 - (void)cleardown {
-    [[[Person query] fetchLightweight] removeAll];
-    [[[PersonSwift query] fetchLightweight] removeAll];
-    [[[Department query] fetchLightweight] removeAll];
-    [[[DepartmentSwift query] fetchLightweight] removeAll];
-    [[[Location query] fetchLightweight] removeAll];
-    [[[SmallPerson query] fetchLightweight] removeAll];
+    [SharkORM rawQuery:@"DELETE FROM Person;"];
+    [SharkORM rawQuery:@"DELETE FROM PersonSwift;"];
+    [SharkORM rawQuery:@"DELETE FROM Department;"];
+    [SharkORM rawQuery:@"DELETE FROM DepartmentSwift;"];
+    [SharkORM rawQuery:@"DELETE FROM Location;"];
+    [SharkORM rawQuery:@"DELETE FROM SmallPerson;"];
+    [SharkORM rawQuery:@"DELETE FROM StringIdObject;"];
+    [SharkORM rawQuery:@"DELETE FROM MostObjectTypes;"];
+    
 }
 
 - (void)databaseError:(SRKError *)error {

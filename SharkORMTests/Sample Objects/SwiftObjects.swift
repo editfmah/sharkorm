@@ -29,6 +29,7 @@ class DepartmentSwift : SRKObject {
 
 class SwiftTestClass : SRKObject {
 	
+    dynamic var SwiftNumber: NSNumber?
 	dynamic var SwiftTestString : String?
 	dynamic var SwiftTestNumber : NSNumber?
 	dynamic var lowercaseField : String?
@@ -62,5 +63,12 @@ class SwiftTestClass : SRKObject {
     
 		
 	}
+    
+    class func testInitialValues() {
+        
+        let p = Person(dictionary: ["Name" : "Adrian Herridge", "age" : 38])
+        p?.commit()
+        
+    }
 	
 }

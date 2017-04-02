@@ -37,6 +37,10 @@ static SRKGlobals* this;
 @property (strong) NSMutableDictionary*     sharkPrimaryTypes;
 @property (strong) NSObject*                SRK_LOCK_WRITE;
 @property (strong) id<SRKDelegate>          ormDelegate;
+@property (copy) SRKGlobalEventCallback     insertCallbackBlock;
+@property (copy) SRKGlobalEventCallback     updateCallbackBlock;
+@property (copy) SRKGlobalEventCallback     deleteCallbackBlock;
+@property (strong) NSMutableDictionary*     fqnClassNames;
 
 @end
 
@@ -78,7 +82,9 @@ static SRKGlobals* this;
             _sharkPrimaryTypes = [[NSMutableDictionary alloc] init];
         }
         
-        
+        if (!_fqnClassNames) {
+            _fqnClassNames = [[NSMutableDictionary alloc] init];
+        }
     }
     return self;
 }
@@ -186,10 +192,48 @@ static SRKGlobals* this;
         return _sharkSystemEntityRelationships;
     }
 }
+
 - (NSArray*)systemEntityRelationshipsReadOnly {
     @synchronized (_sharkSystemEntityRelationships) {
         return [NSArray arrayWithArray:_sharkSystemEntityRelationships];
     }
 }
+
+- (void)setInsertCallback:(SRKGlobalEventCallback)callback {
+    self.insertCallbackBlock = callback;
+}
+
+- (SRKGlobalEventCallback)getInsertCallback {
+    return self.insertCallbackBlock;
+}
+
+- (void)setUpdateCallback:(SRKGlobalEventCallback)callback {
+    self.updateCallbackBlock = callback;
+}
+
+- (SRKGlobalEventCallback)getUpdateCallback {
+    return self.updateCallbackBlock;
+}
+
+- (void)setDeleteCallback:(SRKGlobalEventCallback)callback {
+    self.deleteCallbackBlock = callback;
+}
+
+- (SRKGlobalEventCallback)getDeleteCallback {
+    return self.deleteCallbackBlock;
+}
+
+- (void)setFQNameForClass:(NSString*)shortName fullName:(NSString*)fullName {
+    @synchronized (_fqnClassNames) {
+        [_fqnClassNames setObject:fullName forKey:shortName];
+    }
+}
+
+- (NSString*)getFQNameForClass:(NSString*)shortName {
+    @synchronized (_fqnClassNames) {
+        return [_fqnClassNames objectForKey:shortName];
+    }
+}
+
 
 @end

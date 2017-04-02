@@ -1,13 +1,28 @@
 Shark Changelog
 ===============
+## v2.1.2 - Mar 31, 2017
 
-##v2.1.1 - Jan 4, 2017
+Changes to better support Swift3 interoperability.  Fixes all kinds of strange issues with the persistence of Arrays & Dictionaries coming back out as strings.
+
+Added the ability to initialise an object with a dictionary, to make it easier to populate objects programatically from network calls.
+
+Removed `databaseEntityWasDeleted`, `databaseEntityWasUpdated`, `databaseEntityWasInserted` from SRKDelegate, these have been replaced with .....
+
+Added 3 methods to the SharkORM class to allow developers to register blocks with the ORM to support callbacks globally.  The new methods are,  `setInsertCallbackBlock`, `setUpdateCallbackBlock`, `setDeleteCallbackBlock`.  The block takes an SRKObject as a parameter, which you can inspect to see which type of object the event was raised for.
+
+`.orderBy()` parameters can now be chained together, example: `.orderBy("name").orderBy("age")`.
+
+Improved documentation for object methods, including excluding properties from the schema.
+
+More unit tests added, stability improvements.
+
+## v2.1.1 - Jan 4, 2017
 
 Upgraded to SQLite v3.16.1.
 
 Fixed a reported issue where the limits configured in SQLite were too low for SharkORM to operate in extreme circumstances.
 
-##v2.1.0 - Jan 4, 2017
+## v2.1.0 - Jan 4, 2017
 
 New transaction module, all changes made within a transaction block will be rolled back on error.  Including any modification of property values of referenced but uncommited objects, it is like the block never ran! (as far as the entities are concerned).  Transactions are now much faster, and there is a slightly lower memory impact.
 
@@ -21,15 +36,15 @@ Added *..commitOptions (property)*, which allows for far greated control over ho
 
 Work on the Swift version has now officially started, hopefully resulting in an importable module very soon.
 
-##v2.0.9 - Oct 19, 2016
+## v2.0.9 - Oct 19, 2016
 
 Fixed a bug where the high velocity calls to the orm from dispatched blocks, which were inadvertantly accessing some static variables caused the main thread to block forever and would never release.
 
 Upgraded to SQLite 3.15.0 - Took 3 seconds off our performance test, which is a 10k random read-write routine, across multiple tables with multiple record shapes and event trigers.  Was 15.03s now 11.98s.
 
 
-##v2.0.8 - Aug 03, 2016
-####Added Object dot notation support to query syntax
+## v2.0.8 - Aug 03, 2016
+#### Added Object dot notation support to query syntax
 
 Developers can now access the properties of related objects from within the *where* clause of a query, such as the following.  If we take the example of a Person class which is related to the Department class via the `department` property.
     
@@ -45,20 +60,20 @@ Better support of UUID primary keys in many scenarios.
 Change [SRKResultSet removeAll] to return a BOOL value indicating the success of the operation to remain consistent with other read/write operations.
 
 
-##v2.0.7 - July 24, 2016
+## v2.0.7 - July 24, 2016
 Fixed a bug where the cached property types of an SRKObject did not contain a data type for the Id column.
 
-##v2.0.6 - July 17, 2016
+## v2.0.6 - July 17, 2016
 Fixed an issue with circular commit chains, SRKObjects can now be arranged with complicated relationships such as A-B-C-B.  But also with A-C as well, causing a quad point relationship within a single commit.
 
 SRKObject’s now implement a class method ‘ignoreProperties’.  Which
 allows developers to choose which properties to ignore.
 
-##v2.0.5 - June 29, 2016
+## v2.0.5 - June 29, 2016
 Fixed crash when printing an object without an primary key value.  No Null check was made.
 Fixed serious issue, where SRKObject properties were being persisted. Causing query errors.
 
-##v2.0.4 - June 24, 2016
+## v2.0.4 - June 24, 2016
 
 Added support for Raw Queries, Inherritance support & Carthage support.
 
@@ -67,7 +82,7 @@ Raw query example:
 SRKRawResults* results = [SharkORM rawQuery:@"SELECT * FROM Person ORDER BY age;"];
 ```
 
-##v2.0.3 - June 20, 2016
+## v2.0.3 - June 20, 2016
 Added more tests, changed print output of a class to output in the style of the following.
 ```
 {
@@ -128,10 +143,10 @@ Added more tests, changed print output of a class to output in the style of the 
 }
 ```
 
-##v2.0.2 - June 19, 2016
+## v2.0.2 - June 19, 2016
 Updated the podspec, pushed a new version due to a problem merging a pull request
 
-##v2.0.1 - June 18, 2016
+## v2.0.1 - June 18, 2016
 JOIN: Added join tests & fixed bugs with join.
 This turned up some faults when you wanted to Query C From A through a B join.  So, if you specifically specified the FQ field name it failed, because the ORM attemoted to prepend the self.class name.
 
@@ -150,5 +165,5 @@ Person * p = [[[[[Person query]
 
 Fixed framework build output to include x86_64 in the available architectures
 
-##v2.0.0 - June 16, 2016
+## v2.0.0 - June 16, 2016
 Initial check in.  Replaces the DBAccess project from v1.6.13

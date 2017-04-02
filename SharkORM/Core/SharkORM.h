@@ -20,13 +20,11 @@
 //    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //    SOFTWARE.
 
-
-
 #ifndef __SHARKORM_H
 #define __SHARKORM_H
 
-#define SHARK_DATE              20170106
-#define SHARK_VER               2.01.01
+#define SHARK_DATE              20170402
+#define SHARK_VER               2.01.02
 
 #import <Foundation/Foundation.h>
 #import <objc/message.h>
@@ -159,12 +157,6 @@ typedef enum : int {
 - (void)databaseError:(SRKError*)error;
 /// This method, if implemented, will profile all queries that are performed within SharkORM.  Use the queryTime property within the SRKQueryProfile* object to filter out only queries that do not meet your performance requirements.
 - (void)queryPerformedWithProfile:(SRKQueryProfile*)profile;
-/// Called whenever an object is removed form the database.
-- (void)databaseEntityWasDeleted:(SRKObject*)entity;
-/// Called whenever an existing object is re-written into the database.
-- (void)databaseEntityWasUpdated:(SRKObject*)entity;
-/// Called when a new object is commited for the first time into the database.
-- (void)databaseEntityWasInserted:(SRKObject*)entity;
 /// An object that did not support a valid encoding mechanisum was attempted to be written to the database.  It is therefore passed to the delegate method for encoding.  You must return an NSData object that can be stored and later re-hydrated by a call to "decodeUnsupportedColumnValueForColumn"
 - (NSData*)encodeUnsupportedColumnValueForColumn:(NSString*)column inEntity:(NSString*)entity value:(id)value;
 /// Previously an object was persistsed that was not supported by SharkORM, and "encodeUnsupportedColumnValueForColumn" was called to encode it into a NSData* object, this metthod will pass back a hydrated object created from the NSData*
@@ -175,6 +167,9 @@ typedef enum : int {
 /**
  * SharkORM class, always accessed through class methods, there is only ever a single instance of the database engine.
  */
+
+typedef void(^SRKGlobalEventCallback)(SRKObject* entity);
+
 @interface SharkORM : NSObject {
     
 }
@@ -221,6 +216,28 @@ typedef enum : int {
  * @return (SRKRawResults*);
  */
 +(SRKRawResults*)rawQuery:(NSString*)sql;
+/**
+ * Allows the developer to specify a block to be executed against all INSERT events.
+ *
+ * @param (^SRKGlobalEventCallback) The block to be executed when the ORM has instigated any INSERT.
+ * @return void;
+ */
++(void)setInsertCallbackBlock:(SRKGlobalEventCallback)callback;
+/**
+ * Allows the developer to specify a block to be executed against all UPDATE events.
+ *
+ * @param (^SRKGlobalEventCallback) The block to be executed when the ORM has instigated any UPDATE.
+ * @return void;
+ */
++(void)setUpdateCallbackBlock:(SRKGlobalEventCallback)callback;
+/**
+ * Allows the developer to specify a block to be executed against all DELETE events.
+ *
+ * @param (^SRKGlobalEventCallback) The block to be executed when the ORM has instigated any DELETE.
+ * @return void;
+ */
++(void)setDeleteCallbackBlock:(SRKGlobalEventCallback)callback;
+
 @end
 
 /*
@@ -441,12 +458,11 @@ typedef void(^SRKCommitOptionsBlock)();
 
 /**
  * Initialises a new instance of the object, if an object already exists with the specified primary key then you will get that object back, if not you will net a new object with the primary key specified already.
-
  *
  * @param (NSObject*)priKeyValue The primary key value to look up an existing object
  * @return SRKObject* Either an existing or new class.
  */
-- (id)initWithPrimaryKeyValue:(NSObject*)priKeyValue;
+- (instancetype)initWithPrimaryKeyValue:(NSObject*)priKeyValue;
 /**
  * Returns an object that matches the primary key value specified, if there is no match, nil is returned.
  
@@ -454,7 +470,14 @@ typedef void(^SRKCommitOptionsBlock)();
  * @param (NSObject*)priKeyValue The primary key value to look up an existing object
  * @return SRKObject* Either an existing object or nil.
  */
-+ (id)objectWithPrimaryKeyValue:(NSObject*)priKeyValue;
++ (instancetype)objectWithPrimaryKeyValue:(NSObject*)priKeyValue;
+/**
+ * Initialises a new instance of the object, the supplied dictionary will pre-populate the field values.
+ *
+ * @param (NSDictionary*)initialValues, in the format [<property as string>:<value as Any>]
+ * @return SRKObject*.  A new object with the pre-populated values.
+ */
+- (instancetype)initWithDictionary:(NSDictionary*)initialValues;
 /**
  * Removes the object form the database
 

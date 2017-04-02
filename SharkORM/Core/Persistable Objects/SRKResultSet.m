@@ -52,6 +52,9 @@
 	self = [super init];
 	if (self != nil) {
 		_query = query;
+        _size = array.count;
+        _arrayRecordPrimaryKeys = array;
+        _dictionaryStore = [NSMutableDictionary new];
 	}
 	return self;
 }
@@ -88,7 +91,7 @@
 				NSMutableArray* primaryKeysToRetrieve = [NSMutableArray new];
 				for (int i=@(index).intValue; i < _size; i++) {
 					[primaryKeysToRetrieve addObject:[_arrayRecordPrimaryKeys objectAtIndex:i]];
-					if (primaryKeysToRetrieve.count == _batchSize) {
+					if (primaryKeysToRetrieve.count == _query.batchSize) {
 						break;
 					}
 				}

@@ -10,29 +10,22 @@ Its mantra is simple, to be fast, simple and the first choice for any developer.
 Shark is designed to get your app working quickly, integrated as source code, or as a framework. 
 
 ### Requirements
+XCode 8+, iOS7+
 
-| Shark Version | Minimum iOS Target  |                                   Notes                                   |
-|:--------------------:|:---------------------------:|:----------------------------:|:-------------------------------------------------------------------------:|
-|          2.x.x         |            iOS 7 as source, iOS 8 as framework            | Xcode 8 is required. |
-|          2.x.x         |            tvOS 9 as source and framework            | Xcode 8 is required. |
-|          2.x.x         |            macOS 10.8 as source and framework            | Xcode 8 is required. |
-|          2.x.x         |            watchOS 2 as source and framework            | Xcode 8 is required. |
+### Install From Cocoapods
 
-
-###Install From Cocoapods
-
-####To install it, simply add the following line to your Podfile:
+#### To install it, simply add the following line to your Podfile:
 ```ruby
 pod "SharkORM"
 ```
-###Install as Framework
+### Install as Framework
 Download the source code from GitHub and compile the SharkORM framework target, and then within your application, add the following:
 
 ```objective-c
 // include the framework header within your app, for Swift add this to the bridging header
 #include <SharkORM/SharkORM.h>
 ```
-###Install as Source
+### Install as Source
 Download the source code from GitHub and add to your target the contents of Core and SQLite:
 
 ```objective-c
@@ -40,7 +33,7 @@ Download the source code from GitHub and add to your target the contents of Core
 #include “SharkORM.h”
 ```
 
-##Getting help and support
+## Getting help and support
 If you are having trouble with your implementation then simply ask a question on Stack Overflow, the team actively monitor SO and will answer your questions as quickly as possible.
 
 If you have found a bug or want to suggest a feature, then feel free to use the issue tracker in GitHub to raise an issue.
@@ -80,14 +73,39 @@ func application(application: UIApplication, didFinishLaunchingWithOptions launc
 	return true
 }
 ```
-###Objects
+### Objects
 SharkORM objects are normal classes with properties defined on them, the ORM then inspects all these classes and mirrors their structure in a SQLite database automatically. If you add or remove columns, then the tables are updated to represent the current structure of the classes.
 
 You can use these classes in much the same way as any other class in the system, and they can be extended with methods and sub classed, and passed around from thread to thread with no problem.
 
 In Objective-C properties need to be implemented using `@dynamic`, this is to indicate to the ORM that it will control the fetching and setting of these values from the database, and in Swift the property is implemented as `var dynamic`
 
-####Example Object
+## Schemas (Migration)
+The schema is automatically maintained from the class signatures and all additions, deletions & type changes are automatically made to the database.  Where possible data is retained and converted between types.
+
+If a default value is specified using, `defaultValuesForEntity` and a property is added, then the column is automatically populated with teh default value.
+
+Tables are created automatically by referencing a class which is a subclass of SRKObject.
+
+### Excluding properties from the schema.
+By default all properties that are either `@dynamic` or `dynamic var` are picked up by SharkORM and added to the coresponding tables.  If you wish to exclude certain properties which are not for persistence then implement the class method `ignoredProperties`, for which you return an array of string values which match the properties you wish the ORM to ignore.
+
+Example:
+
+```objective-c
+// Obj-C
++ (NSArray*)ignoredProperties {
+   return @[@"age",@"name"];
+}
+```
+```swift
+// Swift
+override class func ignoredProperties() -> [Any] {
+   return ["age","name"]
+}
+```
+
+#### Example Object
 `Objective-C`
 ```objective-c
 //  Header File : Person.h
@@ -144,7 +162,7 @@ let p = Person(dictionary: ["Name" : "Adrian Herridge", "age" : 38])
 
 Shark supports the following types: `BOOL`, `bool`, `int`, `int64`, `uint`, `uint64`, `float`, `double`, `long`, `long long`, `unsigned long long`, `NSString`, `NSDate`, `NSData`, `NSNumber`.
 
-##Relationships
+## Relationships
 
 `SRKObject`s can be linked to each other either by directly embedding them to create a one-to-one relationship (`dynamic var department : Department?`) or for a one-to-many relationship we employ the use of a method which returns either an `NSArray` or `SRKResultSet` object.
 
@@ -167,7 +185,7 @@ class Department : SRKObject {
 }
 ```
 
-###One-to-One Relationships
+### One-to-One Relationships
 
 This has been created by adding the `Department` property into the `SRKObject` class, and once it has been set with a value it can be used as any other property making use of object dot notation.
 
@@ -186,7 +204,7 @@ employee.department = section
 
 Properties can then be accessed directly, and Shark will automatically retrieve any related objects and allow you to access their properties.  For example `employee.deparment.location.address` will automatically retrieve the required objects to satisfy the statement by loading the related `Department` and `Location` objects.
 
-###One-to-Many Relationships
+### One-to-Many Relationships
 
 You can define to-many relationships by adding methods to the inverse relationship.  For example, to relate in a to-many relationship `Department` and `Person` we would add the following method to `Department`.
 
@@ -207,7 +225,7 @@ func people() -> SRKResultSet {
 
 You can then safely use these results anywhere, and because an `SRKResultSet` is an array object, these can be iterated inline. `for (Person* employee in [department people]) {...}`.
 
-##Indexing Properties
+## Indexing Properties
 
 Shark supports indexing by overriding the `indexDefinitionForEntity` method and returning an `SRKIndexDefinition` object which describes all of the indexes that need to be maintained on the object.
 
@@ -231,7 +249,7 @@ override class func indexDefinitionForEntity() -> SRKIndexDefinition {
 ```
 These will automatically be matched to the appropriate query to aid performance.  All related object properties are automatically indexed as is required for caching.  So there would be no need, for instance, to add in an index for `Person.department` as it will have already been created.
 
-###Default Values
+### Default Values
 You can specify a set of default values for whenever a new `SRKObject` is created, by overriding the method `defaultValuesForEntity`, and returning a dictionary of default values:
 `Objective-C`
 ```objective-c
@@ -245,10 +263,10 @@ override class func defaultValuesForEntity() -> [NSObject : AnyObject] {
     return ["name" : "Billy", "age" : 36]
 }
 ```
-##Triggers
+## Triggers
 Shark objects all have the same methods available for them, to enforce constraints and check validity before or after writes have been made.
 
-###entityWillInsert(), entityWillUpdate(), entityWillDelete() returning bool
+### entityWillInsert(), entityWillUpdate(), entityWillDelete() returning bool
 Objects receive this method before any action has been carried out.  In here you can test to see if you wish the operation to continue.  If `true` is returned then the operation is told to continue, but if `false` is retuned then the transaction is aborted, and the commit returns false.
 `Objective-C`
 ```objective-c
@@ -263,10 +281,10 @@ override func entityWillDelete() -> Bool {
 }
 ```
 
-###entityDidInsert(), entityDidUpdate(), entityDidDelete()
+### entityDidInsert(), entityDidUpdate(), entityDidDelete()
 Objects receive this message after an event has happened and after the transaction is complete.
 
-###Printing objects using print(), NSLog or po
+### Printing objects using print(), NSLog or po
 We have provided a printable dictionary styled output which, when called, produces output like below.
 ```
 {
@@ -327,7 +345,7 @@ We have provided a printable dictionary styled output which, when called, produc
 }
 ```
 
-##Writing Objects
+## Writing Objects
 Shark looks to simplify the persistence of objects down to a simple method `commit`.  This can be called at any moment and from any thread.  If an object contains either a single or multiple related objects within it, then calling `commit` on the parent object will automatically store all the subsequent objects too.
 
 `Objective-C`
@@ -359,7 +377,7 @@ thisPerson.commit()
 
 Objects are committed immediately and are written to the store in an atomic fashion.  They will become immediately queryable upon completion.
 
-###.commitOptions (property)
+### .commitOptions (property)
 
 the commitOptions property is present in all SRKObjects, and allows the developer to control on an object-by-object basis how SharkORM behaves when asked to commit certain objects.
 
@@ -388,7 +406,7 @@ If set to true then events are raised for insert,update,delete operations.
 
 
 
-###Writing in Transactions
+### Writing in Transactions
 For some batch storage situations, it may be better to batch a lot of writes into a single transaction, this will improve speed, and give you atomicity over the persistence to the data store.  All changes to all objects will be rolled back upon any raised error within the block.  Event triggers will be not be executed until successful completion of the transaction.
 
 You may manually fail a transaction by calling SRKFailTransaction() within the block, allowing developers to abort and rollback based on applicaiton logic.
@@ -414,7 +432,7 @@ SRKTransaction.transaction({
     }
 ```
 
-##Querying
+## Querying
 To retrieve objects back, we use the SRKQuery object that is associated with every `SRKObject` class. This then takes optional parameters such as `where`, `limit`, `orderBy` & `offset`. All of the parameters return the same query object back, enabling the building of a query within a single nested instruction.
 
 The final call to a query object is made using `fetch`, `count`, `sum`, `fetchLightweight` & `fetchAsync` which will then execute the query and return the results.
@@ -457,42 +475,42 @@ Person.query().whereWithFormat("department.name = %@", withParameters: ["Test De
 ```
 Where `name` is within a related object, SharkORM will now automatically re-arrange the query and join the two tables on that relationship and therefore validate that condition.
 
-###Supported parameters to `SRKQuery`
+### Supported parameters to `SRKQuery`
 Shark supports the following optional parameters to a query:
 
-###where, whereWithFormat (and with parameters).  
+### where, whereWithFormat (and with parameters).  
 This is the query string supplied to the query, and can contain format specifiers along with object to be placed into the query as normal parameter options.  Supported format specifiers are `%@`,`%i`,`%u`,`%d`,`%s`,`%f`,`%ul`,`%ull`.
 
 `%@` objects can also be Arrays and Sets for use in subqueries, such as `@"department IN (%@)", @[@(1),@(2),@(3)]`.
-###limit
+### limit
 Specifies the limit to the number of query results to return
-###orderBy
+### orderBy
 Specifies the order by which the `SRKResultSet` will be returned.  These can be chained together to produce multiple vectors.  Example, `.....orderBy("Name").orderBy(descending: "age").fetch()`
-###offset
+### offset
 Specifies the offset in the values to be retrieved, to allow developers to only retrieve a window of data when required.
-###batch
+### batch
 This, although it does not affect the query, does allow developers to iterate through a large data set without having the performance and memory issue of dealing with the entire data set.  If a batch size of 10 is specified, then the `SRKResultSet` will perform an entire query, but will only fully retrieve the first 10 objects.  Then, it will maintain a window of the batch size when iterating through the results, automatically fetching them in batches.  This enables developers to optimise their system without the need to change the way their code is written.
-###joinTo
+### joinTo
 Shark allows `LEFT JOIN` unions to be made, to allow for faster and less nested queries.  See Joins for more info.
-##Other types of Query
+## Other types of Query
 In addition to retrieving entire objects there are also additional types of queries which help developers solve other problems.
-###fetchLightweight
+### fetchLightweight
 Fetches an object from the store, except it does not retrieve any property values.  These are lazily loaded upon access, and can be configured to then be permanently available of freed immediately.
-###fetchAsync
+### fetchAsync
 Performs an asynchronous query on a background thread and then executes the supplied block when the results are complete.
 
-###count
+### count
 Returns a count of the query, the same as `COUNT(*)` would.
-###sum
+### sum
 Returns a `SUM(field)` value from the supplied property name, these can also be compound, such as `SUM(property1 + property2)`.
-###distinct
+### distinct
 Returns an NSArray of the distinct values for a particular column, it is used like `distinct("surname")`.
-###groupBy
+### groupBy
 Returns an NSDictionary, which is grouped by the specified property `groupBy("surname")`.
-###ids
+### ids
 Returns the PK values of the matching objects, this is a faster way to store results for use in a subquery.  Although, in practice it is little faster than using lightweight objects.
 
-##Joins
+## Joins
 Joins represent the most powerful feature of SQL as the way any RDBMS is optimised is not through subqueries, but through joins and null checking.
 
 In Shark, for the time being, all joins are `LEFT JOIN`.  Simply because we have to retrieve whole objects from the originating query class.  But joins can be multiple and compound.
@@ -533,7 +551,7 @@ An example of output looks like this.
 }
 ```
 
-###Removing objects
+### Removing objects
 To remove an object from Shark you simply call `remove()` on this object, this will delete it form the data store and sterilise it to ensure it cannot be accidentally written back at a later date.  To optimise the bulk removal of objects, a query can be combined with a call to `removeAll()` on the result set to delete many objects at once.
 
 `Objective-C`
@@ -562,7 +580,7 @@ for person in Person.query().fetch() {
 }
 ```
 
-##Event handling
+## Event handling
 Shark events fall into two caregories, the first being events on an individual object and the second being events on a class.
 
 Class events are raised when there has been any underlying change in the values stored in a class.  This is useful for updating a view when data is written on a background thread, or event triggers are actioned.
@@ -588,7 +606,5 @@ For object event handlers, all individual objects have the ability to register b
 ## Requirements:
 
 - CocoaPods 1.0.0
-
-[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
 

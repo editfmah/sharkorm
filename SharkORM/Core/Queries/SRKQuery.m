@@ -348,12 +348,23 @@
 }
 
 - (SRKQuery*)orderBy:(NSString*)order {
-	self.orderBy = order;
+    if ([self.orderBy isEqualToString:SRK_DEFAULT_ORDER]) {
+        self.orderBy = order;
+    } else {
+        // we need to append this ORDER BY to an existing one
+        self.orderBy = [NSString stringWithFormat:@"%@,%@", self.orderBy, order];
+    }
+	
 	return self;
 }
 
 - (SRKQuery*)orderByDescending:(NSString*)order {
-	self.orderBy = [order stringByAppendingString:@" DESC"];
+    if ([self.orderBy isEqualToString:SRK_DEFAULT_ORDER]) {
+        self.orderBy = [order stringByAppendingString:@" DESC"];
+    } else {
+        // we need to append this ORDER BY to an existing one
+        self.orderBy = [NSString stringWithFormat:@"%@,%@", self.orderBy, [order stringByAppendingString:@" DESC"]];
+    }
 	return self;
 }
 

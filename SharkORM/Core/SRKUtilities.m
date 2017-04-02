@@ -26,6 +26,7 @@
 #import "SRKObject+Private.h"
 #import "SharkORM+Private.h"
 #import <UIKit/UIKit.h>
+#import "SRKGlobals.h"
 
 @implementation SRKUtilities
 
@@ -107,6 +108,10 @@
                 break;
             }
             Class entityClass = NSClassFromString([NSString stringWithUTF8String:tableName]);
+            if (!entityClass) {
+                // we need to trap if this is a FQDN swift classs name.
+                entityClass = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:[NSString stringWithUTF8String:tableName]]);
+            }
             if (entityClass) {
                 switch ([SRKObject getEntityPropertyType:columnName forClass:entityClass]) {
                     case SRK_PROPERTY_TYPE_STRING:
