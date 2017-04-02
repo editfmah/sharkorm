@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "SharkORM"
-  s.version      = "2.1.2"
+  s.version      = "2.1.3"
   s.summary      = "SQLite based ORM for iOS, tvOS & macOS"
   s.description  = <<-DESC
 Shark is an open source ORM, designed from the start to be low maintenance and natural to use, developers choose shark for its power and simplicity.
