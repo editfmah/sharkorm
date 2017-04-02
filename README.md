@@ -143,7 +143,22 @@ class Person: SRKObject {
 }
 ```
 
-## Supported Types
+### Initial values
+You can initialise an SRKObject with a dictionary, allowing you to populate an object programatically.
+
+Example:
+
+```objective-c
+// Obj-C
+Person* p = [[Person alloc] initWithDictionary:@{@"Name":@"Adrian Herridge",@"age":@(38)}];
+```
+```swift
+// Swift
+let p = Person(dictionary: ["Name" : "Adrian Herridge", "age" : 38])
+```
+
+
+##Supported Types
 
 Shark supports the following types: `BOOL`, `bool`, `int`, `int64`, `uint`, `uint64`, `float`, `double`, `long`, `long long`, `unsigned long long`, `NSString`, `NSDate`, `NSData`, `NSNumber`.
 
@@ -470,7 +485,7 @@ This is the query string supplied to the query, and can contain format specifier
 ### limit
 Specifies the limit to the number of query results to return
 ### orderBy
-Specifies the order by which the `SRKResultSet` will be returned.  These can be multiple values, such as `orderBy("name,age")`.
+Specifies the order by which the `SRKResultSet` will be returned.  These can be chained together to produce multiple vectors.  Example, `.....orderBy("Name").orderBy(descending: "age").fetch()`
 ### offset
 Specifies the offset in the values to be retrieved, to allow developers to only retrieve a window of data when required.
 ### batch
