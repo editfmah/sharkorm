@@ -25,7 +25,6 @@
 #import "SRKUtilities.h"
 #import "SRKObject+Private.h"
 #import "SharkORM+Private.h"
-#import <UIKit/UIKit.h>
 #import "SRKGlobals.h"
 
 @implementation SRKUtilities
@@ -283,8 +282,8 @@
             
         } else if ([p isKindOfClass:NSClassFromString(TARGET_OS_MAC ? @"NSImage" : @"UIImage")]) {
             
-            NSData* d = UIImagePNGRepresentation(((UIImage*)p));
-            sqlite3_bind_blob(statement, paramCount, [d bytes], @([d length]).intValue, SQLITE_TRANSIENT);
+            //NSData* d = UIImagePNGRepresentation(((UIImage*)p));
+            //sqlite3_bind_blob(statement, paramCount, [d bytes], @([d length]).intValue, SQLITE_TRANSIENT);
             
         } else if ([p isKindOfClass:[NSData class]]) {
             

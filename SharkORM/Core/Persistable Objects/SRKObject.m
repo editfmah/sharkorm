@@ -39,7 +39,6 @@
 #import "SRKGlobals.h"
 #import "SRKTransaction+Private.h"
 #import "SRKCommitOptions+Private.h"
-#import <UIKit/UIKit.h>
 
 @implementation SRKObject {
     id cachedPrimaryKeyValue;
@@ -616,7 +615,7 @@ static id propertyIMP(SRKObject* self, SEL _cmd) {
                     if ([self.class getEntityPropertyType:columnName] == SRK_PROPERTY_TYPE_IMAGE) {
                         
                         NSData* val = (NSData*)columnValue;
-                        columnValue = [UIImage imageWithData:val];
+                        //columnValue = [UIImage imageWithData:val];
                         
                         /* store the object so this method is only called the once */
                         [self setFieldRaw:columnName value:columnValue];
