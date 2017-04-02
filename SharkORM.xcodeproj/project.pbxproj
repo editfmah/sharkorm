@@ -24,74 +24,32 @@
 		E02AC1B91E07EF2500E47406 /* SRKTransactionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = E02AC1B71E07EF2500E47406 /* SRKTransactionInfo.h */; };
 		E02AC1BA1E07EF2500E47406 /* SRKTransactionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = E02AC1B81E07EF2500E47406 /* SRKTransactionInfo.m */; };
 		E02AC1BB1E07EF2500E47406 /* SRKTransactionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = E02AC1B81E07EF2500E47406 /* SRKTransactionInfo.m */; };
-		E02AC1BC1E07EF2500E47406 /* SRKTransactionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = E02AC1B81E07EF2500E47406 /* SRKTransactionInfo.m */; };
 		E040B5BF1D1479E900FCC830 /* Examples.m in Sources */ = {isa = PBXBuildFile; fileRef = E040B5BE1D1479E900FCC830 /* Examples.m */; };
 		E040B5C31D14970D00FCC830 /* Joins.m in Sources */ = {isa = PBXBuildFile; fileRef = E040B5C21D14970D00FCC830 /* Joins.m */; };
 		E049CCED1E13B8B900EE8DF2 /* SRKCommitOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = E049CCEB1E13B8B900EE8DF2 /* SRKCommitOptions.m */; };
 		E049CCEE1E13B8B900EE8DF2 /* SRKCommitOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = E049CCEB1E13B8B900EE8DF2 /* SRKCommitOptions.m */; };
-		E049CCEF1E13B8B900EE8DF2 /* SRKCommitOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = E049CCEB1E13B8B900EE8DF2 /* SRKCommitOptions.m */; };
 		E04FFAB81D1C8FB700F7866D /* SRKRawResults.m in Sources */ = {isa = PBXBuildFile; fileRef = E04FFAB61D1C8FB700F7866D /* SRKRawResults.m */; };
 		E04FFAB91D1C8FB700F7866D /* SRKRawResults.m in Sources */ = {isa = PBXBuildFile; fileRef = E04FFAB61D1C8FB700F7866D /* SRKRawResults.m */; };
-		E04FFABA1D1C8FB700F7866D /* SRKRawResults.m in Sources */ = {isa = PBXBuildFile; fileRef = E04FFAB61D1C8FB700F7866D /* SRKRawResults.m */; };
 		E07C4F2E1D451BAA00DB6CAB /* SwiftStringId.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07C4F2D1D451BAA00DB6CAB /* SwiftStringId.swift */; };
-		E07C4F2F1D45F12500DB6CAB /* SRKObjectChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A330F611D25461500483626 /* SRKObjectChain.m */; };
 		E07C4F331D45F71400DB6CAB /* SRKStringObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E07C4F311D45F71400DB6CAB /* SRKStringObject.m */; };
 		E07C4F341D45F71400DB6CAB /* SRKStringObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E07C4F311D45F71400DB6CAB /* SRKStringObject.m */; };
-		E07C4F351D45F71400DB6CAB /* SRKStringObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E07C4F311D45F71400DB6CAB /* SRKStringObject.m */; };
 		E07EFCDB1E904241006AF533 /* SchemaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E07EFCDA1E904241006AF533 /* SchemaTests.m */; };
 		E092CB051D00964700C6C8CD /* DBAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = E092CB041D0095A300C6C8CD /* DBAccess.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E092CB081D00DBE800C6C8CD /* Performance.m in Sources */ = {isa = PBXBuildFile; fileRef = E092CB071D00DBE800C6C8CD /* Performance.m */; };
 		E09B720D1D4F530A00B68A80 /* SRKAES256Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E09B720B1D4F530A00B68A80 /* SRKAES256Extension.h */; };
 		E09B720E1D4F530A00B68A80 /* SRKAES256Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E09B720C1D4F530A00B68A80 /* SRKAES256Extension.m */; };
 		E09B720F1D4F531000B68A80 /* SRKAES256Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E09B720C1D4F530A00B68A80 /* SRKAES256Extension.m */; };
-		E09B72101D4F531300B68A80 /* SRKAES256Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E09B720C1D4F530A00B68A80 /* SRKAES256Extension.m */; };
 		E0A0CDFB1E016B1500942AE5 /* Transactions.m in Sources */ = {isa = PBXBuildFile; fileRef = E0A0CDFA1E016B1500942AE5 /* Transactions.m */; };
 		E0A83F261DB75E82003F608B /* SRKGlobals.h in Headers */ = {isa = PBXBuildFile; fileRef = E0A83F241DB75E82003F608B /* SRKGlobals.h */; };
 		E0A83F271DB75E82003F608B /* SRKGlobals.m in Sources */ = {isa = PBXBuildFile; fileRef = E0A83F251DB75E82003F608B /* SRKGlobals.m */; };
 		E0A83F281DB75E82003F608B /* SRKGlobals.m in Sources */ = {isa = PBXBuildFile; fileRef = E0A83F251DB75E82003F608B /* SRKGlobals.m */; };
-		E0A83F291DB75E82003F608B /* SRKGlobals.m in Sources */ = {isa = PBXBuildFile; fileRef = E0A83F251DB75E82003F608B /* SRKGlobals.m */; };
 		E0A83F2B1DB7B59E003F608B /* sqlite mods.txt in Resources */ = {isa = PBXBuildFile; fileRef = E0A83F2A1DB7B59E003F608B /* sqlite mods.txt */; };
 		E0A83F2C1DB7B59E003F608B /* sqlite mods.txt in Resources */ = {isa = PBXBuildFile; fileRef = E0A83F2A1DB7B59E003F608B /* sqlite mods.txt */; };
-		E0A83F2D1DB7B59E003F608B /* sqlite mods.txt in Resources */ = {isa = PBXBuildFile; fileRef = E0A83F2A1DB7B59E003F608B /* sqlite mods.txt */; };
 		E0A83F311DB7B5C9003F608B /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = E0A83F2E1DB7B5C9003F608B /* sqlite3.c */; };
 		E0A83F321DB7B5C9003F608B /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = E0A83F2E1DB7B5C9003F608B /* sqlite3.c */; };
-		E0A83F331DB7B5C9003F608B /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = E0A83F2E1DB7B5C9003F608B /* sqlite3.c */; };
 		E0A83F341DB7B5C9003F608B /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = E0A83F2F1DB7B5C9003F608B /* sqlite3.h */; };
 		E0A83F351DB7B5C9003F608B /* sqlite3ext.h in Headers */ = {isa = PBXBuildFile; fileRef = E0A83F301DB7B5C9003F608B /* sqlite3ext.h */; };
-		E0C450A61D107AA8003FA21D /* SRKEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413631CF632120085166C /* SRKEvent.m */; };
-		E0C450A71D107AA8003FA21D /* SRKEventBlockHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413651CF632120085166C /* SRKEventBlockHolder.m */; };
-		E0C450A81D107AA8003FA21D /* SRKEventHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413671CF632120085166C /* SRKEventHandler.m */; };
-		E0C450A91D107AA8003FA21D /* SRKEventRegistryObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413691CF632120085166C /* SRKEventRegistryObject.m */; };
-		E0C450AA1D107AA8003FA21D /* FTSRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4136C1CF632120085166C /* FTSRegistry.m */; };
-		E0C450AB1D107AA8003FA21D /* SRKFuzzyStore.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4136F1CF632120085166C /* SRKFuzzyStore.m */; };
-		E0C450AC1D107AA8003FA21D /* SRKIndexDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413721CF632120085166C /* SRKIndexDefinition.m */; };
-		E0C450AD1D107AA8003FA21D /* SRKEncryptedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413751CF632120085166C /* SRKEncryptedObject.m */; };
-		E0C450AE1D107AA8003FA21D /* SRKObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413771CF632120085166C /* SRKObject.m */; };
-		E0C450AF1D107AA8003FA21D /* SRKResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413791CF632120085166C /* SRKResultSet.m */; };
-		E0C450B01D107AA8003FA21D /* SRKUnsupportedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4137B1CF632120085166C /* SRKUnsupportedObject.m */; };
-		E0C450B11D107AA8003FA21D /* SRKFTSQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4137D1CF632120085166C /* SRKFTSQuery.m */; };
-		E0C450B21D107AA8003FA21D /* SRKJoinObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4137F1CF632120085166C /* SRKJoinObject.m */; };
-		E0C450B31D107AA8003FA21D /* SRKQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413811CF632120085166C /* SRKQuery.m */; };
-		E0C450B41D107AA8003FA21D /* SRKQueryAsyncHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413831CF632120085166C /* SRKQueryAsyncHandler.m */; };
-		E0C450B51D107AA8003FA21D /* SRKQueryProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413841CF632120085166C /* SRKQueryProfile.m */; };
-		E0C450B61D107AA8003FA21D /* SRKRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413871CF632120085166C /* SRKRegistry.m */; };
-		E0C450B71D107AA8003FA21D /* SRKRegistryEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413891CF632120085166C /* SRKRegistryEntry.m */; };
-		E0C450B81D107AA8003FA21D /* SRKContext.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4139A1CF632120085166C /* SRKContext.m */; };
-		E0C450B91D107AA8003FA21D /* SRKTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4139B1CF632120085166C /* SRKTransaction.m */; };
-		E0C450BC1D107AA8003FA21D /* SharkORM.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4138C1CF632120085166C /* SharkORM.m */; };
-		E0C450BD1D107AA8003FA21D /* SRKError.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F4138E1CF632120085166C /* SRKError.m */; };
-		E0C450BE1D107AA8003FA21D /* SRKLazyLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413901CF632120085166C /* SRKLazyLoader.m */; };
-		E0C450BF1D107AA8003FA21D /* SRKRelationship.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413921CF632120085166C /* SRKRelationship.m */; };
-		E0C450C01D107AA8003FA21D /* SRKSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413931CF632120085166C /* SRKSettings.m */; };
-		E0C450C11D107AA8003FA21D /* SRKSQLiteHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413951CF632120085166C /* SRKSQLiteHandle.m */; };
-		E0C450C21D107AA8003FA21D /* SRKUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = E0F413971CF632120085166C /* SRKUtilities.m */; };
 		E0C450C61D10865A003FA21D /* Query.m in Sources */ = {isa = PBXBuildFile; fileRef = E0C450C51D10865A003FA21D /* Query.m */; };
-		E0DFA42B1D107A1800DFDB6F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E0DFA42A1D107A1800DFDB6F /* main.m */; };
-		E0DFA42E1D107A1800DFDB6F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E0DFA42D1D107A1800DFDB6F /* AppDelegate.m */; };
-		E0DFA4311D107A1800DFDB6F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E0DFA4301D107A1800DFDB6F /* ViewController.m */; };
-		E0DFA4341D107A1800DFDB6F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E0DFA4321D107A1800DFDB6F /* Main.storyboard */; };
-		E0DFA4361D107A1800DFDB6F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E0DFA4351D107A1800DFDB6F /* Assets.xcassets */; };
-		E0DFA4391D107A1800DFDB6F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E0DFA4371D107A1800DFDB6F /* LaunchScreen.storyboard */; };
 		E0E3ACD21D11B80A006803F7 /* Relationship.m in Sources */ = {isa = PBXBuildFile; fileRef = E0E3ACD11D11B80A006803F7 /* Relationship.m */; };
 		E0E3ACD51D11B8B5006803F7 /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = E0E3ACD41D11B8B5006803F7 /* Location.m */; };
 		E0E3ACD81D11BC6A006803F7 /* Multithreaded.m in Sources */ = {isa = PBXBuildFile; fileRef = E0E3ACD71D11BC6A006803F7 /* Multithreaded.m */; };
@@ -178,13 +136,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		E0C450A41D107A67003FA21D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E0F4133E1CF6312A0085166C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = E0DFA4261D107A1800DFDB6F;
-			remoteInfo = TestTargetApplication;
-		};
 		E0F413531CF6312A0085166C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E0F4133E1CF6312A0085166C /* Project object */;
@@ -248,16 +199,6 @@
 		E0A83F301DB7B5C9003F608B /* sqlite3ext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3ext.h; sourceTree = "<group>"; };
 		E0C450C41D10865A003FA21D /* Query.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Query.h; sourceTree = "<group>"; };
 		E0C450C51D10865A003FA21D /* Query.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Query.m; sourceTree = "<group>"; };
-		E0DFA4271D107A1800DFDB6F /* TestTargetApplication.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestTargetApplication.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		E0DFA42A1D107A1800DFDB6F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		E0DFA42C1D107A1800DFDB6F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		E0DFA42D1D107A1800DFDB6F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		E0DFA42F1D107A1800DFDB6F /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		E0DFA4301D107A1800DFDB6F /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		E0DFA4331D107A1800DFDB6F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		E0DFA4351D107A1800DFDB6F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		E0DFA4381D107A1800DFDB6F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		E0DFA43A1D107A1800DFDB6F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E0E3ACD01D11B80A006803F7 /* Relationship.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Relationship.h; sourceTree = "<group>"; };
 		E0E3ACD11D11B80A006803F7 /* Relationship.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Relationship.m; sourceTree = "<group>"; };
 		E0E3ACD31D11B8B5006803F7 /* Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Location.h; sourceTree = "<group>"; };
@@ -325,13 +266,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		E0DFA4241D107A1800DFDB6F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		E0F413431CF6312A0085166C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -481,37 +415,12 @@
 			path = Transactions;
 			sourceTree = "<group>";
 		};
-		E0DFA4281D107A1800DFDB6F /* TestTargetApplication */ = {
-			isa = PBXGroup;
-			children = (
-				E0DFA42C1D107A1800DFDB6F /* AppDelegate.h */,
-				E0DFA42D1D107A1800DFDB6F /* AppDelegate.m */,
-				E0DFA42F1D107A1800DFDB6F /* ViewController.h */,
-				E0DFA4301D107A1800DFDB6F /* ViewController.m */,
-				E0DFA4321D107A1800DFDB6F /* Main.storyboard */,
-				E0DFA4351D107A1800DFDB6F /* Assets.xcassets */,
-				E0DFA4371D107A1800DFDB6F /* LaunchScreen.storyboard */,
-				E0DFA43A1D107A1800DFDB6F /* Info.plist */,
-				E0DFA4291D107A1800DFDB6F /* Supporting Files */,
-			);
-			path = TestTargetApplication;
-			sourceTree = "<group>";
-		};
-		E0DFA4291D107A1800DFDB6F /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				E0DFA42A1D107A1800DFDB6F /* main.m */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		E0F4133D1CF6312A0085166C = {
 			isa = PBXGroup;
 			children = (
 				E012E0351D0AEDDD00B6F741 /* TODO.rtf */,
 				E0F413491CF6312A0085166C /* SharkORM */,
 				E0F413551CF6312A0085166C /* SharkORMTests */,
-				E0DFA4281D107A1800DFDB6F /* TestTargetApplication */,
 				E0F413481CF6312A0085166C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -521,7 +430,6 @@
 			children = (
 				E0F413471CF6312A0085166C /* SharkORM.framework */,
 				E0F413511CF6312A0085166C /* SharkORMTests.xctest */,
-				E0DFA4271D107A1800DFDB6F /* TestTargetApplication.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -750,23 +658,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		E0DFA4261D107A1800DFDB6F /* TestTargetApplication */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = E0DFA43B1D107A1800DFDB6F /* Build configuration list for PBXNativeTarget "TestTargetApplication" */;
-			buildPhases = (
-				E0DFA4231D107A1800DFDB6F /* Sources */,
-				E0DFA4241D107A1800DFDB6F /* Frameworks */,
-				E0DFA4251D107A1800DFDB6F /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = TestTargetApplication;
-			productName = TestTargetApplication;
-			productReference = E0DFA4271D107A1800DFDB6F /* TestTargetApplication.app */;
-			productType = "com.apple.product-type.application";
-		};
 		E0F413461CF6312A0085166C /* SharkORM */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E0F4135B1CF6312A0085166C /* Build configuration list for PBXNativeTarget "SharkORM" */;
@@ -797,7 +688,6 @@
 			);
 			dependencies = (
 				E0F413541CF6312A0085166C /* PBXTargetDependency */,
-				E0C450A51D107A67003FA21D /* PBXTargetDependency */,
 			);
 			name = SharkORMTests;
 			productName = SharkORMTests;
@@ -814,10 +704,6 @@
 				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Adrian Herridge";
 				TargetAttributes = {
-					E0DFA4261D107A1800DFDB6F = {
-						CreatedOnToolsVersion = 7.3.1;
-						LastSwiftMigration = 0830;
-					};
 					E0F413461CF6312A0085166C = {
 						CreatedOnToolsVersion = 7.3.1;
 						LastSwiftMigration = 0830;
@@ -825,7 +711,6 @@
 					E0F413501CF6312A0085166C = {
 						CreatedOnToolsVersion = 7.3.1;
 						LastSwiftMigration = 0830;
-						TestTargetID = E0DFA4261D107A1800DFDB6F;
 					};
 				};
 			};
@@ -844,23 +729,11 @@
 			targets = (
 				E0F413461CF6312A0085166C /* SharkORM */,
 				E0F413501CF6312A0085166C /* SharkORMTests */,
-				E0DFA4261D107A1800DFDB6F /* TestTargetApplication */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		E0DFA4251D107A1800DFDB6F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				E0DFA4391D107A1800DFDB6F /* LaunchScreen.storyboard in Resources */,
-				E0DFA4361D107A1800DFDB6F /* Assets.xcassets in Resources */,
-				E0A83F2D1DB7B59E003F608B /* sqlite mods.txt in Resources */,
-				E0DFA4341D107A1800DFDB6F /* Main.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		E0F413451CF6312A0085166C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -881,51 +754,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		E0DFA4231D107A1800DFDB6F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				E0DFA4311D107A1800DFDB6F /* ViewController.m in Sources */,
-				E0C450B21D107AA8003FA21D /* SRKJoinObject.m in Sources */,
-				E0C450A71D107AA8003FA21D /* SRKEventBlockHolder.m in Sources */,
-				E0C450B41D107AA8003FA21D /* SRKQueryAsyncHandler.m in Sources */,
-				E0C450B11D107AA8003FA21D /* SRKFTSQuery.m in Sources */,
-				E0C450BD1D107AA8003FA21D /* SRKError.m in Sources */,
-				E0C450A81D107AA8003FA21D /* SRKEventHandler.m in Sources */,
-				E0C450B01D107AA8003FA21D /* SRKUnsupportedObject.m in Sources */,
-				E0C450AB1D107AA8003FA21D /* SRKFuzzyStore.m in Sources */,
-				E0C450BE1D107AA8003FA21D /* SRKLazyLoader.m in Sources */,
-				E0C450B81D107AA8003FA21D /* SRKContext.m in Sources */,
-				E0C450A91D107AA8003FA21D /* SRKEventRegistryObject.m in Sources */,
-				E0C450C11D107AA8003FA21D /* SRKSQLiteHandle.m in Sources */,
-				E0C450BC1D107AA8003FA21D /* SharkORM.m in Sources */,
-				E04FFABA1D1C8FB700F7866D /* SRKRawResults.m in Sources */,
-				E0C450AD1D107AA8003FA21D /* SRKEncryptedObject.m in Sources */,
-				E0DFA42E1D107A1800DFDB6F /* AppDelegate.m in Sources */,
-				E0C450B51D107AA8003FA21D /* SRKQueryProfile.m in Sources */,
-				E02AC1BC1E07EF2500E47406 /* SRKTransactionInfo.m in Sources */,
-				E09B72101D4F531300B68A80 /* SRKAES256Extension.m in Sources */,
-				E0DFA42B1D107A1800DFDB6F /* main.m in Sources */,
-				E0C450B31D107AA8003FA21D /* SRKQuery.m in Sources */,
-				E0C450AA1D107AA8003FA21D /* FTSRegistry.m in Sources */,
-				E07C4F351D45F71400DB6CAB /* SRKStringObject.m in Sources */,
-				E0C450C21D107AA8003FA21D /* SRKUtilities.m in Sources */,
-				E0A83F331DB7B5C9003F608B /* sqlite3.c in Sources */,
-				E0C450B71D107AA8003FA21D /* SRKRegistryEntry.m in Sources */,
-				E0C450C01D107AA8003FA21D /* SRKSettings.m in Sources */,
-				E0C450AE1D107AA8003FA21D /* SRKObject.m in Sources */,
-				E0C450BF1D107AA8003FA21D /* SRKRelationship.m in Sources */,
-				E0C450AF1D107AA8003FA21D /* SRKResultSet.m in Sources */,
-				E0C450B61D107AA8003FA21D /* SRKRegistry.m in Sources */,
-				E049CCEF1E13B8B900EE8DF2 /* SRKCommitOptions.m in Sources */,
-				E0C450B91D107AA8003FA21D /* SRKTransaction.m in Sources */,
-				E0C450AC1D107AA8003FA21D /* SRKIndexDefinition.m in Sources */,
-				E0A83F291DB75E82003F608B /* SRKGlobals.m in Sources */,
-				E0C450A61D107AA8003FA21D /* SRKEvent.m in Sources */,
-				E07C4F2F1D45F12500DB6CAB /* SRKObjectChain.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		E0F413421CF6312A0085166C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1035,11 +863,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		E0C450A51D107A67003FA21D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = E0DFA4261D107A1800DFDB6F /* TestTargetApplication */;
-			targetProxy = E0C450A41D107A67003FA21D /* PBXContainerItemProxy */;
-		};
 		E0F413541CF6312A0085166C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = E0F413461CF6312A0085166C /* SharkORM */;
@@ -1047,50 +870,7 @@
 		};
 /* End PBXTargetDependency section */
 
-/* Begin PBXVariantGroup section */
-		E0DFA4321D107A1800DFDB6F /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				E0DFA4331D107A1800DFDB6F /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		E0DFA4371D107A1800DFDB6F /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				E0DFA4381D107A1800DFDB6F /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
-		E0DFA43C1D107A1800DFDB6F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = TestTargetApplication/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = sharksync.TestTargetApplication;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
-			};
-			name = Debug;
-		};
-		E0DFA43D1D107A1800DFDB6F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = TestTargetApplication/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = sharksync.TestTargetApplication;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
-			};
-			name = Release;
-		};
 		E0F413591CF6312A0085166C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1241,7 +1021,6 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "SharkORMTests/SharkORMTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestTargetApplication.app/TestTargetApplication";
 			};
 			name = Debug;
 		};
@@ -1255,22 +1034,12 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SharkORMTests/SharkORMTests-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TestTargetApplication.app/TestTargetApplication";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		E0DFA43B1D107A1800DFDB6F /* Build configuration list for PBXNativeTarget "TestTargetApplication" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				E0DFA43C1D107A1800DFDB6F /* Debug */,
-				E0DFA43D1D107A1800DFDB6F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		E0F413411CF6312A0085166C /* Build configuration list for PBXProject "SharkORM" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
