@@ -29,8 +29,6 @@
 #import "SQLite3.h"
 #import "SRKDefinitions.h"
 
-@class SRKTransactionGroup;
-
 @interface SharkORM ()
 
 // form data methods

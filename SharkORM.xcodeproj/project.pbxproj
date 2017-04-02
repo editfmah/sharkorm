@@ -38,6 +38,8 @@
 		E07C4F331D45F71400DB6CAB /* SRKStringObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E07C4F311D45F71400DB6CAB /* SRKStringObject.m */; };
 		E07C4F341D45F71400DB6CAB /* SRKStringObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E07C4F311D45F71400DB6CAB /* SRKStringObject.m */; };
 		E07C4F351D45F71400DB6CAB /* SRKStringObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E07C4F311D45F71400DB6CAB /* SRKStringObject.m */; };
+		E07EFCDB1E904241006AF533 /* SchemaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E07EFCDA1E904241006AF533 /* SchemaTests.m */; };
+		E07EFCDC1E904241006AF533 /* SchemaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E07EFCDA1E904241006AF533 /* SchemaTests.m */; };
 		E092CB051D00964700C6C8CD /* DBAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = E092CB041D0095A300C6C8CD /* DBAccess.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E092CB081D00DBE800C6C8CD /* Performance.m in Sources */ = {isa = PBXBuildFile; fileRef = E092CB071D00DBE800C6C8CD /* Performance.m */; };
 		E09B720D1D4F530A00B68A80 /* SRKAES256Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E09B720B1D4F530A00B68A80 /* SRKAES256Extension.h */; };
@@ -229,6 +231,8 @@
 		E04FFAB61D1C8FB700F7866D /* SRKRawResults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKRawResults.m; sourceTree = "<group>"; };
 		E07C4F2D1D451BAA00DB6CAB /* SwiftStringId.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftStringId.swift; sourceTree = "<group>"; };
 		E07C4F311D45F71400DB6CAB /* SRKStringObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKStringObject.m; sourceTree = "<group>"; };
+		E07EFCD91E904241006AF533 /* SchemaTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchemaTests.h; sourceTree = "<group>"; };
+		E07EFCDA1E904241006AF533 /* SchemaTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SchemaTests.m; sourceTree = "<group>"; };
 		E08DF4391E02BAD9003884DE /* SRKTransaction+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SRKTransaction+Private.h"; sourceTree = "<group>"; };
 		E092CB041D0095A300C6C8CD /* DBAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DBAccess.h; sourceTree = "<group>"; };
 		E092CB061D00DBE800C6C8CD /* Performance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Performance.h; sourceTree = "<group>"; };
@@ -460,6 +464,15 @@
 			path = Joins;
 			sourceTree = "<group>";
 		};
+		E07EFCD81E904119006AF533 /* Schema */ = {
+			isa = PBXGroup;
+			children = (
+				E07EFCD91E904241006AF533 /* SchemaTests.h */,
+				E07EFCDA1E904241006AF533 /* SchemaTests.m */,
+			);
+			path = Schema;
+			sourceTree = "<group>";
+		};
 		E0A0CDF81E016B1500942AE5 /* Transactions */ = {
 			isa = PBXGroup;
 			children = (
@@ -529,6 +542,7 @@
 			children = (
 				E00320601CFB8EA000240C44 /* BaseTestCase.h */,
 				E0F413561CF6312A0085166C /* BaseTestCase.m */,
+				E07EFCD81E904119006AF533 /* Schema */,
 				E00320321CFA58FF00240C44 /* Events Test */,
 				E040B5BC1D1479CF00FCC830 /* Examples */,
 				E0F413581CF6312A0085166C /* Info.plist */,
@@ -882,6 +896,7 @@
 				E0C450B01D107AA8003FA21D /* SRKUnsupportedObject.m in Sources */,
 				E0C450AB1D107AA8003FA21D /* SRKFuzzyStore.m in Sources */,
 				E0C450BE1D107AA8003FA21D /* SRKLazyLoader.m in Sources */,
+				E07EFCDC1E904241006AF533 /* SchemaTests.m in Sources */,
 				E0C450B81D107AA8003FA21D /* SRKContext.m in Sources */,
 				E0C450A91D107AA8003FA21D /* SRKEventRegistryObject.m in Sources */,
 				E0C450C11D107AA8003FA21D /* SRKSQLiteHandle.m in Sources */,
@@ -960,6 +975,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3A44877E1D1E857B00BD9CB5 /* OtherTests.m in Sources */,
+				E07EFCDB1E904241006AF533 /* SchemaTests.m in Sources */,
 				E0F413B71CF632120085166C /* SRKIndexDefinition.m in Sources */,
 				E00320481CFA58FF00240C44 /* MostObjectTypes.m in Sources */,
 				E092CB081D00DBE800C6C8CD /* Performance.m in Sources */,

@@ -23,7 +23,7 @@
 #ifndef __SHARKORM_H
 #define __SHARKORM_H
 
-#define SHARK_DATE              20170308
+#define SHARK_DATE              20170331
 #define SHARK_VER               2.01.02
 
 #import <Foundation/Foundation.h>
@@ -157,12 +157,6 @@ typedef enum : int {
 - (void)databaseError:(SRKError*)error;
 /// This method, if implemented, will profile all queries that are performed within SharkORM.  Use the queryTime property within the SRKQueryProfile* object to filter out only queries that do not meet your performance requirements.
 - (void)queryPerformedWithProfile:(SRKQueryProfile*)profile;
-/// Called whenever an object is removed form the database.
-- (void)databaseEntityWasDeleted:(SRKObject*)entity;
-/// Called whenever an existing object is re-written into the database.
-- (void)databaseEntityWasUpdated:(SRKObject*)entity;
-/// Called when a new object is commited for the first time into the database.
-- (void)databaseEntityWasInserted:(SRKObject*)entity;
 /// An object that did not support a valid encoding mechanisum was attempted to be written to the database.  It is therefore passed to the delegate method for encoding.  You must return an NSData object that can be stored and later re-hydrated by a call to "decodeUnsupportedColumnValueForColumn"
 - (NSData*)encodeUnsupportedColumnValueForColumn:(NSString*)column inEntity:(NSString*)entity value:(id)value;
 /// Previously an object was persistsed that was not supported by SharkORM, and "encodeUnsupportedColumnValueForColumn" was called to encode it into a NSData* object, this metthod will pass back a hydrated object created from the NSData*

@@ -236,15 +236,15 @@ typedef enum : int {
 }
 
 + (void)setInsertCallbackBlock:(SRKGlobalEventCallback)callback {
-    
+    [[SRKGlobals sharedObject] setInsertCallback:callback];
 }
 
 + (void)setUpdateCallbackBlock:(SRKGlobalEventCallback)callback {
-    
+    [[SRKGlobals sharedObject] setUpdateCallback:callback];
 }
 
 + (void)setDeleteCallbackBlock:(SRKGlobalEventCallback)callback {
-    
+    [[SRKGlobals sharedObject] setDeleteCallback:callback];
 }
 
 +(sqlite3 *)defaultHandleForDatabase {
@@ -1290,7 +1290,8 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                 
                 NSMutableArray* values = [NSMutableArray new];
                 for (NSString* key in keys) {
-                    [values addObject:[entity getField:key] ? [entity getField:key] : [NSNull null]];
+                    id value = [entity getField:key];
+                    [values addObject:value ? value : [NSNull null]];
                 }
                 
                 [[SRKUtilities new] bindParameters:values toStatement:statement];

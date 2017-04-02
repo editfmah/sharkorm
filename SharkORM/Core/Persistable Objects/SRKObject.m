@@ -2310,10 +2310,13 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
         if ([[SharkORM new] removeObject:self]) {
             
             [self entityDidDelete];
-            // now raise a global event
-            SRKGlobalEventCallback callback = [[SRKGlobals sharedObject] getDeleteCallback];
-            if (callback) {
-                callback(self);
+            // now raise a global event, but only if we are not within a transaction.
+            // Because a transaction will also raise the event
+            if (!self.transactionInfo) {
+                SRKGlobalEventCallback callback = [[SRKGlobals sharedObject] getDeleteCallback];
+                if (callback) {
+                    callback(self);
+                }
             }
             
             self.exists = NO;
@@ -2397,7 +2400,7 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
                     // check to see if this object has already appeard in this chain.
                     if (![chain doesObjectExistInChain:o]) {
                         [(SRKObject*)o __commitRawWithObjectChain:[chain addObjectToChain:self]];
-                    } 
+                    }
                 }
             }
             
@@ -2430,9 +2433,11 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
                 [self entityDidInsert];
                 
                 // now raise a global event
-                SRKGlobalEventCallback callback = [[SRKGlobals sharedObject] getInsertCallback];
-                if (callback) {
-                    callback(self);
+                if (!self.transactionInfo) {
+                    SRKGlobalEventCallback callback = [[SRKGlobals sharedObject] getInsertCallback];
+                    if (callback) {
+                        callback(self);
+                    }
                 }
                 
                 /* now send out the live message as well as tiggering the local event */
@@ -2503,11 +2508,12 @@ static void setPropertyCharPTRIMP(SRKObject* self, SEL _cmd, char* aValue) {
                 [self entityDidUpdate];
                 
                 // now raise a global event
-                SRKGlobalEventCallback callback = [[SRKGlobals sharedObject] getUpdateCallback];
-                if (callback) {
-                    callback(self);
+                if (!self.transactionInfo) {
+                    SRKGlobalEventCallback callback = [[SRKGlobals sharedObject] getUpdateCallback];
+                    if (callback) {
+                        callback(self);
+                    }
                 }
-                
                 /* now send out the live message as well as triggering the local event */
                 if (![[self class] entityDoesNotRaiseEvents] && ![SRKTransaction transactionIsInProgress] && self.commitOptions.triggerEvents) {
                     SRKEvent* e = [SRKEvent new];

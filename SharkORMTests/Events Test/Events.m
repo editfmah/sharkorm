@@ -136,4 +136,110 @@
     
 }
 
+- (void)test_global_event_blocks {
+    
+    [self cleardown];
+    
+    __block int insertCount = 0;
+    __block int updateCount = 0;
+    __block int deleteCount = 0;
+    
+    [SharkORM setInsertCallbackBlock:^(SRKObject *entity) {
+        if ([[entity.class description] isEqualToString:@"Person"]) {
+            insertCount += 1;
+        }
+    }];
+    
+    [SharkORM setUpdateCallbackBlock:^(SRKObject *entity) {
+        if ([[entity.class description] isEqualToString:@"Person"]) {
+            updateCount += 1;
+        }
+    }];
+    
+    [SharkORM setDeleteCallbackBlock:^(SRKObject *entity) {
+        if ([[entity.class description] isEqualToString:@"Person"]) {
+            deleteCount += 1;
+        }
+    }];
+    
+    Person* p = [Person new];
+    p.Name = @"testing 123";
+    [p commit];
+    
+    XCTAssert(insertCount == 1 && updateCount == 0 && deleteCount == 0 ,@"failed to trigger event correctly");
+    p.Name = @"testing 321";
+    [p commit];
+    
+    XCTAssert(insertCount == 1 && updateCount == 1 && deleteCount == 0 ,@"failed to trigger event correctly");
+    
+    [p remove];
+    
+    XCTAssert(insertCount == 1 && updateCount == 1 && deleteCount == 1 ,@"failed to trigger event correctly");
+    
+    insertCount = 0;
+    updateCount = 0;
+    deleteCount = 0;
+    
+    p = [Person new];
+    
+    [SRKTransaction transaction:^{
+    
+        // insert
+        p.Name = @"testing 123";
+        [p commit];
+        
+    } withRollback:^{
+        
+        
+        
+    }];
+    
+    [SRKTransaction transaction:^{
+        
+        // update
+        p.Name = @"testing 321";
+        [p commit];
+        
+    } withRollback:^{
+        
+        
+        
+    }];
+    
+    [SRKTransaction transaction:^{
+        
+        // delete
+        [p remove];
+        
+    } withRollback:^{
+        
+        
+        
+    }];
+    
+    XCTAssert(insertCount == 1 && updateCount == 1 && deleteCount == 1 ,@"failed to trigger event correctly");
+    
+    insertCount = 0;
+    updateCount = 0;
+    deleteCount = 0;
+    
+    [SRKTransaction transaction:^{
+        
+        Person* p = [Person new];
+        p.Name = @"testing 123";
+        [p commit];
+        p.Name = @"testing 321";
+        [p commit];
+        [p remove];
+        
+    } withRollback:^{
+        
+    // a transaction only holds a "final" state for an object, which in this case is delete.
+    XCTAssert(insertCount == 0 && updateCount == 0 && deleteCount == 1 ,@"failed to trigger event correctly");
+        
+        
+    }];
+    
+}
+
 @end
