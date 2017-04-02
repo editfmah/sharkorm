@@ -95,7 +95,7 @@ Example:
 ```objective-c
 // Obj-C
 + (NSArray*)ignoredProperties {
-   return @["age","name"];
+   return @[@"age",@"name"];
 }
 ```
 ```swift
