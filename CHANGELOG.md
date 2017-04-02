@@ -6,9 +6,9 @@ Changes to better support Swift3 interoperability.  Fixes all kinds of strange i
 
 Removed `databaseEntityWasDeleted`, `databaseEntityWasUpdated`, `databaseEntityWasInserted` from SRKDelegate, these have been replaced with .....
 
-Added 3 methods to the SharkORM class to allow developers to register blocks with the ORM to support callbacks globally.  The new methods are,  `setInsertCallbackBlock`, `setUpdateCallbackBlock`, `setDeleteCallbackBlock`.
+Added 3 methods to the SharkORM class to allow developers to register blocks with the ORM to support callbacks globally.  The new methods are,  `setInsertCallbackBlock`, `setUpdateCallbackBlock`, `setDeleteCallbackBlock`.  The block takes an SRKObject as a parameter, which you can inspect to see which type of object the event was raised for.
 
-
+Improved documentation for object methods, including excluding properties from the schema.
 
 ## v2.1.1 - Jan 4, 2017
 
