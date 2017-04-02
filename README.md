@@ -80,12 +80,30 @@ You can use these classes in much the same way as any other class in the system,
 
 In Objective-C properties need to be implemented using `@dynamic`, this is to indicate to the ORM that it will control the fetching and setting of these values from the database, and in Swift the property is implemented as `var dynamic`
 
-## Schema (Migration)
+## Schemas (Migration)
 The schema is automatically maintained from the class signatures and all additions, deletions & type changes are automatically made to the database.  Where possible data is retained and converted between types.
 
 If a default value is specified using, `defaultValuesForEntity` and a property is added, then the column is automatically populated with teh default value.
 
 Tables are created automatically by referencing a class which is a subclass of SRKObject.
+
+### Excluding properties from the schema.
+By default all properties that are either `@dynamic` or `dynamic var` are picked up by SharkORM and added to the coresponding tables.  If you wish to exclude certain properties which are not for persistence then implement the class method `ignoredProperties`, for which you return an array of string values which match the properties you wish the ORM to ignore.
+
+Example:
+
+```objective-c
+// Obj-C
++ (NSArray*)ignoredProperties {
+   return @[@"age",@"name"];
+}
+```
+```swift
+// Swift
+override class func ignoredProperties() -> [Any] {
+   return ["age","name"]
+}
+```
 
 #### Example Object
 `Objective-C`
