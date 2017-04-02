@@ -452,7 +452,7 @@ This is the query string supplied to the query, and can contain format specifier
 ###limit
 Specifies the limit to the number of query results to return
 ###orderBy
-Specifies the order by which the `SRKResultSet` will be returned.  These can be multiple values, such as `orderBy("name,age")`.
+Specifies the order by which the `SRKResultSet` will be returned.  These can be chained together to produce multiple vectors.  Example, `.....orderBy("Name").orderBy(descending: "age").fetch()`
 ###offset
 Specifies the offset in the values to be retrieved, to allow developers to only retrieve a window of data when required.
 ###batch
