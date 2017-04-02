@@ -4,11 +4,17 @@ Shark Changelog
 
 Changes to better support Swift3 interoperability.  Fixes all kinds of strange issues with the persistence of Arrays & Dictionaries coming back out as strings.
 
+Added the ability to initialise an object with a dictionary, to make it easier to populate objects programatically from network calls.
+
 Removed `databaseEntityWasDeleted`, `databaseEntityWasUpdated`, `databaseEntityWasInserted` from SRKDelegate, these have been replaced with .....
 
 Added 3 methods to the SharkORM class to allow developers to register blocks with the ORM to support callbacks globally.  The new methods are,  `setInsertCallbackBlock`, `setUpdateCallbackBlock`, `setDeleteCallbackBlock`.  The block takes an SRKObject as a parameter, which you can inspect to see which type of object the event was raised for.
 
+`.orderBy()` parameters can now be chained together, example: `.orderBy("name").orderBy("age")`.
+
 Improved documentation for object methods, including excluding properties from the schema.
+
+More unit tests added, stability improvements.
 
 ## v2.1.1 - Jan 4, 2017
 
