@@ -34,22 +34,28 @@
     Department* d = [Department new];
     d.name = @"Test Department";
     
+    Department* d2 = [Department new];
+    d2.name = @"Old Department";
+    
     Person* p = [Person new];
     p.Name = @"Adrian";
     p.age = 37;
     p.department = d;
+    p.origDepartment = d2;
     [p commit];
     
     p = [Person new];
     p.Name = @"Neil";
     p.age = 34;
     p.department = d;
+    p.origDepartment = d2;
     [p commit];
     
     p = [Person new];
     p.Name = @"Michael";
     p.age = 30;
     p.department = d;
+    p.origDepartment = d2;
     [p commit];
     
 }
@@ -145,7 +151,7 @@
     
     [self setupCommonData];
     
-    Department* d = [[[Department query] fetch] firstObject];
+    Department* d = [[[[Department query] where:@"name = 'Test Department'"] fetch] firstObject];
     
     SRKResultSet *r = [[Person query] whereWithFormat:@"department = %@", d].fetch;
     
@@ -205,7 +211,7 @@
     SRKRawResults* results = [SharkORM rawQuery:@"SELECT * FROM Person ORDER BY age;"];
     
     XCTAssert(results.rowCount == 3, @"Raw query row count was incorrect given fixed data");
-    XCTAssert(results.columnCount == 7, @"Raw query column count was incorrect given fixed data");
+    XCTAssert(results.columnCount == 8, @"Raw query column count was incorrect given fixed data");
     XCTAssert([((NSString*)[results valueForColumn:@"Name" atRow:0]) isEqualToString:@"Michael"], @"Raw query column count was incorrect given fixed data");
     
 }
@@ -226,6 +232,17 @@
     [self setupCommonData];
     
     SRKResultSet *r = [[[Person query] where:@"department.name='Test Department' AND location.locationName IS NULL"] orderBy:@"department.name"].fetch;
+    
+    XCTAssert(r,@"Failed to return a result set");
+    XCTAssert(r.count == 3,@"incorrect number of results returned");
+    
+}
+
+- (void)test_where_query_with_object_dot_notation_joins_not_named_as_entity {
+    
+    [self setupCommonData];
+    
+    SRKResultSet *r = [[Person query] where:@"origDepartment.name='Old Department' AND location.locationName IS NULL"].fetch;
     
     XCTAssert(r,@"Failed to return a result set");
     XCTAssert(r.count == 3,@"incorrect number of results returned");

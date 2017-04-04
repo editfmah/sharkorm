@@ -1905,7 +1905,7 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
                 if (r) {
                     // because the user has referenced an object like "department.name = 'Development' " and not just 'department IN (select ID from Department WHERE name='Development'), we now want to automatically join the table
                     // but we need to rename the join and re-arrange the query to cope with a mixture of both object.value and traditional joins to the exact same tables.
-                    [fromList addObject:[NSString stringWithFormat:@" LEFT JOIN %@ as query_auto_join_%@ ON %@.%@ = query_auto_join_%@.%@ ", [r.targetClass description], qFieldName, [r.sourceClass description], qFieldName, [r.targetClass description], SRK_DEFAULT_PRIMARY_KEY_NAME]];
+                    [fromList addObject:[NSString stringWithFormat:@" LEFT JOIN %@ as query_auto_join_%@ ON %@.%@ = query_auto_join_%@.%@ ", [r.targetClass description], qFieldName, [r.sourceClass description], qFieldName, qFieldName, SRK_DEFAULT_PRIMARY_KEY_NAME]];
                     
                     // now we need to swap out all instances of the 'component' with the new named version.
                     NSString* namedReplacement = [NSString stringWithFormat:@"query_auto_join_%@.",qFieldName];

@@ -16,6 +16,7 @@
 @property int               seq;
 @property int               payrollNumber;
 @property Department*       department;
+@property Department*       origDepartment;
 @property Location*         location;
 
 @end
