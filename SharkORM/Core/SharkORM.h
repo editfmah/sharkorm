@@ -39,6 +39,7 @@
 @class SRKFTSQuery;
 @class SRKTransaction;
 @class SRKRawResults;
+@class SRKIndexProperty;
 
 typedef void(^SRKTransactionBlockBlock)();
 
@@ -286,6 +287,15 @@ enum SRKIndexSortOrder {
  * @return void
  */
 - (void)addIndexForProperty:(NSString*)propertyName propertyOrder:(enum SRKIndexSortOrder)propOrder;
+
+/**
+ * Adds the definition for a compound index with an indefinite number of properties
+ *
+ * @param indexProperty A list of properties that makes up the compound index
+ * @return void
+ */
+- (void)addIndexWithProperties: (SRKIndexProperty *)indexProperty, ...;
+
 /**
  * Adds a composite index on a given object with a sub index on an additional property.
  *
@@ -1005,6 +1015,49 @@ typedef void(^SRKQueryAsyncResponse)(SRKResultSet* results);
  * @return (NSString*), the column name to be used in queries.
  */
 - (NSString*)columnNameForIndex:(NSInteger)index;
+
+@end
+
+/**
+ * A SRKIndexProperty is used to store the name and sort order of a single column within a compound index
+ *
+ *
+ */
+@interface SRKIndexProperty : NSObject
+
+@property (strong) NSString*   name;
+@property enum SRKIndexSortOrder order;
+
+/**
+ * Formats the object's SRKIndexSortOrder into the string representation necessary for creating indices
+ *
+ * @return (NSString) the string representation of the sort order
+ */
+-(NSString*) getSortOrderString;
+
+/**
+ * Formats the object's SRKIndexSortOrder into the string representation necessary for naming indices
+ *
+ * @return (NSString) the string representation of the sort order
+ */
+-(NSString*) getSortOrderIndexName;
+
+/**
+ * Initializes a new SRKIndexProperty object
+ *
+ * @param (NSString*)columnName The named column used within the index
+ * @param (enum SRKIndexSortOrder)sortOrder The direction in which the index should sort
+ * @return (id)
+ */
+-(id) initWithName:(NSString*)columnName andOrder:(enum SRKIndexSortOrder) sortOrder;
+
+/**
+ * Initializes a new SRKIndexProperty object with a default sort order of Ascending
+ *
+ * @param (NSString*)columnName The named column used within the index
+ * @return (id)
+ */
+-(id) initWithName:(NSString*)columnName;
 
 @end
 
