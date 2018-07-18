@@ -27,6 +27,5 @@
 
 + (void)StartService;
 + (void)StopService;
-+ (void)SynchroniseNow;
 
 @end

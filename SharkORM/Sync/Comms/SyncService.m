@@ -22,19 +22,16 @@
 
 
 #import "SyncService.h"
+#import "SyncNetwork.h"
 
 @implementation SyncService
 
 + (void)StartService {
-    
+    [[SyncNetwork sharedInstance] startService];
 }
 
 + (void)StopService {
-    
-}
-
-+ (void)SynchroniseNow {
-    
+    [[SyncNetwork sharedInstance] stopService];
 }
 
 @end
