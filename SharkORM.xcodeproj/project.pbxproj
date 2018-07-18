@@ -44,7 +44,7 @@
 		3AF67F8620FEF9140013FA97 /* SharkSyncChange.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF67F2020FEF9140013FA97 /* SharkSyncChange.h */; };
 		3AF67F8720FEF9140013FA97 /* SharkSyncGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AF67F2120FEF9140013FA97 /* SharkSyncGroup.m */; };
 		3AF67F8820FEF9140013FA97 /* SRKSyncObject+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF67F2220FEF9140013FA97 /* SRKSyncObject+Private.h */; };
-		3AF67F8920FEF9140013FA97 /* SharkORM.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF67F2320FEF9140013FA97 /* SharkORM.h */; };
+		3AF67F8920FEF9140013FA97 /* SharkORM.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF67F2320FEF9140013FA97 /* SharkORM.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3AF67F8A20FEF9140013FA97 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AF67F2520FEF9140013FA97 /* sqlite3.c */; };
 		3AF67F8B20FEF9140013FA97 /* sqlite mods.txt in Resources */ = {isa = PBXBuildFile; fileRef = 3AF67F2620FEF9140013FA97 /* sqlite mods.txt */; };
 		3AF67F8C20FEF9140013FA97 /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF67F2720FEF9140013FA97 /* sqlite3.h */; };
@@ -676,6 +676,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3AF67F8920FEF9140013FA97 /* SharkORM.h in Headers */,
 				3AF67F6720FEF9140013FA97 /* SRKCommitOptions+Private.h in Headers */,
 				3AF67F6820FEF9140013FA97 /* SRKResultSet+Private.h in Headers */,
 				3AF67FAC20FEF9140013FA97 /* SRKEntityChain.h in Headers */,
@@ -701,7 +702,6 @@
 				3AF67F7620FEF9140013FA97 /* SyncService.h in Headers */,
 				3AF67FAD20FEF9140013FA97 /* SRKEncryptedObject.h in Headers */,
 				3AF67F8320FEF9140013FA97 /* SRKDeferredChange.h in Headers */,
-				3AF67F8920FEF9140013FA97 /* SharkORM.h in Headers */,
 				3AF67F6C20FEF9140013FA97 /* SRKEventHandler+Private.h in Headers */,
 				3AF67F8020FEF9140013FA97 /* SharkSyncGroup.h in Headers */,
 				3AF67FBE20FEF9140013FA97 /* SRKEventRegistryObject.h in Headers */,
@@ -920,6 +920,7 @@
 		E0F413591CF6312A0085166C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -958,6 +959,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = ./SharkORM/SharkORM.modulemap;
 				MODULE_NAME = SharkORM;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -973,6 +975,7 @@
 		E0F4135A1CF6312A0085166C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -1005,6 +1008,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = ./SharkORM/SharkORM.modulemap;
 				MODULE_NAME = SharkORM;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -1025,17 +1029,17 @@
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_PKGINFO_FILE = YES;
 				INFOPLIST_FILE = SharkORM/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = io.sharksync.sharmorm;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "arm64 armv7 armv7s x86_64";
+				VALID_ARCHS = "arm64 armv7 armv7s x86_64 i386";
 			};
 			name = Debug;
 		};
@@ -1046,17 +1050,16 @@
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_PKGINFO_FILE = YES;
 				INFOPLIST_FILE = SharkORM/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.sharksync.sharmorm;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "arm64 armv7 armv7s x86_64";
+				VALID_ARCHS = "arm64 armv7 armv7s x86_64 i386";
 			};
 			name = Release;
 		};
