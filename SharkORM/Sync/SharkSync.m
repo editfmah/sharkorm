@@ -29,12 +29,18 @@
 #import "SRKSyncRegisteredClass.h"
 #import "SharkSync+Private.h"
 
-#ifdef TARGET_OS_IPHONE
-#import <UIKit/UIImage.h>
+
+#if TARGET_OS_IPHONE
+#import <UIKit/UIKit.h>
 typedef UIImage XXImage;
 #else
-#import <AppKit/NSImage.h>
 typedef NSImage XXImage;
+#endif
+
+
+#if TARGET_OS_IPHONE
+#else
+#import <AppKit/AppKit.h>
 #endif
 
 @interface SharkSync ()
@@ -243,7 +249,13 @@ typedef NSImage XXImage;
         
     } else if (dataType == SharkSyncPropertyTypeImage) {
         
-        return [UIImage imageWithData:decrypteddata];
+#if TARGET_OS_IPHONE
+       return [UIImage imageWithData:decrypteddata];
+#else
+       return [[NSImage alloc] initWithData:decrypteddata];
+#endif
+        
+        
         
     } else if (dataType == SharkSyncPropertyTypeDate) {
         
@@ -350,14 +362,16 @@ typedef NSImage XXImage;
                         [dValue appendBytes:&type length:sizeof(uint8_t)];
                         uint8_t r = (char)rand()%256;
                         [dValue appendBytes:&r length:sizeof(uint8_t)];
-                        [dValue appendData:UIImageJPEGRepresentation(((XXImage*)value), 0.7)];
-                    }
-                    else if ([value isKindOfClass:[UIImage class]]) {
-                        type = SharkSyncPropertyTypeImage;
-                        [dValue appendBytes:&type length:sizeof(uint8_t)];
-                        uint8_t r = (char)rand()%256;
-                        [dValue appendBytes:&r length:sizeof(uint8_t)];
+#if TARGET_OS_IPHONE
                         [dValue appendData:UIImageJPEGRepresentation(((UIImage*)value), 0.7)];
+#else
+                        NSData *imageData = [((XXImage*)value) TIFFRepresentation];
+                        NSBitmapImageRep *imageRep = [NSBitmapImageRep imageRepWithData:imageData];
+                        NSDictionary *imageProps = [NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:0.7] forKey:NSImageCompressionFactor];
+                        imageData = [imageRep representationUsingType:NSJPEGFileType properties:imageProps];
+                        [dValue appendData:imageData];
+#endif
+                        
                     }
                     else if ([value isKindOfClass:[NSNull class]]) {
                         type = SharkSyncPropertyTypeNull;
