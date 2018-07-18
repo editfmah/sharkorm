@@ -1,6 +1,6 @@
 //    MIT License
 //
-//    Copyright (c) 2016 SharkSync
+//    Copyright (c) 2010-2018 SharkSync
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy
 //    of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,7 @@
 
 @class SRKEvent;
 @class SRKEventHandler;
-@class SRKObject;
+@class SRKEntity;
 
 @interface SRKRegistry : NSObject
 
@@ -34,9 +34,9 @@
 - (void)broadcast:(SRKEvent*)event;
 - (void)registerHandler:(SRKEventHandler*)handler;
 - (void)deregisterHandler:(SRKEventHandler*)handler;
-- (void)registerObject:(SRKObject*)object;
+- (void)registerObject:(SRKEntity*)object;
 - (void)add:(NSArray*)objects intoDomain:(NSString*)domain;
-- (void)remove:(SRKObject*)object;
+- (void)remove:(SRKEntity*)object;
 + (void)resetSharkORM;
 
 @end

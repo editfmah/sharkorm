@@ -1,6 +1,6 @@
 //    MIT License
 //
-//    Copyright (c) 2016 SharkSync
+//    Copyright (c) 2010-2018 SharkSync
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy
 //    of this software and associated documentation files (the "Software"), to deal
@@ -23,9 +23,9 @@
 
 
 #import "SharkORM.h"
-#import "SRKObject+Private.h"
+#import "SRKEntity+Private.h"
 #import "SharkORM+Private.h"
-#import "SRKObjectChain.h"
+#import "SRKEntityChain.h"
 
 @interface SRKContext ()
 
@@ -43,17 +43,17 @@
 	return self;
 }
 
-- (void)addEntityToContext:(SRKObject*)entity {
+- (void)addEntityToContext:(SRKEntity*)entity {
 	[self.entities addObject:entity];
 	entity.context = self;
 }
 
-- (void)removeEntityFromContext:(SRKObject*)entity {
+- (void)removeEntityFromContext:(SRKEntity*)entity {
 	[self.entities removeObject:entity];
 	entity.context = nil;
 }
 
-- (BOOL)isEntityInContext:(SRKObject*)entity {
+- (BOOL)isEntityInContext:(SRKEntity*)entity {
 	return [self.entities containsObject:entity];
 }
 
@@ -65,12 +65,12 @@
     
     [SRKTransaction transaction:^{
         
-        for (SRKObject* ob in self.entities) {
+        for (SRKEntity* ob in self.entities) {
             
             if (ob.isMarkedForDeletion) {
                 [ob __removeRaw];
             } else {
-                [ob __commitRawWithObjectChain:[SRKObjectChain new]];
+                [ob __commitRawWithObjectChain:[SRKEntityChain new]];
             }
         }
         

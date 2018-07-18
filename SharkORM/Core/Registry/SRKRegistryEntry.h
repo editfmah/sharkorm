@@ -1,6 +1,6 @@
 //    MIT License
 //
-//    Copyright (c) 2016 SharkSync
+//    Copyright (c) 2010-2018 SharkSync
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy
 //    of this software and associated documentation files (the "Software"), to deal
@@ -23,12 +23,12 @@
 
 #import <Foundation/Foundation.h>
 
-@class SRKObject;
+@class SRKEntity;
 @class SRKEventHandler;
 
 @interface SRKRegistryEntry : NSObject
 
-@property (weak, nonatomic)    SRKObject*       entity;
+@property (weak, nonatomic)    SRKEntity*       entity;
 @property (strong, nonatomic)  NSString*       sourceTable;
 @property (weak, nonatomic)    SRKEventHandler* tableEventHandler;
 

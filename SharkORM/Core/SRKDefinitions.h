@@ -1,6 +1,6 @@
 //    MIT License
 //
-//    Copyright (c) 2016 SharkSync
+//    Copyright (c) 2010-2018 SharkSync
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy
 //    of this software and associated documentation files (the "Software"), to deal
@@ -80,19 +80,17 @@ _Pragma("clang diagnostic pop") \
 } while (0)
 
 typedef enum {
-	SRK_PRIKEY_INTEGER = 1,
-	SRK_PRIKEY_GUID = 2
+    SRK_PRIKEY_INTEGER = 1,
+    SRK_PRIKEY_GUID = 2
 } SRKPrimaryKeyColumnType;
 
-typedef enum {
-	SRK_COLUMN_TYPE_TEXT = 1,
-	SRK_COLUMN_TYPE_NUMBER = 2,
-	SRK_COLUMN_TYPE_DATE = 3,
-	SRK_COLUMN_TYPE_IMAGE = 4,
-	SRK_COLUMN_TYPE_INTEGER = 5,
-	SRK_COLUMN_TYPE_BLOB = 6,
-	SRK_COLUMN_TYPE_ENTITYCLASS = 99,
-	SRK_COLUMN_TYPE_ENTITYCOLLECTION = 100
-} SRKColumnStorageType;
+#define SRK_COLUMN_TYPE_TEXT 1
+#define SRK_COLUMN_TYPE_NUMBER 2
+#define SRK_COLUMN_TYPE_DATE 3
+#define SRK_COLUMN_TYPE_IMAGE 4
+#define SRK_COLUMN_TYPE_INTEGER 5
+#define SRK_COLUMN_TYPE_BLOB 6
+#define SRK_COLUMN_TYPE_ENTITYCLASS 99
+#define SRK_COLUMN_TYPE_ENTITYCOLLECTION 100
 
 #endif /* SRKDefinitions_h */

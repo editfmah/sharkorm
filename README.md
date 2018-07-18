@@ -100,7 +100,7 @@ Example:
 ```
 ```swift
 // Swift
-override class func ignoredProperties() -> [Any] {
+override class func ignoredProperties() -> [String] {
    return ["age","name"]
 }
 ```
@@ -229,22 +229,10 @@ You can then safely use these results anywhere, and because an `SRKResultSet` is
 
 Shark supports indexing by overriding the `indexDefinitionForEntity` method and returning an `SRKIndexDefinition` object which describes all of the indexes that need to be maintained on the object.
 
-`Objective-C`
-```objective-c
-+ (SRKIndexDefinition *)indexDefinitionForEntity {
-    SRKIndexDefinition* idx = [SRKIndexDefinition new];
-    [idx addIndexForProperty:@"name" propertyOrder:SRKIndexSortOrderAscending];
-    [idx addIndexForProperty:@"age" propertyOrder:SRKIndexSortOrderAscending];
-    return idx;
-}
-```
 `Swift`
 ```swift
 override class func indexDefinitionForEntity() -> SRKIndexDefinition {
-	let idx = SRKIndexDefinition()
-	idx.addIndexForProperty("name", propertyOrder: SRKIndexSortOrderAscending)
-	idx.addIndexForProperty("age", propertyOrder: SRKIndexSortOrderAscending)
-	return idx
+    return return SRKIndexDefinition(["name","age"])
 }
 ```
 These will automatically be matched to the appropriate query to aid performance.  All related object properties are automatically indexed as is required for caching.  So there would be no need, for instance, to add in an index for `Person.department` as it will have already been created.

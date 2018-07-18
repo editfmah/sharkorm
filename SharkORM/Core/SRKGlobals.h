@@ -1,6 +1,6 @@
 //    MIT License
 //
-//    Copyright (c) 2016 SharkSync
+//    Copyright (c) 2010-2018 SharkSync
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy
 //    of this software and associated documentation files (the "Software"), to deal
@@ -45,15 +45,6 @@
 
 // locks
 - (id)writeLockObject;
-
-// schema
-- (NSMutableDictionary*)tableSchemas;
-- (NSMutableDictionary*)primaryKeys;
-- (NSMutableDictionary*)primaryTypes;
-
-// relationships
-- (NSMutableArray*)systemEntityRelationships;
-- (NSArray*)systemEntityRelationshipsReadOnly;
 
 // global event callbacks
 - (void)setInsertCallback:(SRKGlobalEventCallback)callback;

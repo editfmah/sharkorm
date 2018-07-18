@@ -1,6 +1,6 @@
 //    MIT License
 //
-//    Copyright (c) 2016 SharkSync
+//    Copyright (c) 2010-2018 SharkSync
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy
 //    of this software and associated documentation files (the "Software"), to deal
@@ -24,14 +24,11 @@
 #import "SharkORM.h"
 #import "Sqlite3.h"
 
-static SRKGlobals* this;
-
 @interface SRKGlobals ()
 
 @property void** handles;
 @property (strong) NSMutableDictionary*     databaseHandleIndex;
 @property (strong) SRKSettings*             sharkORMSettings;
-@property (strong) NSMutableArray*          sharkSystemEntityRelationships;
 @property (strong) NSMutableDictionary*     sharkTableSchemas;
 @property (strong) NSMutableDictionary*     sharkPrimaryKeys;
 @property (strong) NSMutableDictionary*     sharkPrimaryTypes;
@@ -47,7 +44,10 @@ static SRKGlobals* this;
 @implementation SRKGlobals
 
 + (instancetype)sharedObject {
-    if (!this) {
+    
+    static SRKGlobals* this = nil;
+    
+    if (this == nil) {
         this = [SRKGlobals new];
     }
     return this;
@@ -63,10 +63,6 @@ static SRKGlobals* this;
         
         if (!_databaseHandleIndex) {
             _databaseHandleIndex = [NSMutableDictionary new];
-        }
-        
-        if (!_sharkSystemEntityRelationships) {
-            _sharkSystemEntityRelationships = [[NSMutableArray alloc] init];
         }
         
         /* now cache the schemas for fast joins and efficient queries */
@@ -111,6 +107,7 @@ static SRKGlobals* this;
     }
     
     return nil;
+    
 }
 
 - (void*)handleForIndex:(int)index {
@@ -184,18 +181,6 @@ static SRKGlobals* this;
 - (NSMutableDictionary*)primaryTypes {
     @synchronized (_sharkPrimaryTypes) {
         return _sharkPrimaryTypes;
-    }
-}
-
-- (NSMutableArray*)systemEntityRelationships {
-    @synchronized (_sharkSystemEntityRelationships) {
-        return _sharkSystemEntityRelationships;
-    }
-}
-
-- (NSArray*)systemEntityRelationshipsReadOnly {
-    @synchronized (_sharkSystemEntityRelationships) {
-        return [NSArray arrayWithArray:_sharkSystemEntityRelationships];
     }
 }
 

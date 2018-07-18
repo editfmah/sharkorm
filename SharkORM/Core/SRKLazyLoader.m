@@ -1,6 +1,6 @@
 //    MIT License
 //
-//    Copyright (c) 2016 SharkSync
+//    Copyright (c) 2010-2018 SharkSync
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy
 //    of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@
 
 
 #import "SRKLazyLoader.h"
-#import "SRKObject+Private.h"
+#import "SRKEntity+Private.h"
 
 #define RELATE_ONETOONE  1
 #define RELATE_ONETOMANY 2
@@ -50,13 +50,12 @@
 		
 		/* load this entity up based on the relationship */
 		NSString* entityNameInSourceObject = self.relationship.sourceProperty;
-		SRKObject* linked = (id)parentEntity;
+		SRKEntity* linked = (id)parentEntity;
 		NSObject* primaryKey = [linked getField:entityNameInSourceObject];
 		
 		if (primaryKey) {
-			
-			SRKObject* o = [[self.relationship.targetClass alloc] initWithPrimaryKeyValue:primaryKey];
-			return o.exists ? o : nil;
+
+            return [self.relationship.targetClass objectWithPrimaryKeyValue:primaryKey];
 			
 		} else {
 			
@@ -70,10 +69,10 @@
 		
 		/* fetch a set of results for this relationship as one-to-many */
 		
-		NSObject* primaryKey = ((SRKObject*)parentEntity).Id;
+		NSObject* primaryKey = ((SRKEntity*)parentEntity).reflectedPrimaryKeyValue;
 		if (primaryKey) {
 			
-			return [[[self.relationship.targetClass query] whereWithFormat:@"%@=%@ AND %@", self.relationship.targetProperty,primaryKey, self.relationship.restrictions] fetch];
+			return [[[self.relationship.targetClass query] where:@" ? = ? AND ?" parameters:@[ self.relationship.targetProperty,primaryKey, self.relationship.restrictions]] fetch];
 			
 		} else {
 			NSArray* weakArray = [NSArray new];

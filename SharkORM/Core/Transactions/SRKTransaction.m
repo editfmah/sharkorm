@@ -1,6 +1,6 @@
 //    MIT License
 //
-//    Copyright (c) 2016 SharkSync
+//    Copyright (c) 2010-2018 SharkSync
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy
 //    of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@
 #import "SharkORM.h"
 #import "SharkORM+Private.h"
 #import "SRKTransaction+Private.h"
-#import "SRKObject+Private.h"
+#import "SRKEntity+Private.h"
 #import "SRKRegistry.h"
 #import "SRKGlobals.h"
 
@@ -124,7 +124,7 @@ void SRKFailTransaction() {
                 if (transactionResult != SRKTransactionPassed) {
                     
                     // now rollback all the SRKObjects
-                    for (SRKObject* o in transactionReferencedObjects) {
+                    for (SRKEntity* o in transactionReferencedObjects) {
                         // rollback the object using the SRKTransactionInfo.
                         [o rollback];
                     }
@@ -139,7 +139,7 @@ void SRKFailTransaction() {
                     }
                     
                     // now execute the event notifications for all objects within this transaction
-                    for (SRKObject* o in transactionReferencedObjects) {
+                    for (SRKEntity* o in transactionReferencedObjects) {
                         
                         // triger the global callbacks if they have been registered
                         
@@ -179,7 +179,7 @@ void SRKFailTransaction() {
                     
                     // execute any post commit/remove blocks
                     
-                    for (SRKObject* o in transactionReferencedObjects) {
+                    for (SRKEntity* o in transactionReferencedObjects) {
                         if (o.transactionInfo.eventType == SharkORMEventInsert || o.transactionInfo.eventType == SharkORMEventUpdate ) {
                             if (o.commitOptions.postCommitBlock) {
                                 o.commitOptions.postCommitBlock();

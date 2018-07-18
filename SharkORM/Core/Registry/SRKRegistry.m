@@ -1,6 +1,6 @@
 //    MIT License
 //
-//    Copyright (c) 2016 SharkSync
+//    Copyright (c) 2010-2018 SharkSync
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy
 //    of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@
 
 #import "SRKRegistry.h"
 #import "SharkORM.h"
-#import "SRKObject+Private.h"
+#import "SRKEntity+Private.h"
 #import "SRKEventHandler+Private.h"
 #import "SRKRegistryEntry.h"
 
@@ -36,7 +36,7 @@
 @end
 
 /* private methods hidden from the public headers */
-@interface SRKObject ()
+@interface SRKEntity ()
 
 @end
 
@@ -89,20 +89,20 @@ static SRKRegistry* this = nil;
 	NSMutableArray* freedObjects = [NSMutableArray new];
 	NSMutableArray* triggerableEventObjects = [NSMutableArray new];
 	
-	SRKObject* thisEventEntity = event.entity;
+	SRKEntity* thisEventEntity = event.entity;
 	
-	if ((event.event == SharkORMEventUpdate || event.event == SharkORMEventDelete) && thisEventEntity.Id) {
+	if ((event.event == SharkORMEventUpdate || event.event == SharkORMEventDelete) && thisEventEntity.reflectedPrimaryKeyValue) {
 		@synchronized(self.objectRegistry) {
 			
 			NSString* eventTable = [[thisEventEntity class] description];
 			for (SRKRegistryEntry* o in self.objectRegistry) {
 				
-				SRKObject* thisObject = o.entity;
+				SRKEntity* thisObject = o.entity;
 				
 				if (thisObject) {
 					
-					NSNumber *thisId = thisObject.Id;
-					NSNumber *eventId = thisEventEntity.Id;
+					NSNumber *thisId = thisObject.reflectedPrimaryKeyValue;
+					NSNumber *eventId = thisEventEntity.reflectedPrimaryKeyValue;
 					
 					if (thisId) {
 						if ([o.sourceTable isEqualToString:eventTable]) {
@@ -110,7 +110,7 @@ static SRKRegistry* this = nil;
 							if ([thisId isKindOfClass:eventId.class]) {
 								if (([thisId isKindOfClass:[NSNumber class]] && thisId.unsignedLongLongValue == eventId.unsignedLongLongValue) || ([thisId isKindOfClass:[NSString class]] && [((NSString*)thisId) isEqualToString:(NSString*)eventId])) {
 									
-									SRKObject* obj = o.entity;
+									SRKEntity* obj = o.entity;
 									
 									/* check for a domain match */
 									if (o.entity.managedObjectDomain && thisEventEntity.managedObjectDomain && [o.entity.managedObjectDomain isEqualToString:thisEventEntity.managedObjectDomain]) {
@@ -135,7 +135,7 @@ static SRKRegistry* this = nil;
 	}
 	
 	/* trigger any events that we have put by, block may modify the event objects so we can't do it with a lock around the array */
-	for (SRKObject* obj in triggerableEventObjects) {
+	for (SRKEntity* obj in triggerableEventObjects) {
 		[obj triggerInternalEvent:event];
 	}
 	
@@ -153,10 +153,10 @@ static SRKRegistry* this = nil;
 	
 }
 
-- (void)registerObject:(SRKObject *)object {
+- (void)registerObject:(SRKEntity *)object {
 	
 	/* test to see if the object is ready yet, e.g. existing */
-	if (!object.Id) {
+	if (!object.reflectedPrimaryKeyValue) {
 		/* an object without an ID cannot be placed into the registry, as it can have no twins */
 		return;
 	}
@@ -180,9 +180,9 @@ static SRKRegistry* this = nil;
 	
 	@synchronized(self.objectRegistry) {
 		
-		for (SRKObject* object in objects) {
+		for (SRKEntity* object in objects) {
 			/* test to see if the object is ready yet, e.g. existing */
-			if (object.Id) {
+			if (object.reflectedPrimaryKeyValue) {
 				
 				/* an object without an ID cannot be placed into the registry, as it can have no twins */
 				/* create the storage object, needed to maintain a weak reference to the SRKObject */
@@ -226,7 +226,7 @@ static SRKRegistry* this = nil;
 	
 }
 
-- (void)remove:(SRKObject *)object {
+- (void)remove:(SRKEntity *)object {
 	
 	/* create the storage object, needed to maintain a weak reference to the SRKObject */
 	
@@ -240,7 +240,7 @@ static SRKRegistry* this = nil;
 		
 		for (SRKRegistryEntry* o in self.objectRegistry) {
 			
-			SRKObject* obj = o.entity;
+			SRKEntity* obj = o.entity;
 			if (!obj || obj == object) {
 				[freedObjects addObject:o];
 			}

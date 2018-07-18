@@ -1,0 +1,9 @@
+framework module SharkORM {
+    
+    umbrella header "SharkORM.h"
+    
+    export *
+    module * { export * }
+    
+}
+

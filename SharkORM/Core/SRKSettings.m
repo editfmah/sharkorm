@@ -1,6 +1,6 @@
 //    MIT License
 //
-//    Copyright (c) 2016 SharkSync
+//    Copyright (c) 2010-2018 SharkSync
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy
 //    of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,7 @@
 		self.defaultObjectDomain = @"default";
 		NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 		NSString *documentDirectory = [paths objectAtIndex:0];
+        [[NSFileManager defaultManager] createDirectoryAtPath:documentDirectory withIntermediateDirectories:YES attributes:nil error:nil];
 		self.databaseLocation = documentDirectory;
 		self.defaultDatabaseName = @"database";
 		self.encryptionKey = @"bvzdsrthjnbvcxdfrtyuijbvcxdrtyuhjbvcxdfsdfghjcfhjw45678iuojkbnvcxfe5678uijhvgcf";

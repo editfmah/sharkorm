@@ -1,6 +1,6 @@
 //    MIT License
 //
-//    Copyright (c) 2016 SharkSync
+//    Copyright (c) 2010-2018 SharkSync
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy
 //    of this software and associated documentation files (the "Software"), to deal
@@ -21,26 +21,26 @@
 //    SOFTWARE.
 
 #import "SRKTransactionInfo.h"
-#import "SRKObject+Private.h"
+#import "SRKEntity+Private.h"
 
 @implementation SRKTransactionInfo
 
-- (void)copyObjectValuesIntoRestorePoint:(SRKObject*)object {
+- (void)copyObjectValuesIntoRestorePoint:(SRKEntity*)object {
     
     self.originalFieldData = [NSMutableDictionary dictionaryWithDictionary:object.fieldData.copy];
     self.originalChangedValues = [NSMutableDictionary dictionaryWithDictionary:object.changedValues.copy];
-    self.originalPk = object.Id;
+    self.originalPk = object.reflectedPrimaryKeyValue;
     self.originalIsDirty = object.dirty;
     self.originalDirtyFields = [NSMutableDictionary dictionaryWithDictionary:object.dirtyFields.copy];
     self.originalEmbeddedEntities = [NSMutableDictionary dictionaryWithDictionary: object.embeddedEntities.copy];
 
 }
 
-- (void)restoreValuesIntoObject:(SRKObject*)object {
+- (void)restoreValuesIntoObject:(SRKEntity*)object {
     
     object.fieldData = self.originalFieldData;
     object.changedValues = self.originalChangedValues;
-    object.Id = self.originalPk;
+    [object setReflectedPrimaryKeyValue:self.originalPk];
     object.dirty = self.originalIsDirty;
     object.dirtyFields = self.originalDirtyFields;
     object.embeddedEntities = self.originalEmbeddedEntities;

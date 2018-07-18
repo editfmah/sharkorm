@@ -1,6 +1,6 @@
 //    MIT License
 //
-//    Copyright (c) 2016 SharkSync
+//    Copyright (c) 2010-2018 SharkSync
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy
 //    of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@
 #import "SRKUtilities.h"
 #import "SRKJoinObject.h"
 #import "SRKRegistry.h"
-#import "SRKObject+Private.h"
+#import "SRKEntity+Private.h"
 #import "SRKGlobals.h"
 
 @implementation SRKQuery
@@ -42,6 +42,53 @@
 - (SRKQuery*)where:(NSString*)where {
 	self.whereClause = where;
 	return self;
+}
+
+- (SRKQuery*)where:(NSString * _Nonnull)statement parameters:(NSArray * _Nonnull)parameters {
+    
+    // build up all the components finding all the '?' chars
+    NSMutableArray *characters = [[NSMutableArray alloc] initWithCapacity:[statement length]];
+    for (int i=0; i < [statement length]; i++) {
+        NSString *ichar  = [NSString stringWithFormat:@"%c", [statement characterAtIndex:i]];
+        [characters addObject:ichar];
+    }
+    
+    NSString* format = @"";
+    NSMutableArray* params = [NSMutableArray new];
+    int i=0;
+    for (__strong NSString* c in characters) {
+        if ([c isEqualToString:@"?"]) {
+            
+            // this is a parameter
+            id p = [parameters objectAtIndex:i];
+            i++;
+            
+            if ([p isKindOfClass:[NSArray class]] || [p isKindOfClass:[NSSet class]]) {
+                
+                // now strecth out the '?' to match the number of items within the set/array. e.g. ? -> ?,?,?,?,?
+                NSMutableArray* placeHolders = [NSMutableArray new];
+                for (id o in p) {
+                    [placeHolders addObject:@"?"];
+                    [params addObject:o];
+                }
+                
+                c = [placeHolders componentsJoinedByString:@","];
+                
+            } else {
+                
+                [params addObject:p];
+                
+            }
+            
+        }
+        format = [format stringByAppendingString:c];
+    }
+    
+    self.whereClause = format;
+    self.parameters = [NSArray arrayWithArray:params];
+    
+    return self;
+    
 }
 
 - (SRKQuery*)whereWithFormat:(NSString*)format withParameters:(NSArray*)params {
@@ -347,15 +394,19 @@
 	return self;
 }
 
-- (SRKQuery*)orderBy:(NSString*)order {
+- (SRKQuery*)order:(NSString*)order {
     if ([self.orderBy isEqualToString:SRK_DEFAULT_ORDER]) {
         self.orderBy = order;
     } else {
         // we need to append this ORDER BY to an existing one
         self.orderBy = [NSString stringWithFormat:@"%@,%@", self.orderBy, order];
     }
-	
-	return self;
+    
+    return self;
+}
+
+- (SRKQuery*)orderBy:(NSString*)order {
+    return [self order:order];
 }
 
 - (SRKQuery*)orderByDescending:(NSString*)order {
@@ -423,25 +474,20 @@
 	
 }
 
+- (SRKObject*)first {
+    
+    self.limitOf = 1;
+    
+    NSArray* results = [[SharkORM new] fetchEntitySetForQuery:self];
+    if (!results.count) {
+        return nil;
+    }
+    return [results objectAtIndex:0];
+    
+}
+
+
 - (SRKResultSet*)fetch {
-	
-	/* look to see if this request is a FTS query, if so change the restrictions to focus on the fts table */
-	/* the original query may look like name MATCH 'adrian', but these object will be in an fts_ table */
-	if (self.fts) {
-		/*
-		 check to see if this object is actually an FTS object and someone isn't using the wrong query type.
-		 */
-		if (![self.classDecl FTSParametersForEntity]) {
-			SRKError* err = [SRKError new];
-			err.errorMessage = [NSString stringWithFormat:@"You have attempted to query the class '%@' using the fts (Full Text Search) query object.  But this class does not implement the 'FTSParametersForEntity' method, so the query returned no results.", self.classDecl];
-			
-			if ([[[SRKGlobals sharedObject] delegate] respondsToSelector:@selector(databaseError:)]) {
-				[[[SRKGlobals sharedObject] delegate] performSelector:@selector(databaseError:) withObject:err];
-			}
-			return [SRKResultSet new]; /* no results, as no FTS objects to query */
-		}
-		self.whereClause = [NSString stringWithFormat:@"Id IN (SELECT docid FROM fts_%@ WHERE %@)", [self.classDecl description], self.whereClause];
-	}
 	
 	if (!self.batchSize) {
 		
@@ -564,7 +610,7 @@
 	
 	SRKContext* context = [SRKContext new];
 	NSArray* entitys = [self fetch];
-	for (SRKObject* o in entitys) {
+	for (SRKEntity* o in entitys) {
 		o.context = context;
 		[context addEntityToContext:o];
 	}
@@ -575,7 +621,7 @@
 - (NSArray*)fetchIntoContext:(SRKContext*)context {
 	
 	NSArray* entitys = [self fetch];
-	for (SRKObject* o in entitys) {
+	for (SRKEntity* o in entitys) {
 		o.context = context;
 		[context addEntityToContext:o];
 	}
@@ -589,7 +635,7 @@
 	NSMutableDictionary* resultsSet = [[NSMutableDictionary alloc] init];
 	SRKResultSet* queryResult = [self fetch];
 	
-	for (SRKObject* g in queryResult) {
+	for (SRKEntity* g in queryResult) {
 		
 		NSString* keyValue = (NSString*)[g getField:propertyName];
 		if (keyValue) {
@@ -630,7 +676,7 @@
 
 - (SRKQuery*)entityclass:(Class)entityClass {
 	
-	if ([entityClass isSubclassOfClass:[SRKObject class]]) {
+	if ([entityClass isSubclassOfClass:[SRKEntity class]]) {
 		if ([entityClass conformsToProtocol:@protocol(SRKPartialClassDelegate)]) {
 			
 			Class fullClass = [entityClass classIsPartialImplementationOfClass];
