@@ -16,6 +16,5 @@
 #import "StringIdObject.h"
 #import "StringIdRelatedObject.h"
 #import "WidePerson.h"
-#import "SharkORMTests-Swift.h"
 
 #endif /* Header_h */

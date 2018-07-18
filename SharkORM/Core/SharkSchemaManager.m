@@ -420,8 +420,8 @@ static SharkSchemaManager* this;
             if (sqlite3_prepare_v2(handle, indexSQL.UTF8String, (int)indexSQL.length, &indexNames, nil) == SQLITE_OK) {
                 while (sqlite3_step(indexNames) ==  SQLITE_ROW) {
                     
-                    NSString* name = [NSString stringWithUTF8String:(const char*)sqlite3_column_text(columnNames, 0)];
-                    NSString* sql = [NSString stringWithUTF8String:(const char*)sqlite3_column_text(columnNames, 1)];
+                    NSString* name = [NSString stringWithUTF8String:(const char*)sqlite3_column_text(indexNames, 0)];
+                    NSString* sql = [NSString stringWithUTF8String:(const char*)sqlite3_column_text(indexNames, 1)];
                     
                     [SharkSchemaManager.shared databaseAddIndexDefinitionForEntity:table name:name definition:sql];
                     
@@ -583,6 +583,10 @@ static SharkSchemaManager* this;
         // check to see if this table already exists
         if (databases[entity] == nil) {
             
+            if ([entity isEqualToString:@"SmallPerson"]) {
+                int i=0;
+            }
+            
             // completely new table, so we can do this in a single operation
             NSString* sql = @"CREATE TABLE IF NOT EXISTS ";
             sql = [sql stringByAppendingString:entity];
@@ -600,7 +604,9 @@ static SharkSchemaManager* this;
                 sql = @"ALTER TABLE ";
                 sql = [sql stringByAppendingString:entity];
                 sql = [sql stringByAppendingString:@" ADD COLUMN "];
-                sql = [self sqlTextTypeFromColumnType:[self entityTypeToSQLSotrageType:[self schemaPropertyType:entity property:f]]];
+                sql = [sql stringByAppendingString:f];
+                sql = [sql stringByAppendingString:@" "];
+                sql = [sql stringByAppendingString:[self sqlTextTypeFromColumnType:[self entityTypeToSQLSotrageType:[self schemaPropertyType:entity property:f]]]];
                 [SharkORM executeSQL:sql inDatabase:database];
             }
             
@@ -614,6 +620,8 @@ static SharkSchemaManager* this;
                     sql = @"ALTER TABLE ";
                     sql = [sql stringByAppendingString:entity];
                     sql = [sql stringByAppendingString:@" ADD COLUMN "];
+                    sql = [sql stringByAppendingString:f];
+                    sql = [sql stringByAppendingString:@" "];
                     sql = [sql stringByAppendingString:[self sqlTextTypeFromColumnType:[self entityTypeToSQLSotrageType:[self schemaPropertyType:entity property:f]]]];
                     [SharkORM executeSQL:sql inDatabase:database];
                 }

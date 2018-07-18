@@ -159,19 +159,19 @@
     __block int updateCount = 0;
     __block int deleteCount = 0;
     
-    [SharkORM setInsertCallbackBlock:^(SRKObject *entity) {
+    [SharkORM setInsertCallbackBlock:^(SRKEntity * _Nonnull entity) {
         if ([[entity.class description] isEqualToString:@"Person"]) {
             insertCount += 1;
         }
     }];
     
-    [SharkORM setUpdateCallbackBlock:^(SRKObject *entity) {
+    [SharkORM setUpdateCallbackBlock:^(SRKEntity * _Nonnull entity) {
         if ([[entity.class description] isEqualToString:@"Person"]) {
             updateCount += 1;
         }
     }];
     
-    [SharkORM setDeleteCallbackBlock:^(SRKObject *entity) {
+    [SharkORM setDeleteCallbackBlock:^(SRKEntity * _Nonnull entity) {
         if ([[entity.class description] isEqualToString:@"Person"]) {
             deleteCount += 1;
         }

@@ -1,6 +1,6 @@
 Shark Changelog
 ===============
-## v{BUILD} - {DATE}
+## v2.2 - July 18, 2018
 
 After a year of attempting to port the entire product into Swift 3 then 4 then 4.1, we have come to the conclusion that at this precise time it is just not possible.  Instead we have decided to make the interaction between the two languages as smooth and as nice as possible.  So we have strongly typed all methods and properties wherever possible and added extra functionality to data objects to allow a smoother code flow.  It is a shame we wasted over a year, but it became apparent that the "little bugs" were just escalating out of control and there were far too many compromises that would have resulted in a significantly different product, that was not as fluid to use.
 

@@ -440,7 +440,7 @@ Queries can be built up using a FLUENT interface, so every call except a call to
 SRKResultSet* results = [[[[[Person query]
                        		where:@"age = 35"]
                        		limit:99]
-                     	  orderBy:@"name"]
+                     	  order:@"name"]
                         fetch];
 ```
 `Swift`

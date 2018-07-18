@@ -73,17 +73,6 @@
     
 }
 
-- (void)test_check_subclass_swift_object {
-    
-    [self cleardown];
-    
-    SmallPersonSwift* sp = [SmallPersonSwift new];
-    sp.height = @(165);
-    sp.Name = @"Adrian";
-    [sp commit];
-    
-}
-
 - (void)test_check_subclass_object {
     
     [self cleardown];

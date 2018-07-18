@@ -139,7 +139,7 @@
     p.age = 34;
     [p commit];
     
-    NSArray* r = [[[Person query] orderBy:@"Name"] distinct:@"Name"];
+    NSArray* r = [[[Person query] order:@"Name"] distinct:@"Name"];
     XCTAssert(r, @"call to get distinct results failed");
     XCTAssert(r.count == 3, @"number of items returned from distinct call is incorrect");
     XCTAssert([[r objectAtIndex:0] isEqualToString:@"Adrian"], @"order by in distinct failed");
@@ -186,14 +186,14 @@
     
     [self setupCommonData];
     
-    SRKResultSet *r = [[Person query] whereWithFormat:@"Name LIKE %@", makeLikeParameter(@"cha")].fetch;
+    SRKResultSet *r = [[Person query] where:@"Name LIKE ?" parameters:@[@"%cha%"]].fetch;
     
     XCTAssert(r,@"Failed to return a result set");
     XCTAssert(r.count == 1,@"incorrect number of results returned");
     XCTAssert([((Person*)[r objectAtIndex:0]).Name isEqualToString:@"Michael"],@"incorrect number of results returned");
     
     // test for case insensitivity
-    r = [[Person query] whereWithFormat:@"Name LIKE %@", makeLikeParameter(@"chA")].fetch;
+    r = [[Person query] where:@"Name LIKE ?" parameters:@[@"chA"]].fetch;
     
     XCTAssert(r,@"Failed to return a result set");
     
@@ -231,7 +231,7 @@
     
     [self setupCommonData];
     
-    SRKResultSet *r = [[[Person query] where:@"department.name='Test Department' AND location.locationName IS NULL"] orderBy:@"department.name"].fetch;
+    SRKResultSet *r = [[[Person query] where:@"department.name='Test Department' AND location.locationName IS NULL"] order:@"department.name"].fetch;
     
     XCTAssert(r,@"Failed to return a result set");
     XCTAssert(r.count == 3,@"incorrect number of results returned");

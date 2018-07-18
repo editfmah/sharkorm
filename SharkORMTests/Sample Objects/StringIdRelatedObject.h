@@ -7,9 +7,8 @@
 
 #import "SharkORM.h"
 
-@interface StringIdRelatedObject : SRKObject
+@interface StringIdRelatedObject : SRKStringObject
 
-@property (strong, nonatomic) NSString* Id;
 @property (strong) NSString* name;
 
 @end

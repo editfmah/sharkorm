@@ -47,7 +47,7 @@
             @autoreleasepool {
                 SRKResultSet* r = [[[Person query] where:@"seq > 300 AND seq < 800"] fetch];
                 r = [[[Person query] where:@"seq > 300 AND seq < 3000"] fetch];
-                r = [[[[Person query] where:@"seq > 400 AND seq < 450"] orderBy:@"age"]fetch];
+                r = [[[[Person query] where:@"seq > 400 AND seq < 450"] order:@"age"]fetch];
                 r = [[[Person query] where:@"seq > 200 AND seq < 400"] fetch];
                 r = [[[[Person query] where:@"seq > 100 AND seq < 700"] orderByDescending:@"age"]fetch];
                 r = [[[Person query] where:@"seq > 900 AND seq < 8000"] fetch];

@@ -28,7 +28,7 @@
 - (void)test_basic_example_methods {
     
     /* clear all pre-existing data from the entity class */
-    [[[Person query] fetchLightweight] removeAll];
+    [[[Person query] fetchLightweight] remove];
     
     /* now create a new object ready for persistence */
     Person* newPerson = [Person new];

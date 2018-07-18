@@ -298,7 +298,6 @@ typedef enum : int {
                 /* create the revision table */
                 sqlite3_exec(dbHandle, "CREATE TABLE IF NOT EXISTS _schemaRevision (revision INTEGER);", nil, nil, nil);
                 sqlite3_exec(dbHandle, "CREATE TABLE IF NOT EXISTS _entityRevision (entityName TEXT,revision INTEGER);", nil, nil, nil);
-                sqlite3_exec(dbHandle, "CREATE TABLE IF NOT EXISTS _floatPKTable (pkValue INTEGER); DELETE FROM _floatPKTable; INSERT INTO _floatPKTable VALUES (NULL);", nil, nil, nil);
                 
             }
             else

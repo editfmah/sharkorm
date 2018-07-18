@@ -12,10 +12,9 @@
 @dynamic name, location;
 
 + (SRKIndexDefinition *)indexDefinitionForEntity {
-    SRKIndexDefinition* idx = [SRKIndexDefinition new];
-    [idx addIndexForProperty:@"name" propertyOrder:SRKIndexSortOrderAscending];
-    [idx addIndexForProperty:@"age" propertyOrder:SRKIndexSortOrderAscending];
-    return idx;
+    
+    return [[SRKIndexDefinition alloc] init:@[@"name",@"age"]];
+
 }
 
 @end

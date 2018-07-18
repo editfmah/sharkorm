@@ -110,13 +110,11 @@
 		E00320491CFA58FF00240C44 /* Person.m in Sources */ = {isa = PBXBuildFile; fileRef = E003203E1CFA58FF00240C44 /* Person.m */; };
 		E003204A1CFA58FF00240C44 /* StringIdObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E00320401CFA58FF00240C44 /* StringIdObject.m */; };
 		E003204B1CFA58FF00240C44 /* StringIdRelatedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E00320421CFA58FF00240C44 /* StringIdRelatedObject.m */; };
-		E003204C1CFA58FF00240C44 /* SwiftObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00320431CFA58FF00240C44 /* SwiftObjects.swift */; };
 		E003204D1CFA58FF00240C44 /* WidePerson.m in Sources */ = {isa = PBXBuildFile; fileRef = E00320451CFA58FF00240C44 /* WidePerson.m */; };
 		E00320631CFB8F0B00240C44 /* Persistence.m in Sources */ = {isa = PBXBuildFile; fileRef = E00320621CFB8F0B00240C44 /* Persistence.m */; };
 		E0215CA81D195C2700876ABC /* Subclass.m in Sources */ = {isa = PBXBuildFile; fileRef = E0215CA71D195C2700876ABC /* Subclass.m */; };
 		E040B5BF1D1479E900FCC830 /* Examples.m in Sources */ = {isa = PBXBuildFile; fileRef = E040B5BE1D1479E900FCC830 /* Examples.m */; };
 		E040B5C31D14970D00FCC830 /* Joins.m in Sources */ = {isa = PBXBuildFile; fileRef = E040B5C21D14970D00FCC830 /* Joins.m */; };
-		E07C4F2E1D451BAA00DB6CAB /* SwiftStringId.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07C4F2D1D451BAA00DB6CAB /* SwiftStringId.swift */; };
 		E07EFCDB1E904241006AF533 /* SchemaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E07EFCDA1E904241006AF533 /* SchemaTests.m */; };
 		E092CB081D00DBE800C6C8CD /* Performance.m in Sources */ = {isa = PBXBuildFile; fileRef = E092CB071D00DBE800C6C8CD /* Performance.m */; };
 		E0A0CDFB1E016B1500942AE5 /* Transactions.m in Sources */ = {isa = PBXBuildFile; fileRef = E0A0CDFA1E016B1500942AE5 /* Transactions.m */; };
@@ -250,7 +248,6 @@
 		E00320401CFA58FF00240C44 /* StringIdObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StringIdObject.m; sourceTree = "<group>"; };
 		E00320411CFA58FF00240C44 /* StringIdRelatedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringIdRelatedObject.h; sourceTree = "<group>"; };
 		E00320421CFA58FF00240C44 /* StringIdRelatedObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StringIdRelatedObject.m; sourceTree = "<group>"; };
-		E00320431CFA58FF00240C44 /* SwiftObjects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftObjects.swift; sourceTree = "<group>"; };
 		E00320441CFA58FF00240C44 /* WidePerson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WidePerson.h; sourceTree = "<group>"; };
 		E00320451CFA58FF00240C44 /* WidePerson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WidePerson.m; sourceTree = "<group>"; };
 		E00320581CFA5D0000240C44 /* Tests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Tests.h; sourceTree = "<group>"; };
@@ -263,7 +260,6 @@
 		E040B5BE1D1479E900FCC830 /* Examples.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Examples.m; sourceTree = "<group>"; };
 		E040B5C11D14970D00FCC830 /* Joins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Joins.h; sourceTree = "<group>"; };
 		E040B5C21D14970D00FCC830 /* Joins.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Joins.m; sourceTree = "<group>"; };
-		E07C4F2D1D451BAA00DB6CAB /* SwiftStringId.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftStringId.swift; sourceTree = "<group>"; };
 		E07EFCD91E904241006AF533 /* SchemaTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchemaTests.h; sourceTree = "<group>"; };
 		E07EFCDA1E904241006AF533 /* SchemaTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SchemaTests.m; sourceTree = "<group>"; };
 		E092CB061D00DBE800C6C8CD /* Performance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Performance.h; sourceTree = "<group>"; };
@@ -562,8 +558,6 @@
 				E00320401CFA58FF00240C44 /* StringIdObject.m */,
 				E00320411CFA58FF00240C44 /* StringIdRelatedObject.h */,
 				E00320421CFA58FF00240C44 /* StringIdRelatedObject.m */,
-				E00320431CFA58FF00240C44 /* SwiftObjects.swift */,
-				E07C4F2D1D451BAA00DB6CAB /* SwiftStringId.swift */,
 				E00320441CFA58FF00240C44 /* WidePerson.h */,
 				E00320451CFA58FF00240C44 /* WidePerson.m */,
 			);
@@ -904,9 +898,7 @@
 				E040B5BF1D1479E900FCC830 /* Examples.m in Sources */,
 				E003204D1CFA58FF00240C44 /* WidePerson.m in Sources */,
 				E0E3ACD81D11BC6A006803F7 /* Multithreaded.m in Sources */,
-				E07C4F2E1D451BAA00DB6CAB /* SwiftStringId.swift in Sources */,
 				E00320631CFB8F0B00240C44 /* Persistence.m in Sources */,
-				E003204C1CFA58FF00240C44 /* SwiftObjects.swift in Sources */,
 				E00320471CFA58FF00240C44 /* Department.m in Sources */,
 				E0A0CDFB1E016B1500942AE5 /* Transactions.m in Sources */,
 				E0C450C61D10865A003FA21D /* Query.m in Sources */,
@@ -966,6 +958,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MODULEMAP_FILE = ./SharkORM/SharkORM.modulemap;
+				MODULE_NAME = SharkORM;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1011,6 +1005,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MODULEMAP_FILE = ./SharkORM/SharkORM.modulemap;
+				MODULE_NAME = SharkORM;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -1034,7 +1030,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = sharksync.SharkORM;
+				PRODUCT_BUNDLE_IDENTIFIER = io.sharksync.sharmorm;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
@@ -1055,7 +1051,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = sharksync.SharkORM;
+				PRODUCT_BUNDLE_IDENTIFIER = io.sharksync.sharmorm;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;

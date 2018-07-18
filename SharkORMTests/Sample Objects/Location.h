@@ -21,7 +21,7 @@
 //    SOFTWARE.
 
 
-#import <SharkORM/SharkORM.h>
+#import "SharkORM.h"
 #import "Department.h"
 
 @class Department;
