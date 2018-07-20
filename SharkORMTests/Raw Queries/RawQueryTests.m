@@ -23,6 +23,15 @@
     XCTAssert([SharkORM rawQuery:@"SELECT * FROM RawQueryTest"].rowCount == 1, @"RawQuery, row count was incorrect");
     
     XCTAssert([[[SharkORM rawQuery:@"SELECT * FROM RawQueryTest"] valueForColumn:@"value" atRow:0] isEqualToString:@"testing123"], @"RawQuery, retrieved value is incorrect");
+    
+    XCTAssert(((NSNumber*)[[SharkORM rawQuery:@"SELECT * FROM RawQueryTest"] valueForColumn:@"numValue" atRow:0]).intValue == 123, @"RawQuery, retrieved value is incorrect");
+    
+    XCTAssert([[[SharkORM rawQuery:@"SELECT * FROM RawQueryTest"] valueForColumn:@"value" atRow:0] isKindOfClass:[NSString class]], @"RawQuery, class type is incorrect");
+    
+    XCTAssert([[[SharkORM rawQuery:@"SELECT * FROM RawQueryTest"] valueForColumn:@"numValue" atRow:0] isKindOfClass:[NSNumber class]], @"RawQuery, class type is incorrect");
+    
+    XCTAssert([[[SharkORM rawQuery:@"SELECT * FROM RawQueryTest"] valueForColumn:@"blobValue" atRow:0] isKindOfClass:[NSNull class]], @"RawQuery, class type is incorrect");
+    
 }
 
 @end
