@@ -29,6 +29,7 @@ static SyncNetwork* __this;
 @interface SyncNetwork()
 
 @property (strong) dispatch_queue_t queue;
+@property BOOL running;
 
 @end
 
@@ -45,6 +46,10 @@ static SyncNetwork* __this;
 }
 
 - (void)queueNextRequest {
+    
+    if (self.running == NO) {
+        return;
+    }
     
     __weak SyncNetwork* wSelf = self;
     
@@ -132,17 +137,14 @@ dispatch_async(_queue, currentBlock);
 
 - (void)startService {
     
+    self.running = YES;
     // queue an operation block which repetitively calls the service
-    dispatch_resume(_queue);
     [self queueNextRequest];
     
 }
 
 - (void)stopService {
-    if (currentBlock) {
-        dispatch_block_cancel(currentBlock);
-    }
-    dispatch_suspend(_queue);
+    self.running = NO;
 }
 
 @end

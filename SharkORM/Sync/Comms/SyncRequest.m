@@ -42,9 +42,9 @@
     
     SyncRequestObject* r = [SyncRequestObject new];
     
-    r.request[@"app_id"] = SharkSync.Settings.applicationKey;
-    r.request[@"device_id"] = SharkSync.Settings.deviceId;
-    r.request[@"app_api_access_key"] = SharkSync.Settings.accountKey;
+    r.request[@"AppId"] = SharkSync.Settings.applicationKey;
+    r.request[@"DeviceId"] = SharkSync.Settings.deviceId;
+    r.request[@"AppApiAccessKey"] = SharkSync.Settings.accountKey;
     
     // now pull out the changes, as these go into the changes key.
     NSMutableArray* changes = [NSMutableArray new];
@@ -62,14 +62,14 @@
         if (change.entity) { c[@"Entity"] = change.entity; }
         if (change.recordId) { c[@"RecordId"] = change.recordId; }
         if (change.property) { c[@"Property"] = change.property; }
-        if (change.timestamp) { c[@"SecondsAgo"] = @(secondsAgo.unsignedLongLongValue); }
+        if (change.timestamp) { c[@"MillisecondsAgo"] = @(secondsAgo.unsignedLongLongValue); }
         if (change.value) { c[@"Value"] = change.value; }
         
         [changes addObject:c];
         
     }
     
-    r.request[@"changes"] = changes;
+    r.request[@"Changes"] = changes;
     
     
     // now find all of the groups which need servicing based on their frequency
@@ -93,7 +93,7 @@
         [groups addObject:g];
     }
     
-    r.request[@"groups"] = groups;
+    r.request[@"Groups"] = groups;
     
     return r;
     
@@ -124,9 +124,9 @@
             for (NSDictionary<NSString*,id>* change in group[@"Changes"]) {
                 
                 NSString* RecordId = change[@"RecordId"];
-                NSString* Entity = change[@"RecordId"];
-                NSString* Property = change[@"RecordId"];
-                NSString* Value = change[@"RecordId"];
+                NSString* Entity = change[@"Entity"];
+                NSString* Property = change[@"Property"];
+                NSString* Value = change[@"Value"];
                 
                 if (RecordId && Entity && Property) {
                     

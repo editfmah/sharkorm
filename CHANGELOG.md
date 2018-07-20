@@ -1,5 +1,9 @@
 Shark Changelog
 ===============
+## v2.3.xx - July 20, 2018
+
+This version addresses some beta test issues withthe SharkSync.io platofrm, as well as improving documentation for the ORM.  All documentation is now solely focused towards Swift 4, examples will no longer be provided for objective-c.
+
 ## v2.2.xx - July 18, 2018
 
 After a year of attempting to port the entire product into Swift 3 then 4 then 4.1, we have come to the conclusion that at this precise time it is just not possible.  Instead we have decided to make the interaction between the two languages as smooth and as nice as possible.  So we have strongly typed all methods and properties wherever possible and added extra functionality to data objects to allow a smoother code flow.  It is a shame we wasted over a year, but it became apparent that the "little bugs" were just escalating out of control and there were far too many compromises that would have resulted in a significantly different product, that was not as fluid to use.

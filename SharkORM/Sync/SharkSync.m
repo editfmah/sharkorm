@@ -154,7 +154,7 @@ typedef NSImage XXImage;
     
     NSString* vg = visibilityGroup;
     
-    [[[[[SharkSyncGroup query] where:@"groupName = ?" parameters:@[vg]]  limit:1] fetch] remove];
+    [[[[[SharkSyncGroup query] where:@"name = ?" parameters:@[vg]]  limit:1] fetch] remove];
     
     // now we need to remove all the records which were part of this visibility group
     for (SRKSyncRegisteredClass* c in [[SRKSyncRegisteredClass query] fetch]) {
@@ -559,7 +559,7 @@ typedef NSImage XXImage;
         self.encryptBlock = nil;
         self.decryptBlock = nil;
         self.defaultPollInterval = 60;
-        self.serviceUrl = @"http://api.testingallthethings.net/Api/Sync";
+        self.serviceUrl = @"https://api.testingallthethings.net/Api/Sync";
         
     }
     return self;

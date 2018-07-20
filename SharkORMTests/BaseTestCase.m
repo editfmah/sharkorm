@@ -14,6 +14,7 @@
 
     [SharkORM setDelegate:self];
     [SharkORM openDatabaseNamed:@"Persistence"];
+    [SharkORM rawQuery:@"DROP TABLE IF EXISTS RawQueryTest;"];
     self.currentError = nil;
     
 }
