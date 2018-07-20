@@ -34,4 +34,15 @@
     
 }
 
+- (void)test_raw_pragma {
+    
+    XCTAssert([[[SharkORM rawQuery:@"PRAGMA data_version;"] valueForColumn:@"data_version" atRow:0] isKindOfClass:[NSNumber class]], @"RawQuery, class type is incorrect");
+    
+    XCTAssert([SharkORM rawQuery:@"PRAGMA data_version;"].rowCount == 1, @"RawQuery, row count was incorrect");
+    
+    XCTAssert(((NSNumber*)[[SharkORM rawQuery:@"PRAGMA data_version;"] valueForColumn:@"data_version" atRow:0]).intValue == 2, @"RawQuery, retrieved value is incorrect");
+    
+}
+
+
 @end

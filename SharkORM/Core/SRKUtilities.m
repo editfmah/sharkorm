@@ -40,6 +40,11 @@
     /* detect the column type and convert to an objective_c object */
     
     NSObject* value = nil;
+    const char* constTableName = sqlite3_column_table_name(stmt, i);
+    NSString* tableName = nil;
+    if (constTableName) {
+        tableName = [NSString stringWithUTF8String:constTableName];
+    }
     
     switch (sqlite3_column_type(stmt, i)) {
         case SQLITE_INTEGER:
@@ -47,7 +52,7 @@
             value = [NSNumber numberWithLongLong:sqlite3_column_int64(stmt, i)];
             
             /* the result could be a date so check the class  column type */
-            NSString* tableName = [NSString stringWithUTF8String:sqlite3_column_table_name(stmt, i)];
+            
             if (tableName) {
                 
                 NSString* columnName = [NSString stringWithUTF8String:sqlite3_column_name(stmt, i)];
@@ -70,7 +75,6 @@
             value = [NSNumber numberWithDouble:sqlite3_column_double(stmt, i)];
             
             /* the result could be a date so check the column type */
-            NSString* tableName = [NSString stringWithUTF8String:sqlite3_column_table_name(stmt, i)];
             if (tableName) {
                 NSString* columnName = [NSString stringWithUTF8String:sqlite3_column_name(stmt, i)];
                 SRKUtilities* dba = [SRKUtilities new];
@@ -91,7 +95,6 @@
             NSData* stringData = [NSData dataWithBytes:sqlite3_column_text16(stmt, i) length:sqlite3_column_bytes16(stmt, i)];
             value = [NSString stringWithCharacters:stringData.bytes length:sqlite3_column_bytes16(stmt, i)/2];
             
-            const char* tableName = sqlite3_column_table_name(stmt, i);
             NSString* columnName = [NSString stringWithUTF8String:sqlite3_column_name(stmt, i)];
             SRKUtilities* dba = [SRKUtilities new];
             columnName = [dba originalColumnName:columnName];
@@ -99,13 +102,13 @@
             if (!tableName) {
                 break;
             }
-            Class entityClass = NSClassFromString([NSString stringWithUTF8String:tableName]);
+            Class entityClass = NSClassFromString(tableName);
             if (!entityClass) {
                 // we need to trap if this is a FQDN swift classs name.
-                entityClass = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:[NSString stringWithUTF8String:tableName]]);
+                entityClass = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:tableName]);
             }
             if (entityClass) {
-                switch ([SharkSchemaManager.shared schemaPropertyType:[NSString stringWithUTF8String:tableName] property:columnName]) {
+                switch ([SharkSchemaManager.shared schemaPropertyType:tableName property:columnName]) {
                     case SRK_PROPERTY_TYPE_STRING:
                         // do nothing, because value is already a string.
                         break;
