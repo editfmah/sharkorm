@@ -566,7 +566,7 @@ static SharkSchemaManager* this;
 
 - (void)refactorDatabase:(NSString*)database entity:(NSString*)entity {
     
-    if (!database || [database isEqualToString:@""]) {
+    if (database != nil || [database isEqualToString:@""]) {
         
         // this is blank, so grab the default
         
