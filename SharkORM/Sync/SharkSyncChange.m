@@ -26,7 +26,7 @@
 
 @implementation SharkSyncChange
 
-@dynamic action,entity,property,recordGroup,recordId,sync_op,value,timestamp;
+@dynamic action,entity,property,recordGroup,recordId,value,timestamp;
 
 - (void)entityDidInsert {
     [SharkSync addChangesWritten:1];

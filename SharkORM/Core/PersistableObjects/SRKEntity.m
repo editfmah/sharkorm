@@ -1574,8 +1574,15 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
     Class originalClass = ((SRKEntity*)self).class;
     self = [originalClass new];
     if (self) {
-        for (NSString* property in initialValues.allKeys) {
-            setPropertyIMP(self, [[SRKUtilities new] generateSetSelectorForPropertyName:property], [initialValues valueForKey:property]);
+        for (NSString* key in initialValues.allKeys) {
+            // directly set the values into the backstore, if there is a match on field
+            for (NSString* field in self.fieldNames) {
+                // make the compare case insensitive to play nice with JSON services.  As case is ignored by SQLite anyway, it seems a superfluous restriction.
+                if ([key.lowercaseString isEqualToString:field.lowercaseString]) {
+                    // match, set the value
+                    [self setField:field value:[initialValues valueForKey:key]];
+                }
+            }
         }
     }
     return self;

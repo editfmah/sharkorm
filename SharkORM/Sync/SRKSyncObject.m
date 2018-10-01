@@ -205,11 +205,14 @@
             return nil;
         }
     }
-    Class cl = [[NSClassFromString(cls) new] objectWithPrimaryKeyValue:pk];
+    Class cl = NSClassFromString(cls);
     if (!cl) {
         cl = NSClassFromString([[SRKGlobals sharedObject] getFQNameForClass:cls]);
     }
-    return [cl objectWithPrimaryKeyValue:pk];
+    if (cl != nil) {
+        return [cl objectWithPrimaryKeyValue:pk];
+    }
+    return nil;
 }
 
 + (SRKSyncObject *)objectFromClass:(NSString *)cls {

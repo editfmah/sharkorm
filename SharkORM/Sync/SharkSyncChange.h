@@ -32,6 +32,5 @@
 @property (strong) NSString* value;
 @property int action;
 @property (strong) NSString* recordGroup;
-@property (strong) NSString* sync_op;
 
 @end

@@ -28,7 +28,8 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.request = [NSMutableDictionary new];
+        self.request = [NSMutableDictionary dictionaryWithDictionary:SharkSync.Settings.defaultPostValues];
+        
     }
     return self;
 }
@@ -45,6 +46,7 @@
     r.request[@"AppId"] = SharkSync.Settings.applicationKey;
     r.request[@"DeviceId"] = SharkSync.Settings.deviceId;
     r.request[@"AppApiAccessKey"] = SharkSync.Settings.accountKey;
+    r.hashes = [NSMutableDictionary new];
     
     // now pull out the changes, as these go into the changes key.
     NSMutableArray* changes = [NSMutableArray new];
@@ -95,11 +97,15 @@
     
     r.request[@"Groups"] = groups;
     
+    NSLog(@"Request: %@", [NSDate date]);
+    
     return r;
     
 }
 
 + (void)handleResponse:(NSDictionary *)response request:(SyncRequestObject *)request {
+    
+    NSLog(@"Responded: %@", [NSDate date]);
     
     if (response[@"Success"] && ((NSNumber*)response[@"Success"]).boolValue == NO) {
         return;
@@ -238,6 +244,15 @@
             }
             
         }
+        
+        // there have been changes, so lets execute the change notification block
+        if ([SharkSync sharedObject].changeBlock) {
+            
+            SharkSyncChanges* changes = [SharkSyncChanges new];
+            
+            
+        }
+        
     }
     
 }

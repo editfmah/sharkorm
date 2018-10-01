@@ -28,19 +28,19 @@ static SyncNetwork* __this;
 
 @interface SyncNetwork()
 
-@property (strong) dispatch_queue_t queue;
+@property (strong) NSURLSession* session;
 @property BOOL running;
 
 @end
 
 @implementation SyncNetwork {
-    dispatch_block_t currentBlock;
+    
 }
 
 + (instancetype)sharedInstance {
     if (!__this) {
         __this = [SyncNetwork new];
-        __this.queue = dispatch_queue_create("SharkSync.io.SyncQueue", nil);
+        __this.session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
     }
     return __this;
 }
@@ -52,8 +52,6 @@ static SyncNetwork* __this;
     }
     
     __weak SyncNetwork* wSelf = self;
-    
-    currentBlock = ^(){
         
         @synchronized([SharkSync sharedObject].currentGroups) {
             
@@ -68,9 +66,7 @@ static SyncNetwork* __this;
                 
                 // create a request object and then, if it contains data, dispatch it on the queue
                 SyncRequestObject* reqObject = [SyncRequest generateSyncRequest];
-                
-                NSURL *url = [NSURL URLWithString:SharkSync.Settings.serviceUrl];
-                NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+                NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL: [NSURL URLWithString:SharkSync.Settings.serviceUrl] cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:60];
                 
                 NSError *error;
                 NSData *jsonData = [NSJSONSerialization dataWithJSONObject:reqObject.request options:0 error:&error];
@@ -89,8 +85,7 @@ static SyncNetwork* __this;
                     [request setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[requestData length]] forHTTPHeaderField:@"Content-Length"];
                     [request setHTTPBody: requestData];
                     
-                    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-                        // this runs on background thread
+                    NSURLSessionDataTask* dataTask = [self.session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
                         
                         if (error != nil) {
                             [SyncRequest handleError:error request:reqObject];
@@ -120,8 +115,10 @@ static SyncNetwork* __this;
                         [wSelf queueNextRequest];
                         return;
                         
-                        
                     }];
+                    
+                    [dataTask resume];
+                    
                 }
                 
             } else {
@@ -129,9 +126,6 @@ static SyncNetwork* __this;
                 [wSelf queueNextRequest];
         }
     }
-};
-
-dispatch_async(_queue, currentBlock);
 
 }
 

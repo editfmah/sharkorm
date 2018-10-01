@@ -1131,8 +1131,8 @@ typedef void(^SharkSyncChangesReceived)(SharkSyncChanges* _Nonnull changes, NSEr
 
 @end
 
-typedef NSData* _Nullable(^SharkSyncEncryptionBlock)(NSData* _Nonnull dataToEncrypt);
-typedef NSData* _Nullable(^SharkSyncDecryptionBlock)(NSData* _Nonnull dataToDecrypt);
+typedef NSString* _Nullable(^SharkSyncEncryptionBlock)(NSString* _Nonnull stringValueEncrypt);
+typedef NSString* _Nullable(^SharkSyncDecryptionBlock)(NSString* _Nonnull stringValueDecrypt);
 
 @interface SharkSyncSettings : NSObject
 
@@ -1167,6 +1167,22 @@ typedef NSData* _Nullable(^SharkSyncDecryptionBlock)(NSData* _Nonnull dataToDecr
 /** When true, if a record is committed into a group to which the device is not subscribed the device will automatically register for that new group.
  */
 @property BOOL      autoSubscribeToGroupsWhenCommiting;
+
+/** Additional dedfault values to be posted to the API service with every call
+ */
+@property (strong, nonnull) NSMutableDictionary* defaultPostValues;
+
+@end
+
+
+@interface SharkSyncChanges : NSObject
+
+/** entities returns an array of the entitiy names that were modified during the recent synchronisation request
+ */
+- (NSArray<NSString*>*)entities;
+/** returns the primary key values which were modified for a particular entity
+ */
+- (NSArray<NSString*>*)primaryKeysForEntity:(NSString*)entity;
 
 @end
 

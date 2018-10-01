@@ -381,7 +381,7 @@ Returns a count of the query, the same as `COUNT(*)` would.
 Returns a `SUM(field)` value from the supplied property name, these can also be compound, such as `SUM(property1 + property2)`.
 ### distinct
 Returns an NSArray of the distinct values for a particular column, it is used like `distinct("surname")`.
-### groupBy
+### group
 Returns an NSDictionary, which is grouped by the specified property `groupBy("surname")`.
 ### ids
 Returns the PK values of the matching objects, this is a faster way to store results for use in a subquery.  Although, in practice it is little faster than using lightweight objects.

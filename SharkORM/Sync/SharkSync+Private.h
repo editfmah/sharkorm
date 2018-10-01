@@ -38,23 +38,6 @@
 
 typedef enum : uint8_t {
     
-    SharkSyncPropertyTypeText = 0x01,
-    SharkSyncPropertyTypeNumber = 0x02,
-    SharkSyncPropertyTypeImage = 0x03,
-    SharkSyncPropertyTypeDate = 0x04,
-    SharkSyncPropertyTypeBytes = 0x05,
-    SharkSyncPropertyTypeArray = 0x06,
-    SharkSyncPropertyTypeMutableArray = 0x07,
-    SharkSyncPropertyTypeDictionary = 0x08,
-    SharkSyncPropertyTypeMutableDictionary = 0x09,
-    SharkSyncPropertyTypeNull = 0x0A,
-    SharkSyncPropertyTypeEntityString = 0x0B,
-    SharkSyncPropertyTypeEntityNumeric = 0x0C,
-    
-} SharkSyncPropertyType;
-
-typedef enum : uint8_t {
-    
     SharkSyncEncryptionTypeAES256v1 = 0x01,
     SharkSyncEncryptionTypeUser = 0xFF,
     
@@ -87,8 +70,8 @@ typedef enum : NSUInteger {
 + (nonnull instancetype)sharedObject;
 + (void)addChangesWritten:(uint64_t)changes;
 
-+ (nullable NSData *)SRKAES256EncryptWithKey:(nonnull NSString *)key data:(nonnull NSData*)data;
-+ (nullable NSData *)SRKAES256DecryptWithKey:(nonnull NSString *)key data:(nonnull NSData*)data;
++ (nullable NSString *)SRKAES256EncryptWithKey:(nonnull NSString *)key data:(nonnull NSString*)data;
++ (nullable NSString *)SRKAES256DecryptWithKey:(nonnull NSString *)key data:(nonnull NSString*)data;
 
 @end
 
