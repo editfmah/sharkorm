@@ -40,15 +40,22 @@
     Person* p = [Person new];
     
     p.age = 65;
+    p.payrollNumber = 100001;
     p.Name = nil;
     NSDictionary* dict = [p asDictionary];
     
     NSLog(@"dict: %@", dict);
     
+    XCTAssert([dict[@"Id"] isEqual:[NSNull null]], @"dict[Id] is wrong!");
+    XCTAssert([dict[@"age"] isEqual:@(65)], @"dict[age] is wrong!");
+    XCTAssert([dict[@"payrollNumber"] isEqual:@(100001)], @"dict[payrollNumber] is wrong!");
+    XCTAssert([dict[@"Name"] isEqual:[NSNull null]], @"dict[Name] is wrong!");
+
     Person* p2 = [[Person alloc] initWithDictionary:dict];
     
-    XCTAssert(p2.age == 65 ,@"failed to establish age");
-    XCTAssert(p2.Name == nil ,@"failed to clear name");
+    XCTAssert(p2.age == 65,@"failed to establish age");
+    XCTAssert(p2.payrollNumber == 100001,@"failed to establish payrollNumber");
+    XCTAssert(p2.Name == nil, @"failed to clear name");
 }
 
 @end
