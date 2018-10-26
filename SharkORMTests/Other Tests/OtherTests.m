@@ -36,4 +36,19 @@
     NSLog(@"%@",p);
 }
 
+- (void)test_asDictionary {
+    Person* p = [Person new];
+    
+    p.age = 65;
+    p.Name = nil;
+    NSDictionary* dict = [p asDictionary];
+    
+    NSLog(@"dict: %@", dict);
+    
+    Person* p2 = [[Person alloc] initWithDictionary:dict];
+    
+    XCTAssert(p2.age == 65 ,@"failed to establish age");
+    XCTAssert(p2.Name == nil ,@"failed to clear name");
+}
+
 @end
