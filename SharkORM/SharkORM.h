@@ -39,6 +39,8 @@
 @class SRKObject;
 @class SRKStringObject;
 
+NSString* _Nonnull makeLikeParameter(NSString* _Nonnull stmt);
+
 typedef void(^SRKTransactionBlockBlock)(void);
 
 /**
@@ -258,8 +260,8 @@ NS_ASSUME_NONNULL_END
 @interface SRKRelationship : NSObject {
     
 }
-@property Class                                       sourceClass;
-@property Class                                       targetClass;
+@property (nonnull) Class                             sourceClass;
+@property (nonnull) Class                             targetClass;
 @property (nonatomic, strong, nullable) NSString*     sourceProperty;
 @property (nonatomic, strong, nullable) NSString*     targetProperty;
 @property (nonatomic, strong, nullable) NSString*     linkTable;
@@ -1114,7 +1116,7 @@ typedef void(^SharkSyncChangesReceived)(SharkSyncChanges* _Nonnull changes, NSEr
 + (nonnull SharkSyncSettings*)Settings;
 /** If set, this block gets called after a successful sync operation where changes were downloaded and written to the datastore.  The block is called with the changes as a Change Object and an error if there was a prolem talking to the service.
  */
-+ (void)setChangeNotification:(SharkSyncChangesReceived)changeBlock;
++ (void)setChangeNotification:(SharkSyncChangesReceived _Nonnull)changeBlock;
 // group management
 /** Adds a new visibility group into the registry.  That group will then be synchronised with the service from that moment on.
  *  @param visibilityGroup, the visibility group that is to be added to the device.
@@ -1179,10 +1181,10 @@ typedef NSString* _Nullable(^SharkSyncDecryptionBlock)(NSString* _Nonnull string
 
 /** entities returns an array of the entitiy names that were modified during the recent synchronisation request
  */
-- (NSArray<NSString*>*)entities;
+- (NSArray<NSString*>* _Nonnull)entities;
 /** returns the primary key values which were modified for a particular entity
  */
-- (NSArray<NSString*>*)primaryKeysForEntity:(NSString*)entity;
+- (NSArray<NSString*>* _Nonnull)primaryKeysForEntity:(NSString* _Nonnull)entity;
 
 @end
 

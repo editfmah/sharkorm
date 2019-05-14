@@ -21,7 +21,7 @@
 //    SOFTWARE.
 
 
-#import <SharkORM/SharkORM.h>
+#import "SharkORM.h"
 
 @interface SharkSyncGroup : SRKObject
 

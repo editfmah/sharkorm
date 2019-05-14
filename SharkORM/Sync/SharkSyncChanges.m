@@ -10,6 +10,12 @@
 
 @implementation SharkSyncChanges
 
+- (NSArray<NSString *> * _Nonnull)entities {
+    return [NSArray new];
+}
 
+- (NSArray<NSString *> * _Nonnull)primaryKeysForEntity:(NSString * _Nonnull)entity {
+    return [NSArray new];
+}
 
 @end
