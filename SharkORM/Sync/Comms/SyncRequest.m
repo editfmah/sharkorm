@@ -246,12 +246,12 @@
         }
         
         // there have been changes, so lets execute the change notification block
-        if ([SharkSync sharedObject].changeBlock) {
-            
-            SharkSyncChanges* changes = [SharkSyncChanges new];
-            
-            
-        }
+//        if ([SharkSync sharedObject].changeBlock) {
+//            
+//            SharkSyncChanges* changes = [SharkSyncChanges new];
+//            
+//            
+//        }
         
     }
     

@@ -50,7 +50,7 @@
 		3AF67F6D20FEF9140013FA97 /* SRKQuery+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF67F0520FEF9140013FA97 /* SRKQuery+Private.h */; };
 		3AF67F6E20FEF9140013FA97 /* SRKQueryAsyncHandler+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF67F0620FEF9140013FA97 /* SRKQueryAsyncHandler+Private.h */; };
 		3AF67F8920FEF9140013FA97 /* SharkORM.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF67F2320FEF9140013FA97 /* SharkORM.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3AF67F8A20FEF9140013FA97 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AF67F2520FEF9140013FA97 /* sqlite3.c */; };
+		3AF67F8A20FEF9140013FA97 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AF67F2520FEF9140013FA97 /* sqlite3.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		3AF67F8B20FEF9140013FA97 /* sqlite mods.txt in Resources */ = {isa = PBXBuildFile; fileRef = 3AF67F2620FEF9140013FA97 /* sqlite mods.txt */; };
 		3AF67F8C20FEF9140013FA97 /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF67F2720FEF9140013FA97 /* sqlite3.h */; };
 		3AF67F8D20FEF9140013FA97 /* sqlite3ext.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF67F2820FEF9140013FA97 /* sqlite3ext.h */; };
@@ -1014,7 +1014,6 @@
 				MODULEMAP_FILE = ./SharkORM/SharkORM.modulemap;
 				MODULE_NAME = SharkORM;
 				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
