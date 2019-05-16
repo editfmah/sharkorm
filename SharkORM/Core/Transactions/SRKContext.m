@@ -25,6 +25,7 @@
 #import "SharkORM.h"
 #import "SRKEntity+Private.h"
 #import "SharkORM+Private.h"
+#import "SharkSync+Private.h"
 #import "SRKEntityChain.h"
 
 @interface SRKContext ()

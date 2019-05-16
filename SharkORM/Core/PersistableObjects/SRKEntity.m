@@ -29,6 +29,7 @@
 #import "SRKQuery+Private.h"
 #import "SRKDefinitions.h"
 #import "SharkORM+Private.h"
+#import "SharkSync+Private.h"
 #import "SRKUtilities.h"
 #import "SRKIndexDefinition+Private.h"
 #import "SRKLazyLoader.h"
