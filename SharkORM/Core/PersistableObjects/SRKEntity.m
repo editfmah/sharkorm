@@ -2219,6 +2219,11 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
             /* now remove the primary key now the event has been broadcast */
             self.Id = nil;
             
+            /* reset the commit options */
+            if(self.commitOptions.resetOptionsAfterCommit) {
+                [self.commitOptions setDefaultOptions];
+            }
+            
             return YES;
         }
     }
@@ -2238,6 +2243,12 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
         self.isMarkedForDeletion = YES;
         
     }
+    
+    /* reset the commit options */
+    if(self.commitOptions.resetOptionsAfterCommit) {
+        [self.commitOptions setDefaultOptions];
+    }
+    
     return YES;
 }
 
@@ -2337,6 +2348,11 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
                     self.dirty = NO;
                 }
                 
+                /* reset the commit options */
+                if(self.commitOptions.resetOptionsAfterCommit) {
+                    [self.commitOptions setDefaultOptions];
+                }
+                
                 return YES;
                 
             }
@@ -2407,12 +2423,22 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
                     self.dirty = NO;
                 }
                 
+                /* reset the commit options */
+                if(self.commitOptions.resetOptionsAfterCommit) {
+                    [self.commitOptions setDefaultOptions];
+                }
+                
                 return YES;
                 
             }
             
         }
         
+    }
+    
+    /* reset the commit options */
+    if(self.commitOptions.resetOptionsAfterCommit) {
+        [self.commitOptions setDefaultOptions];
     }
     
     return NO;
@@ -2460,6 +2486,12 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
         }
         
     }
+    
+    /* reset the commit options */
+    if(self.commitOptions.resetOptionsAfterCommit) {
+        [self.commitOptions setDefaultOptions];
+    }
+    
     return YES;
 }
 
