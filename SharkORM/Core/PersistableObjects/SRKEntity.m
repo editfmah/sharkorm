@@ -2473,7 +2473,11 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
     
     if(!self.context) {
         
-        [self __commitRawWithObjectChain:[SRKEntityChain new]];
+        if ([self isKindOfClass:[SRKSyncObject class]]) {
+            [((SRKSyncObject*)self) __commitRawWithObjectChain:[SRKEntityChain new] group:((SRKSyncObject*)self).getRecordGroup];
+        } else {
+            [self __commitRawWithObjectChain:[SRKEntityChain new]];
+        }
         
     } else {
         

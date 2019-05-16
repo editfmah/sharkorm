@@ -65,8 +65,8 @@
 #define SRK_COMMIT_TRANSACTION_STATEMENT		@"COMMIT TRANSACTION;"
 #define SRK_ROLLBACK_TRANSACTION_STATEMENT		@"ROLLBACK TRANSACTION;"
 
-#define SRK_FIELD_NAME_FORMAT                   @"%@.%@ as result$%@"
-#define SRK_JOINED_FIELD_NAME_FORMAT            @"%@.%@ as result$%@_$_%@"
+#define SRK_FIELD_NAME_FORMAT                   @"%@.'%@' as result$%@"
+#define SRK_JOINED_FIELD_NAME_FORMAT            @"%@.'%@' as result$%@_$_%@"
 
 
 #define SRK_DEFAULT_PRIMARY_KEY_NAME				@"Id"

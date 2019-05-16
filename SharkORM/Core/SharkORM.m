@@ -705,24 +705,19 @@ void stringFromDate(sqlite3_context *context, int argc, sqlite3_value **argv)
             
             sqlite3_stmt* statement;
             
-            NSString* fieldNames = @"";
-            NSString* placeholders = @"";
-            NSMutableArray* keys = [[NSMutableArray alloc] init];
+			NSMutableArray<NSString*>* fieldNames = [NSMutableArray new];
+			NSMutableArray<NSString*>* placeholders = [NSMutableArray new];
+            NSMutableArray<NSString*>* keys = [[NSMutableArray alloc] init];
+			
             for (NSString* key in [entity fieldNames]) {
                 
                 [keys addObject:key];
-                
-                if ([fieldNames length]) {
-                    fieldNames = [fieldNames stringByAppendingString:@", "];
-                    placeholders = [placeholders stringByAppendingString:@", "];
-                }
-                
-                fieldNames = [fieldNames stringByAppendingString:key];
-                placeholders = [placeholders stringByAppendingString:@"?"];
+				[fieldNames addObject:[NSString stringWithFormat:@"'%@'", key]];
+				[placeholders addObject:@"?"];
                 
             }
             
-            NSString* sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ (%@) VALUES (%@);", className , fieldNames, placeholders];
+            NSString* sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ (%@) VALUES (%@);", className , [fieldNames componentsJoinedByString:@","], [placeholders componentsJoinedByString:@","]];
             
             if (sqlite3_prepare_v2([SharkORM handleForDatabase:databaseNameForClass], [sql UTF8String], (int)sql.length, &statement, NULL) == SQLITE_OK) {
                 

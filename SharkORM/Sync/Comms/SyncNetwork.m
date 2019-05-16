@@ -34,111 +34,120 @@ static SyncNetwork* __this;
 @end
 
 @implementation SyncNetwork {
-    
+	
 }
 
 + (instancetype)sharedInstance {
-    if (!__this) {
-        __this = [SyncNetwork new];
-        __this.session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-    }
-    return __this;
+	if (!__this) {
+		__this = [SyncNetwork new];
+		__this.session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration]];
+	}
+	return __this;
 }
 
 - (void)queueNextRequest {
-    
-    if (self.running == NO) {
-        return;
-    }
-    
-    __weak SyncNetwork* wSelf = self;
-        
-        @synchronized([SharkSync sharedObject].currentGroups) {
-            
-            int count = 0;
-            uint64_t time = @([NSDate date].timeIntervalSince1970 * 1000).unsignedLongLongValue;
-            for (SharkSyncGroup* g in [SharkSync sharedObject].currentGroups) {
-                if ((g.lastPolled + g.frequency) < time) {
-                    count++;
-                }
-            }
-            if ([SharkSync sharedObject].countOfChangesToSyncUp > 0 || count != 0) {
-                
-                // create a request object and then, if it contains data, dispatch it on the queue
-                SyncRequestObject* reqObject = [SyncRequest generateSyncRequest];
-                NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL: [NSURL URLWithString:SharkSync.Settings.serviceUrl] cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:60];
-                
-                NSError *error;
-                NSData *jsonData = [NSJSONSerialization dataWithJSONObject:reqObject.request options:0 error:&error];
-                
-                NSString *jsonString;
-                if (! jsonData) {
-                    NSLog(@"Got an error: %@", error);
-                } else {
-                    jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-                    
-                    NSData *requestData = [NSData dataWithBytes:[jsonString UTF8String] length:[jsonString lengthOfBytesUsingEncoding:NSUTF8StringEncoding]];
-                    
-                    [request setHTTPMethod:@"POST"];
-                    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-                    [request setValue:@"application/json; charset=UTF-8" forHTTPHeaderField:@"Content-Type"];
-                    [request setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[requestData length]] forHTTPHeaderField:@"Content-Length"];
-                    [request setHTTPBody: requestData];
-                    
-                    NSURLSessionDataTask* dataTask = [self.session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-                        
-                        if (error != nil) {
-                            [SyncRequest handleError:error request:reqObject];
-                            [NSThread sleepForTimeInterval:5];
-                            [wSelf queueNextRequest];
-                            return;
-                        }
-                        
-                        if (response && ((NSHTTPURLResponse*)response).statusCode != 200) {
-                            [SyncRequest handleError:[NSError errorWithDomain:@"sharksync.io.error" code:((NSHTTPURLResponse*)response).statusCode userInfo:@{@"HTTP Error Code" : @"A response code other than 200 was received by the ORM."}] request:reqObject];
-                            [NSThread sleepForTimeInterval:5];
-                            [wSelf queueNextRequest];
-                            return;
-                        }
-                        
-                        error = nil;
-                        NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-                        if (error) {
-                            [SyncRequest handleError:error request:reqObject];
-                            [NSThread sleepForTimeInterval:5];
-                            [wSelf queueNextRequest];
-                            return;
-                        }
-                        
-                        [SyncRequest handleResponse:json request:reqObject];
-                        [NSThread sleepForTimeInterval:1];
-                        [wSelf queueNextRequest];
-                        return;
-                        
-                    }];
-                    
-                    [dataTask resume];
-                    
-                }
-                
-            } else {
-                [NSThread sleepForTimeInterval:5];
-                [wSelf queueNextRequest];
-        }
-    }
-
+	
+	if (self.running == NO) {
+		return;
+	}
+	
+	__weak SyncNetwork* wSelf = self;
+	
+	@synchronized([SharkSync sharedObject].currentGroups) {
+		
+		int count = 0;
+		uint64_t time = @([NSDate date].timeIntervalSince1970 * 1000).unsignedLongLongValue;
+		for (SharkSyncGroup* g in [SharkSync sharedObject].currentGroups) {
+			if ((g.lastPolled + g.frequency) < time) {
+				count++;
+			}
+		}
+		if (count != 0) {
+			
+			// create a request object and then, if it contains data, dispatch it on the queue
+			SyncRequestObject* reqObject = [SyncRequest generateSyncRequest];
+			NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL: [NSURL URLWithString:SharkSync.Settings.serviceUrl] cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:120];
+			
+			if (!reqObject) {
+				[NSThread sleepForTimeInterval:1];
+				[wSelf queueNextRequest];
+				return;
+			}
+			
+			NSError *error;
+			NSData *jsonData = [NSJSONSerialization dataWithJSONObject:reqObject.request options:0 error:&error];
+			
+			NSString *jsonString;
+			if (! jsonData) {
+				NSLog(@"Got an error: %@", error);
+			} else {
+				jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+				NSLog(@"%@", jsonString);
+				NSData *requestData = [NSData dataWithBytes:[jsonString UTF8String] length:[jsonString lengthOfBytesUsingEncoding:NSUTF8StringEncoding]];
+				
+				[request setHTTPMethod:@"POST"];
+				[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+				[request setValue:@"application/json; charset=UTF-8" forHTTPHeaderField:@"Content-Type"];
+				for (NSString* k in SharkSync.Settings.defaultPostValues.allKeys) {
+					[request setValue:[SharkSync.Settings.defaultPostValues valueForKey:k] forHTTPHeaderField:k];
+				}
+				[request setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[requestData length]] forHTTPHeaderField:@"Content-Length"];
+				[request setHTTPBody: requestData];
+				
+				NSURLSessionDataTask* dataTask = [self.session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+					
+					if (error != nil) {
+						[SyncRequest handleError:error request:reqObject];
+						[NSThread sleepForTimeInterval:5];
+						[wSelf queueNextRequest];
+						return;
+					}
+					
+					if (response && ((NSHTTPURLResponse*)response).statusCode != 200) {
+						[SyncRequest handleError:[NSError errorWithDomain:@"sharksync.io.error" code:((NSHTTPURLResponse*)response).statusCode userInfo:@{@"HTTP Error Code" : @"A response code other than 200 was received by the ORM."}] request:reqObject];
+						[NSThread sleepForTimeInterval:5];
+						[wSelf queueNextRequest];
+						return;
+					}
+					
+					error = nil;
+					NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+					if (error) {
+						[SyncRequest handleError:error request:reqObject];
+						[NSThread sleepForTimeInterval:5];
+						[wSelf queueNextRequest];
+						return;
+					}
+					
+					[SyncRequest handleResponse:json request:reqObject];
+					[NSThread sleepForTimeInterval:1];
+					[wSelf queueNextRequest];
+					return;
+					
+				}];
+				
+				[dataTask resume];
+				
+			}
+			
+		} else {
+			[NSThread sleepForTimeInterval:5];
+			[wSelf queueNextRequest];
+		}
+	}
+	
 }
 
 - (void)startService {
-    
-    self.running = YES;
-    // queue an operation block which repetitively calls the service
-    [self queueNextRequest];
-    
+	
+	self.running = YES;
+	// queue an operation block which repetitively calls the service
+	[self queueNextRequest];
+	
 }
 
 - (void)stopService {
-    self.running = NO;
+	self.running = NO;
 }
 
 @end

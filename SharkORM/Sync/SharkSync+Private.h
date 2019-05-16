@@ -31,10 +31,11 @@
 #import "SRKSyncObject+Private.h"
 #import "SRKEntity+Private.h"
 #import "SharkORM+Private.h"
-#import "SharkSync+Private.h"
 #import "SRKDefunctObject.h"
 #import "SRKDeferredChange.h"
 #import "SyncService.h"
+#import "SyncRequest.h"
+
 
 typedef enum : uint8_t {
     
@@ -58,20 +59,21 @@ typedef enum : NSUInteger {
 @property (copy) SharkSyncChangesReceived _Nullable changeBlock;
 
 // maintained to save querying the database
-@property uint64_t countOfChangesToSyncUp;
 @property (strong) NSMutableArray<SharkSyncGroup*>* _Nullable currentGroups;
+@property (strong) id __nonnull countLock;
 
-+ (nonnull NSString*)MD5FromString:(nonnull NSString*)inVar;
-+ (nonnull NSString*)getEffectiveRecordGroup;
-+ (void)setEffectiveRecorGroup:(nonnull NSString*)group;
-+ (void)clearEffectiveRecordGroup;
-+ (nullable id)decryptValue:(nonnull NSString*)value;
++ (nullable id)decryptValue:(nonnull NSString*)value property:(nonnull NSString*)property entity:(nonnull NSString*)entity;
 + (void)queueObject:(nonnull SRKEntity *)object withChanges:(nullable NSMutableDictionary*)changes withOperation:(SharkSyncOperation)operation inHashedGroup:(nonnull NSString*)group;
 + (nonnull instancetype)sharedObject;
-+ (void)addChangesWritten:(uint64_t)changes;
 
 + (nullable NSString *)SRKAES256EncryptWithKey:(nonnull NSString *)key data:(nonnull NSString*)data;
 + (nullable NSString *)SRKAES256DecryptWithKey:(nonnull NSString *)key data:(nonnull NSString*)data;
+
+@end
+
+@interface SRKSyncObject ()
+
+- (BOOL)__commitRawWithObjectChain:(nonnull SRKEntityChain *)chain group:(nullable NSString*)group;
 
 @end
 

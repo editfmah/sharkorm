@@ -28,8 +28,4 @@
 
 @dynamic action,entity,property,recordGroup,recordId,value,timestamp;
 
-- (void)entityDidInsert {
-    [SharkSync addChangesWritten:1];
-}
-
 @end

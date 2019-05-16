@@ -86,32 +86,18 @@ typedef NSImage XXImage;
     static id this = nil;
     if (!this) {
         this = [SharkSync new];
+		((SharkSync*)this).countLock = [NSObject new];
         ((SharkSync*)this).concurrentRecordGroups = [NSMutableDictionary new];
         ((SharkSync*)this).settings = [SharkSyncSettings new];
         ((SharkSync*)this).currentGroups = [NSMutableArray arrayWithArray:[[SharkSyncGroup query] fetch]];
         if (((SharkSync*)this).currentGroups.count == 0) {
             [SharkSync addVisibilityGroup:SHARKSYNC_DEFAULT_GROUP freqency:((SharkSync*)this).settings.defaultPollInterval];
         }
-        ((SharkSync*)this).countOfChangesToSyncUp = [[SharkSyncChange query] count];
     }
     return this;
     
 }
 
-+ (NSString *)MD5FromString:(NSString *)inVar {
-    
-    const char * pointer = [inVar UTF8String];
-    unsigned char md5Buffer[CC_MD5_DIGEST_LENGTH];
-    
-    CC_MD5(pointer, (CC_LONG)strlen(pointer), md5Buffer);
-    
-    NSMutableString *string = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
-    for (int i = 0; i < CC_MD5_DIGEST_LENGTH; i++)
-        [string appendFormat:@"%02x",md5Buffer[i]];
-    
-    return string;
-    
-}
 
 + (void)addVisibilityGroup:(NSString *)visibilityGroup freqency:(int)frequency {
     
@@ -123,6 +109,7 @@ typedef NSImage XXImage;
             if ([group.name isEqualToString:visibilityGroup]) {
                 group.frequency = frequency*1000;
                 [group commit];
+				found = true;
             }
         }
         if (!found) {
@@ -142,6 +129,7 @@ typedef NSImage XXImage;
     @synchronized([SharkSync sharedObject].currentGroups) {
         return [[SharkSyncGroup query] distinct:@"name"];
     }
+	
 }
 
 + (void)removeVisibilityGroup:(NSString *)visibilityGroup {
@@ -172,33 +160,13 @@ typedef NSImage XXImage;
     }
 }
 
-+ (void)addChangesWritten:(uint64_t)changes {
-    @synchronized([SharkSync sharedObject].currentGroups) {
-        [SharkSync sharedObject].countOfChangesToSyncUp += changes;
-    }
-}
-
-+ (NSString*)getEffectiveRecordGroup {
-    @synchronized ([SharkSync sharedObject].concurrentRecordGroups) {
-        return [[SharkSync sharedObject].concurrentRecordGroups objectForKey:[NSString stringWithFormat:@"%@", [NSThread currentThread]]];
-    }
-}
-
-+ (void)setEffectiveRecorGroup:(NSString*)group {
-    [[SharkSync sharedObject].concurrentRecordGroups setObject:group forKey:[NSString stringWithFormat:@"%@", [NSThread currentThread]]];
-}
-
-+ (void)clearEffectiveRecordGroup {
-    [[SharkSync sharedObject].concurrentRecordGroups removeObjectForKey:[NSString stringWithFormat:@"%@", [NSThread currentThread]]];
-}
-
 + (id)decryptValue:(NSString*)value property:(NSString*)property entity:(NSString*)entity {
     
     if (!value) {
         return nil;
     }
     
-    NSString* encryptedData = [[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:value options:NSDataBase64DecodingIgnoreUnknownCharacters] encoding:NSNonLossyASCIIStringEncoding];
+	NSString* encryptedData = value;
     
     // call the block in the sync settings to encrypt the data
     SharkSync* sync = [SharkSync sharedObject];
@@ -221,7 +189,11 @@ typedef NSImage XXImage;
     }
     
     int dataType = [[SharkSchemaManager shared] schemaPropertyType:entity property:property];
-    
+	
+	if ([decrypteddata isKindOfClass:[NSNull class]]) {
+		return decrypteddata;
+	}
+	
     if (dataType == SRK_PROPERTY_TYPE_STRING) {
         
         return decrypteddata;
@@ -394,7 +366,6 @@ typedef NSImage XXImage;
         
         SharkSyncChange* change = [SharkSyncChange new];
         change.entity = [[object class] description];
-        change.property = @"__delete__";
         change.recordId = object.Id;
         change.action = operation;
         change.recordGroup = group;

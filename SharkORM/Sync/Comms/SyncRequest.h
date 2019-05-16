@@ -25,16 +25,15 @@
 
 @interface SyncRequestObject : NSObject
 
-@property (strong) NSArray<SharkSyncChange*>* changes;
+@property (strong) NSMutableArray<SharkSyncChange*>* changes;
 @property (strong) NSMutableDictionary* request;
-@property (strong) NSMutableDictionary<NSString*, NSString*>* hashes;
 
 @end
 
 @interface SyncRequest : NSObject
 
 + (SyncRequestObject *)generateSyncRequest;
-+ (void)handleResponse:(NSDictionary*)response request:(SyncRequestObject*)request;
++ (int)handleResponse:(NSDictionary*)response request:(SyncRequestObject*)request;
 + (void)handleError:(NSError*)error request:(SyncRequestObject*)request;
 
 @end

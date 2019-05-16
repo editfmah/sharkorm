@@ -143,7 +143,16 @@ static SharkSchemaManager* this;
             }
         }
     }
-    
+	
+	if (schemas[entity] != nil) {
+		SharkSchemaStruct* schema = schemas[entity];
+		for (NSString* f in schema.fields.allKeys) {
+			if ([f.lowercaseString isEqualToString:property.lowercaseString]) {
+				return schema.fields[f].intValue;
+			}
+		}
+	}
+	
     return 0;
     
 }
@@ -290,7 +299,7 @@ static SharkSchemaManager* this;
 }
 
 - (void)databaseSetEntity:(NSString*)entity property:(NSString*)property type:(int)type {
-    
+		
     SharkSchemaStruct* schema = databases[entity];
     if (schema == nil) {
         schema = [SharkSchemaStruct new];
@@ -567,7 +576,7 @@ static SharkSchemaManager* this;
 - (void)refactorDatabase:(NSString*)database entity:(NSString*)entity {
     
     if (!database || [database isEqualToString:@""]) {
-        
+		
         // this is blank, so grab the default
         
         if (SRKGlobals.sharedObject.defaultDatabaseName != nil) {
@@ -576,82 +585,13 @@ static SharkSchemaManager* this;
         
         // see if this database has been opened
         if ([SRKGlobals.sharedObject handleForName:database] == nil) {
-            // this database will be refactored when finally opened in the future.
+            // this database will be refactored when finally opened in teh future.
             return;
         }
         
-    } // database != nil
-    
-    // check to see if this table already exists
-    if (databases[entity] == nil) {
-        
-        // completely new table, so we can do this in a single operation
-        NSString* sql = @"CREATE TABLE IF NOT EXISTS ";
-        sql = [sql stringByAppendingString:entity];
-        sql = [sql stringByAppendingString:@" (Id "];
-        if ([self schemaPrimaryKeyTypeForEntity:entity] == SRK_PROPERTY_TYPE_NUMBER) {
-            sql = [sql stringByAppendingString:@"INTEGER PRIMARY KEY AUTOINCREMENT);"];
-        } else {
-            sql = [sql stringByAppendingString:@"TEXT PRIMARY KEY);"];
-        }
-        
-        [SharkORM executeSQL:sql inDatabase:database];
-        
-        // now add the columns in one-by-one
-        for (NSString* f in [self schemaPropertiesForEntity:entity]) {
-            sql = @"ALTER TABLE ";
-            sql = [sql stringByAppendingString:entity];
-            sql = [sql stringByAppendingString:@" ADD COLUMN "];
-            sql = [sql stringByAppendingString:f];
-            sql = [sql stringByAppendingString:@" "];
-            sql = [sql stringByAppendingString:[self sqlTextTypeFromColumnType:[self entityTypeToSQLSotrageType:[self schemaPropertyType:entity property:f]]]];
-            [SharkORM executeSQL:sql inDatabase:database];
-        }
-        
-    } else {
-        
-        NSString* sql = @"";
-        
-        // existing table, so look for missing columns and add them
-        for (NSString* f in [self schemaPropertiesForEntity:entity]) {
-            if (![self databasePropertyExistsInEntity:entity property:f]) {
-                sql = @"ALTER TABLE ";
-                sql = [sql stringByAppendingString:entity];
-                sql = [sql stringByAppendingString:@" ADD COLUMN "];
-                sql = [sql stringByAppendingString:f];
-                sql = [sql stringByAppendingString:@" "];
-                sql = [sql stringByAppendingString:[self sqlTextTypeFromColumnType:[self entityTypeToSQLSotrageType:[self schemaPropertyType:entity property:f]]]];
-                [SharkORM executeSQL:sql inDatabase:database];
-            }
-        }
-        
-        // look for changed data value types
-        for (NSString* f in [self schemaPropertiesForEntity:entity]) {
-            if ([self databasePropertyExistsInEntity:entity property:f]) {
-                if ([self entityTypeToSQLSotrageType:[self schemaPropertyType:entity property:f]] != [self databasePropertyTypeForEntity:entity property:f]) {
-                    
-                    // detect change, and migrate data accordingly
-                    
-                }
-            }
-        }
-        
-        // notify the entity class that we are between two states, all new columns have been added, but we have not removed the old ones yet.
-        //TODO: implement migration
-        
-        // look for extra columns that need to be dropped
-        BOOL foundDefuncColumns = NO;
-        for (NSString* f in [self databasePropertiesForEntity:entity]) {
-            if (![self schemaPropertyExists:entity property:f]) {
-                foundDefuncColumns = YES;
-            }
-        }
-        
-        if (foundDefuncColumns) {
-            
-            // rename the old table
-            [SharkORM executeSQL:[NSString stringWithFormat:@"ALTER TABLE %@ RENAME TO temp_%@;", entity, entity] inDatabase:database];
-            
+        // check to see if this table already exists
+        if (databases[entity] == nil) {
+                        
             // completely new table, so we can do this in a single operation
             NSString* sql = @"CREATE TABLE IF NOT EXISTS ";
             sql = [sql stringByAppendingString:entity];
@@ -668,43 +608,112 @@ static SharkSchemaManager* this;
             for (NSString* f in [self schemaPropertiesForEntity:entity]) {
                 sql = @"ALTER TABLE ";
                 sql = [sql stringByAppendingString:entity];
-                sql = [sql stringByAppendingString:@" ADD COLUMN "];
+                sql = [sql stringByAppendingString:@" ADD COLUMN `"];
                 sql = [sql stringByAppendingString:f];
-                sql = [sql stringByAppendingString:@" "];
+                sql = [sql stringByAppendingString:@"` "];
                 sql = [sql stringByAppendingString:[self sqlTextTypeFromColumnType:[self entityTypeToSQLSotrageType:[self schemaPropertyType:entity property:f]]]];
                 [SharkORM executeSQL:sql inDatabase:database];
             }
             
-            // copy the data from the temp database
-            [SharkORM executeSQL:[NSString stringWithFormat:@"INSERT INTO %@ (%@) SELECT %@ FROM temp_%@;", entity, [[self schemaPropertiesForEntity:entity] componentsJoinedByString:@","], [[self schemaPropertiesForEntity:entity] componentsJoinedByString:@","], entity] inDatabase:database];
+        } else {
             
-            // drop the temp table
-            [SharkORM executeSQL:[NSString stringWithFormat:@"DROP TABLE temp_%@;", entity] inDatabase:database];
+            NSString* sql = @"";
             
-            // clear out the indexes as they are no longer on this new table
-            databases[entity].indexes = [NSMutableDictionary new];
+            // existing table, so look for missing columns and add them
+            for (NSString* f in [self schemaPropertiesForEntity:entity]) {
+                if (![self databasePropertyExistsInEntity:entity property:f]) {
+                    sql = @"ALTER TABLE ";
+                    sql = [sql stringByAppendingString:entity];
+                    sql = [sql stringByAppendingString:@" ADD COLUMN `"];
+                    sql = [sql stringByAppendingString:f];
+                    sql = [sql stringByAppendingString:@"` "];
+                    sql = [sql stringByAppendingString:[self sqlTextTypeFromColumnType:[self entityTypeToSQLSotrageType:[self schemaPropertyType:entity property:f]]]];
+                    [SharkORM executeSQL:sql inDatabase:database];
+                }
+            }
             
+            // look for changed data value types
+            for (NSString* f in [self schemaPropertiesForEntity:entity]) {
+                if ([self databasePropertyExistsInEntity:entity property:f]) {
+                    if ([self entityTypeToSQLSotrageType:[self schemaPropertyType:entity property:f]] != [self databasePropertyTypeForEntity:entity property:f]) {
+                        
+                        // detect change, and migrate data accordingly
+                        
+                    }
+                }
+            }
+            
+            // notify the entity class that we are between two states, all new columns have been added, but we have not removed the old ones yet.
+            //TODO: implement migration
+            
+            // look for extra columns that need to be dropped
+            BOOL foundDefuncColumns = NO;
+            for (NSString* f in [self databasePropertiesForEntity:entity]) {
+                if (![self schemaPropertyExists:entity property:f]) {
+                    foundDefuncColumns = YES;
+                }
+            }
+            
+            if (foundDefuncColumns) {
+                
+                // rename the old table
+                [SharkORM executeSQL:[NSString stringWithFormat:@"ALTER TABLE %@ RENAME TO temp_%@;", entity, entity] inDatabase:database];
+                
+                // completely new table, so we can do this in a single operation
+                NSString* sql = @"CREATE TABLE IF NOT EXISTS ";
+                sql = [sql stringByAppendingString:entity];
+                sql = [sql stringByAppendingString:@" (Id "];
+                if ([self schemaPrimaryKeyTypeForEntity:entity] == SRK_PROPERTY_TYPE_NUMBER) {
+                    sql = [sql stringByAppendingString:@"INTEGER PRIMARY KEY AUTOINCREMENT);"];
+                } else {
+                    sql = [sql stringByAppendingString:@"TEXT PRIMARY KEY);"];
+                }
+                
+                [SharkORM executeSQL:sql inDatabase:database];
+                
+                // now add the columns in one-by-one
+                for (NSString* f in [self schemaPropertiesForEntity:entity]) {
+					sql = @"ALTER TABLE ";
+					sql = [sql stringByAppendingString:entity];
+					sql = [sql stringByAppendingString:@" ADD COLUMN `"];
+					sql = [sql stringByAppendingString:f];
+					sql = [sql stringByAppendingString:@"` "];
+					sql = [sql stringByAppendingString:[self sqlTextTypeFromColumnType:[self entityTypeToSQLSotrageType:[self schemaPropertyType:entity property:f]]]];
+					[SharkORM executeSQL:sql inDatabase:database];
+                }
+                
+                // copy the data from the temp database
+                [SharkORM executeSQL:[NSString stringWithFormat:@"INSERT INTO %@ (%@) SELECT %@ FROM temp_%@;", entity, [[self schemaPropertiesForEntity:entity] componentsJoinedByString:@","], [[self schemaPropertiesForEntity:entity] componentsJoinedByString:@","], entity] inDatabase:database];
+                
+                // drop the temp table
+                [SharkORM executeSQL:[NSString stringWithFormat:@"DROP TABLE temp_%@;", entity] inDatabase:database];
+                
+                // clear out the indexes as they are no longer on this new table
+                databases[entity].indexes = [NSMutableDictionary new];
+                
+            }
+
         }
         
-    }
-    
-    // now create and remove indexes on the tables
-    NSDictionary<NSString*, NSString*>* idx = [self schemaIndexDefinitionsForEntity:entity];
-    for (NSString* i in idx.allKeys) {
-        if ([self databaseIndexDefinitionsForEntity:entity][i] == nil) {
-            // missing index, create it now
-            [SharkORM executeSQL:idx[i] inDatabase:database];
+        // now create and remove indexes on the tables
+        NSDictionary<NSString*, NSString*>* idx = [self schemaIndexDefinitionsForEntity:entity];
+        for (NSString* i in idx.allKeys) {
+            if ([self databaseIndexDefinitionsForEntity:entity][i] == nil) {
+                // missing index, create it now
+                [SharkORM executeSQL:idx[i] inDatabase:database];
+            }
         }
-    }
-    
-    // remove old indexes
-    idx = [self databaseIndexDefinitionsForEntity:entity];
-    for (NSString* i in idx.allKeys) {
-        if ([self schemaIndexDefinitionsForEntity:entity][i] == nil) {
-            // missing index, create it now
-            [SharkORM executeSQL:[NSString stringWithFormat:@"DROP INDEX IF EXISTS %@;", i] inDatabase:database];
+        
+        // remove old indexes
+        idx = [self databaseIndexDefinitionsForEntity:entity];
+        for (NSString* i in idx.allKeys) {
+            if ([self schemaIndexDefinitionsForEntity:entity][i] == nil) {
+                // missing index, create it now
+                [SharkORM executeSQL:[NSString stringWithFormat:@"DROP INDEX IF EXISTS %@;", i] inDatabase:database];
+            }
         }
-    }
+
+    } // database != nil
     
 }
 

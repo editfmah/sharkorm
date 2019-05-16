@@ -58,6 +58,10 @@
 }
 
 - (BOOL)commit {
+	return [self commitInGroup:nil];
+}
+
+- (BOOL)commitInGroup:(NSString *)group {
 	
 	/* commit all the objects within a transaction */
 	
@@ -69,9 +73,11 @@
             
             if (ob.isMarkedForDeletion) {
                 [ob __removeRaw];
-            } else {
-                [ob __commitRawWithObjectChain:[SRKEntityChain new]];
-            }
+            } else if ([ob isKindOfClass:[SRKSyncObject class]]) {
+                [((SRKSyncObject*)ob) __commitRawWithObjectChain:[SRKEntityChain new] group:group];
+			} else {
+				[ob __commitRawWithObjectChain:[SRKEntityChain new]];
+			}
         }
         
     } withRollback:^{
