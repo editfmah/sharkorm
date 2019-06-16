@@ -2440,7 +2440,7 @@ static void setPropertyCharPTRIMP(SRKEntity* self, SEL _cmd, char* aValue) {
         if (queryString.length != 0) {
             
         }
-        if ([[[self.class query] where:queryString parameters:@[propertyValues]] count]) {
+        if ([[[self.class query] where:queryString parameters:propertyValues] count]) {
             return NO;
         }
     }
