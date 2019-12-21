@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "SharkORM"
-  s.version      = "2.3.69"
+  s.version      = "{VER}"
   s.summary      = "SQLite based ORM for iOS, tvOS & macOS"
   s.homepage     = "http://sharkorm.com/"
   s.license      =  { :type => "MIT", :file => "LICENSE" }
@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = "9.0"
   s.osx.deployment_target = "10.9"
   #s.tvos.deployment_target = "9.0"
-  s.source       = { :git => "https://github.com/sharksync/sharkorm.git", :tag => "v2.3.69" }
+  s.source       = { :git => "https://github.com/sharksync/sharkorm.git", :tag => "v{VER}" }
   s.source_files  = "SharkORM/**/*.{h,m,c}"
   s.public_header_files = "SharkORM/SharkORM.h"
   s.module_map = "SharkORM/SharkORM.modulemap"
