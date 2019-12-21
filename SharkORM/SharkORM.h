@@ -258,8 +258,8 @@ NS_ASSUME_NONNULL_END
 @interface SRKRelationship : NSObject {
     
 }
-@property Class                                       sourceClass;
-@property Class                                       targetClass;
+@property Class _Nullable                             sourceClass;
+@property Class _Nullable                             targetClass;
 @property (nonatomic, strong, nullable) NSString*     sourceProperty;
 @property (nonatomic, strong, nullable) NSString*     targetProperty;
 @property (nonatomic, strong, nullable) NSString*     linkTable;
