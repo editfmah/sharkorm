@@ -116,7 +116,7 @@ let p = Person(dictionary: ["name" : "Shark Developer", "age" : 39])
 ```
 
 
-##Supported Types
+## Supported Types
 
 Shark supports the following (Objective-c) types: `BOOL`, `bool`, `int`, `int64`, `uint`, `uint64`, `float`, `double`, `long`, `long long`, `unsigned long long`, `NSString`, `NSDate`, `NSData`, `NSNumber`.  To use some native Swift types you will need to supply them with a default value as the equivalents are not nullable.  
 
